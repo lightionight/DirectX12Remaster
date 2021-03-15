@@ -40,6 +40,10 @@ struct VColorData
 struct ObjectConstants
 {
     XMFLOAT4X4 WorldViewProj = MathHelper::Identity4x4();
+    FLOAT gTime;
+    XMFLOAT4X4 world = MathHelper::Identity4x4();
+    XMFLOAT4X4 view = MathHelper::Identity4x4();
+    XMFLOAT4X4 proj = MathHelper::Identity4x4();
 };
 
 class BoxApp : public D3DApp

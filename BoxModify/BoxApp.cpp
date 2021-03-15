@@ -46,10 +46,13 @@ void BoxApp::OnResize()
 
 void BoxApp::Update(const GameTimer& gt)
 {
-    // Convert Spherical to Cartesian coordinates.
-    float x = mRadius * sinf(mPhi) * cosf(mTheta);
-    float z = mRadius * sinf(mPhi) * sinf(mTheta);
-    float y = mRadius * cosf(mPhi);
+    
+    float distance = 3.0f;
+    // Convert Spherical to Cartesian coordinates. Reference Link  https://en.wikipedia.org/wiki/Spherical_coordinate_system
+    float x = distance * mRadius * sinf(mPhi) * cosf(mTheta);
+    float z = distance * mRadius * sinf(mPhi) * sinf(mTheta);
+    float y = 3.0f * mRadius * cosf(mPhi);
+    //float y = 0.0f;
 
     // Build the view matrix.
     XMVECTOR pos = XMVectorSet(x, y, z, 1.0f);
@@ -66,6 +69,7 @@ void BoxApp::Update(const GameTimer& gt)
     // Update the constant buffer with the latest worldViewProj matrix.
     ObjectConstants objConstants;
     XMStoreFloat4x4(&objConstants.WorldViewProj, XMMatrixTranspose(worldViewProj));
+    objConstants.gTime = mTimer.TotalTime();
     mObjectCB->CopyData(0, objConstants);
 }
 
@@ -100,13 +104,24 @@ void BoxApp::Draw(const GameTimer& gt)
 
     mCommandList->IASetVertexBuffers(0, 1, &mBoxGeo->VertexBufferView());
     mCommandList->IASetIndexBuffer(&mBoxGeo->IndexBufferView());
-    mCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    mCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);  // This IASet Stage set How to Draw Current Geometry
 
     mCommandList->SetGraphicsRootDescriptorTable(0, mCbvHeap->GetGPUDescriptorHandleForHeapStart());
 
-    mCommandList->DrawIndexedInstanced(
-        mBoxGeo->DrawArgs["box"].IndexCount,
-        1, 0, 0, 0);
+    // Draw Instance of  Geo
+    //mCommandList->DrawIndexedInstanced(
+    //    mBoxGeo->DrawArgs["box"].IndexCount,
+    //    1, 0, 0, 0);
+    mCommandList->DrawIndexedInstanced(18, 1, 0, 0, 0);
+
+    // Change World Matrix to offset draw box
+    //XMMATRIX world = XMLoadFloat4x4(&mWorld);
+    //XMMATRIX offsetPos = XMMatrixTranslation(2.0f, 0.0f, 0.0f);
+    //world = XMMatrixMultiply(world, offsetPos);
+    // ObjectConstants objConstants;
+
+
+    mCommandList->DrawIndexedInstanced(36, 1, 18, 5, 36);
 
     // Indicate a state transition on the resource usage.
     mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
@@ -269,54 +284,93 @@ void BoxApp::BuildShadersAndInputLayout()
 
     TwoInputLayout =
     {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
     };
 
 }
 void BoxApp::BuildBoxGeometry()
 {
-    std::array<Vertex, 8> vertices =
+    Vertex verticesPyramid[] =
     {
-        Vertex({ XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::White) }),
-        Vertex({ XMFLOAT3(-1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Black) }),
-        Vertex({ XMFLOAT3(+1.0f, +1.0f, -1.0f), XMFLOAT4(Colors::Red) }),
-        Vertex({ XMFLOAT3(+1.0f, -1.0f, -1.0f), XMFLOAT4(Colors::Green) }),
-        Vertex({ XMFLOAT3(-1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Blue) }),
-        Vertex({ XMFLOAT3(-1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Yellow) }),
-        Vertex({ XMFLOAT3(+1.0f, +1.0f, +1.0f), XMFLOAT4(Colors::Cyan) }),
-        Vertex({ XMFLOAT3(+1.0f, -1.0f, +1.0f), XMFLOAT4(Colors::Magenta) })
-    };
+        Vertex({ XMFLOAT3(+1.0f,  0.0f, -1.0f), XMFLOAT4(Colors::Green) }),     // 0 Triangle vertex 1
+        Vertex({ XMFLOAT3(-1.0f,  0.0f, +1.0f), XMFLOAT4(Colors::Green) }),     // 1
+        Vertex({ XMFLOAT3(-1.0f,  0.0f, -1.0f), XMFLOAT4(Colors::Green) }),     // 2 Triangle Vertex 2
+        Vertex({ XMFLOAT3(+1.0f,  0.0f, +1.0f), XMFLOAT4(Colors::Green) }),     // 3
+        Vertex({ XMFLOAT3(0.0f,  5.0f, 0.0f), XMFLOAT4(Colors::Red) }),       // 4 Triangle Vertex 3
+        // BoxAdd  Vertex
 
-    std::array<std::uint16_t, 36> indices =
+    };
+    Vertex verticesBox[] =
     {
-        // front face
+        Vertex({ XMFLOAT3(+1.0f,  0.0f, -1.0f), XMFLOAT4(Colors::Purple) }),   //box 1
+        Vertex({ XMFLOAT3(-1.0f,  0.0f, -1.0f), XMFLOAT4(Colors::Red) }),   //box 2
+        Vertex({ XMFLOAT3(-1.0f,  0.0f, +1.0f), XMFLOAT4(Colors::Purple) }),   // 3
+        Vertex({ XMFLOAT3(+1.0f,  0.0f, +1.0f), XMFLOAT4(Colors::Red) }),   //4 
+        Vertex({ XMFLOAT3(+1.0f,  +2.0f, +1.0f), XMFLOAT4(Colors::Purple) }),  // 5
+        Vertex({ XMFLOAT3(+1.0f,  +2.0f, -1.0f), XMFLOAT4(Colors::Red) }),  // 6
+        Vertex({ XMFLOAT3(-1.0f,  +2.0f, -1.0f), XMFLOAT4(Colors::Purple) }),  // 7
+        Vertex({ XMFLOAT3(-1.0f,  +2.0f, +1.0f), XMFLOAT4(Colors::Red) })   // 8
+    };
+    std::uint16_t indicesPyramid[] =
+    {
+        //Pyramid index
         0, 1, 2,
-        0, 2, 3,
+        0, 3, 1,
+        4, 3, 0,
+        4, 0, 2,
+        4, 2, 1,
+        4, 1, 3,
 
-        // back face
-        4, 6, 5,
-        4, 7, 6,
+        
+    };
+    std::uint16_t indicesBox[] =
+    {
+        //Box Index
+        // Buttom
+        0, 2, 1,
+        0, 3, 2,
 
-        // left face
-        4, 5, 1,
-        4, 1, 0,
+        //top
+        5, 7, 4,
+        5, 6, 7,
 
-        // right face
-        3, 2, 6,
-        3, 6, 7,
-
-        // top face
-        1, 5, 6,
-        1, 6, 2,
-
-        // bottom face
-        4, 0, 3,
-        4, 3, 7
+        //left
+        2, 7, 6,
+        2, 6, 1,
+        //right
+        0, 5, 4,
+        0, 4, 3,
+        //front
+        0, 6, 5,
+        0, 1, 6,
+        // back
+        3, 7, 2,
+        3, 4, 7
     };
 
-    const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-    const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+    UINT verticeBoxCount = ARRAYSIZE(verticesBox);
+    UINT verticePyramidCount = ARRAYSIZE(verticesPyramid);
+    UINT verticesSize = verticeBoxCount + verticePyramidCount;
+    UINT indicesPyramidCount = ARRAYSIZE(indicesPyramid);
+    UINT indicesBoxCount = ARRAYSIZE(indicesBox);
+    UINT indicesSize = indicesBoxCount + indicesPyramidCount;
+
+    const UINT vbByteSize = verticesSize * sizeof(Vertex);
+    const UINT ibByteSize = indicesSize * sizeof(std::uint16_t);
+
+    std::vector<Vertex> vertices;
+    std::vector<std::uint16_t> indices;
+
+    // Now Copy data to Combine 
+    for (UINT i = 0; i < verticePyramidCount; i++)
+        vertices.push_back(verticesPyramid[i]);
+    for (UINT i = 0; i < verticeBoxCount; i++)
+        vertices.push_back(verticesBox[i]);
+    for (UINT i = 0; i < indicesPyramidCount; i++)
+        indices.push_back(indicesPyramid[i]);
+    for (UINT i = 0; i < indicesBoxCount; i++)
+        indices.push_back(indicesBox[i]);
 
     mBoxGeo = std::make_unique<MeshGeometry>();
     mBoxGeo->Name = "boxGeo";

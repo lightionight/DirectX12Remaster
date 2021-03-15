@@ -16,6 +16,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{d6f95beb-5b73-4021-85ff-9d98e60c1bcc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSL">
+      <UniqueIdentifier>{10892a64-5770-44f8-abbc-5b4239c089b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ProgramEntry.cpp">
@@ -59,9 +62,6 @@
     <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dUtil.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dx12.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Reference\Include\DX12Common\DDSTextureLoader.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -77,5 +77,13 @@
     <ClInclude Include="..\..\..\Reference\Include\DX12Common\UploadBuffer.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dx12.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Shaders\color.hlsl">
+      <Filter>HLSL</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>
