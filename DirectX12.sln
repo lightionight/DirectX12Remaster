@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Box", "Box\Box.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BoxModify", "BoxModify\BoxModify.vcxproj", "{2D9E3A2E-5B84-4DF4-BB80-F535713FCCF4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SceneDraw", "SceneDraw\SceneDraw.vcxproj", "{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,14 @@ Global
 		{2D9E3A2E-5B84-4DF4-BB80-F535713FCCF4}.Release|Win32.Build.0 = Release|Win32
 		{2D9E3A2E-5B84-4DF4-BB80-F535713FCCF4}.Release|x64.ActiveCfg = Release|x64
 		{2D9E3A2E-5B84-4DF4-BB80-F535713FCCF4}.Release|x64.Build.0 = Release|x64
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Debug|Win32.Build.0 = Debug|Win32
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Debug|x64.ActiveCfg = Debug|x64
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Debug|x64.Build.0 = Debug|x64
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Release|Win32.ActiveCfg = Release|Win32
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Release|Win32.Build.0 = Release|Win32
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Release|x64.ActiveCfg = Release|x64
+		{ABA0F73A-FBB0-4F77-9BA0-1C51BB42CDBF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
