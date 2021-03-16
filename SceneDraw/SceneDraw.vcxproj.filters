@@ -24,64 +24,64 @@
     <ClCompile Include="SceneApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Renference\DX12Common\Camera.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Renference\DX12Common\d3dApp.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Renference\DX12Common\d3dUtil.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Renference\DX12Common\DDSTextureLoader.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Renference\DX12Common\GameTimer.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Renference\DX12Common\GeometryGenerator.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Renference\DX12Common\MathHelper.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="FrameResource.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Reference\Include\DX12Common\Camera.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Reference\Include\DX12Common\d3dApp.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Reference\Include\DX12Common\d3dUtil.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Reference\Include\DX12Common\DDSTextureLoader.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Reference\Include\DX12Common\GameTimer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Reference\Include\DX12Common\GeometryGenerator.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Reference\Include\DX12Common\MathHelper.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SceneApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\Camera.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dApp.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dUtil.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dx12.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\DDSTextureLoader.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\GameTimer.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\GeometryGenerator.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\MathHelper.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\Renference\DX12Common\UploadBuffer.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="FrameResource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\Camera.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dApp.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dUtil.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dx12.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\DDSTextureLoader.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\GameTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\GeometryGenerator.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\MathHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Reference\Include\DX12Common\UploadBuffer.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

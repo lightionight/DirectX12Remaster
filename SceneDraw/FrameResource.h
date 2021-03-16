@@ -22,7 +22,9 @@ struct PassConstants
 	XMFLOAT4X4 InvProj = MathHelper::Identity4x4();
 	XMFLOAT4X4 ViewProj = MathHelper::Identity4x4();
 	XMFLOAT4X4 InvViewProj = MathHelper::Identity4x4();
-	float cbPerObjectPad1 = 0.0f;
+	XMFLOAT3 EyePosW = { 0.0f, 0.0f, 0.0f };
+
+	float CbPerObjectPad1 = 0.0f;
 	XMFLOAT2 RenderTargetSize = { 0.0f, 0.0f };
 	XMFLOAT2 InvRenderTargetSize = { 0.0f, 0.0f };
 
@@ -44,9 +46,9 @@ public:
 	ComPtr<ID3D12CommandAllocator> CmdListAlloc;
 	std::unique_ptr<UploadBuffer<PassConstants>> PassCB = nullptr;
 	std::unique_ptr<UploadBuffer<ObjectConstants>> ObjectCB = nullptr;
-
+	
+// Struct Constructor not set this value, so default is 0, using for condition Current Work is done or not;
 	UINT64 Fence = 0;
-
 public:
 	FrameResource(ID3D12Device* device, UINT passCount, UINT objectCount);
 	FrameResource(const FrameResource& rhs) = delete;

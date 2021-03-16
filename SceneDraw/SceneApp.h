@@ -68,12 +68,44 @@ private:
 	void BuildShapeGeometry();
 	void BuildPSOs();
 	void BuildFrameResources();
+	void BuildRenderItems();
 	void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*> rItems);
 
 private:
-	std::vector<std::unique_ptr<FrameResource>>
+	std::vector<std::unique_ptr<FrameResource>> mFrameResources;
+	FrameResource* mCurrentFrameResources = nullptr;
+	int mCurrentFrameResourceIndex = 0;
 
+	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
+	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
+	
+	ComPtr<ID3D12DescriptorHeap> mSrvDescriptorHeap = nullptr;
 
+// This Contains lots of data using Container to included. 
+	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeometries;  // batch of Geometry
+	std::unordered_map<std::string, ComPtr<ID3DBlob>> mShaders;       // batch of Shader id3dblob
+	std::unordered_map<std::string, ComPtr<ID3D12PipelineState>> mPSOs;   // batch of d3d render pipeline state ojbect pointers
+
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;  // vector array of inputlayout desc
+// All  RenderItems
+	std::vector<std::unique_ptr<RenderItem>> mAllRItems;
+	std::vector<RenderItem*> mOpaqueRitems;
+
+	PassConstants mMainPassCB;
+	UINT mPassCbvOffset = 0;
+
+// Position Variables
+	bool isWireFrame = false;
+	XMFLOAT3 mEyePos = { 0.0f, 0.0f, 0.0f }; // Camera Postion
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+// Speherial
+	float mRadius = 15.0f;
+	float mPhi = 0.2f * XM_PI;
+	float mTheta = 1.5f * XM_PI;
+
+// Mouse Position
+	POINT mLastMousePos;
 };
 
 
