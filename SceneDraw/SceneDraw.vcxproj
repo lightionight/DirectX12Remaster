@@ -86,12 +86,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>
+      </SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>Default</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -140,27 +141,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Reference\Include\DX12Common\Camera.cpp" />
-    <ClCompile Include="..\..\..\Reference\Include\DX12Common\d3dApp.cpp" />
-    <ClCompile Include="..\..\..\Reference\Include\DX12Common\d3dUtil.cpp" />
-    <ClCompile Include="..\..\..\Reference\Include\DX12Common\DDSTextureLoader.cpp" />
-    <ClCompile Include="..\..\..\Reference\Include\DX12Common\GameTimer.cpp" />
-    <ClCompile Include="..\..\..\Reference\Include\DX12Common\GeometryGenerator.cpp" />
-    <ClCompile Include="..\..\..\Reference\Include\DX12Common\MathHelper.cpp" />
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\Camera.cpp" />
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\d3dApp.cpp" />
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\d3dUtil.cpp" />
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\DDSTextureLoader.cpp" />
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\GameTimer.cpp" />
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\GeometryGenerator.cpp" />
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\MathHelper.cpp" />
     <ClCompile Include="FrameResource.cpp" />
     <ClCompile Include="SceneApp.cpp" />
     <ClCompile Include="ProgramEntry.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\Camera.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dApp.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dUtil.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\d3dx12.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\DDSTextureLoader.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\GameTimer.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\GeometryGenerator.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\MathHelper.h" />
-    <ClInclude Include="..\..\..\Reference\Include\DX12Common\UploadBuffer.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\Camera.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dApp.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dUtil.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dx12.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\DDSTextureLoader.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\GameTimer.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\GeometryGenerator.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\MathHelper.h" />
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\UploadBuffer.h" />
     <ClInclude Include="FrameResource.h" />
     <ClInclude Include="SceneApp.h" />
   </ItemGroup>

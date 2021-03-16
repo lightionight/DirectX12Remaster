@@ -1,7 +1,9 @@
-#ifndef SCENE_H
-#define SCENE_H
+#pragma once
 
 #include <d3dApp.h>
+#include <MathHelper.h>
+#include <UploadBuffer.h>
+#include <GeometryGenerator.h>
 #include "FrameResource.h"
 
 using Microsoft::WRL::ComPtr;
@@ -108,9 +110,17 @@ private:
 	POINT mLastMousePos;
 };
 
-
-
-
-
-
-#endif // !SCENE_H
+int WINAPI
+wWinMain(
+	HINSTANCE hInstace,
+	HINSTANCE preHinstace,
+	PWSTR nCmdLine,
+	int nCmdShow
+)
+{
+	SceneApp theApp(hInstace);
+	if (!theApp.Initialize())
+		return false;
+	theApp.Run();
+	return 0;
+}
