@@ -10,8 +10,6 @@ using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
-const int gNumFrameResources = 3;
-
 //Help Structure;
 struct RenderItem
 {
@@ -31,12 +29,8 @@ struct RenderItem
 	UINT indexCount = 0;
 	UINT startIndexLocation = 0;
 	UINT baseVertexLocation = 0;
+// May there Need add Fill Mode, d3d12_FILL_MODE_WIREFRAME or D3D12_FILL_MODE_SOILD;
 };
-
-
-
-
-
 
 class SceneApp : public D3DApp
 {
@@ -80,7 +74,6 @@ private:
 
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
 	ComPtr<ID3D12DescriptorHeap> mCbvHeap = nullptr;
-	
 	ComPtr<ID3D12DescriptorHeap> mSrvDescriptorHeap = nullptr;
 
 // This Contains lots of data using Container to included. 
@@ -109,18 +102,3 @@ private:
 // Mouse Position
 	POINT mLastMousePos;
 };
-
-int WINAPI
-wWinMain(
-	HINSTANCE hInstace,
-	HINSTANCE preHinstace,
-	PWSTR nCmdLine,
-	int nCmdShow
-)
-{
-	SceneApp theApp(hInstace);
-	if (!theApp.Initialize())
-		return false;
-	theApp.Run();
-	return 0;
-}

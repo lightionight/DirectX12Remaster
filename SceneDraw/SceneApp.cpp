@@ -1,13 +1,13 @@
 #include "SceneApp.h"
 
-SceneApp::SceneApp(HINSTANCE hInstance) : D3DApp(hInstance) { }
+const int gNumFrameResources = 3;
 
+SceneApp::SceneApp(HINSTANCE hInstance) : D3DApp(hInstance) { }
 SceneApp::~SceneApp()
 {
 	if (md3dDevice != nullptr)
 		FlushCommandQueue();
 }
-
 bool SceneApp::Initialize()
 {
 	if (!D3DApp::Initialize())
@@ -20,6 +20,7 @@ bool SceneApp::Initialize()
 	BuildShapeGeometry();
 	BuildRenderItems();
 	BuildFrameResources();
+	BuildDescriptorHeaps();
 	BuildConstantBufferViews();
 	BuildPSOs();
 // Close CommandList And Excute Command
@@ -32,7 +33,6 @@ bool SceneApp::Initialize()
 
 	return true;
 }
-
 void SceneApp::OnResize()
 {
 // forward to base class deal with
@@ -42,7 +42,6 @@ void SceneApp::OnResize()
 	XMMATRIX P = DirectX::XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
 }
-
 void SceneApp::Update(const GameTimer& gt)
 {
 	OnKeyBoardInput(gt);
@@ -60,7 +59,6 @@ void SceneApp::Update(const GameTimer& gt)
 	UpdateObjectCBs(gt);
 	UpdateMainPassCB(gt);
 }
-
 void SceneApp::Draw(const GameTimer& gt)
 {
 	auto cmdListAlloc = mCurrentFrameResources->CmdListAlloc;
@@ -87,7 +85,7 @@ void SceneApp::Draw(const GameTimer& gt)
 		));
 // Now Pointer to back buffer and before we Draw something we must clear it up and set all to initialized;
 // Include RenderTargetBuffer and DepthStencilbuffer.
-	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightBlue, 0, nullptr); 
+	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::Azure, 0, nullptr); 
 	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 // indicate buffer that we are going to draw
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
@@ -111,6 +109,9 @@ void SceneApp::Draw(const GameTimer& gt)
 
 // after draw done. we need close mCommandlist for stop recording commands
 	mCommandList->Close();
+// NEED for EXCUTE Commandlist
+	ID3D12CommandList* cmdList[] = { mCommandList.Get() };
+	mCommandQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
 // Swap the front and back buffer.
 	mSwapChain->Present(0, 0);
 // Set backbuffer to next buffer index
@@ -120,20 +121,17 @@ void SceneApp::Draw(const GameTimer& gt)
 // Set after done set new fence point in the timeline future.
 	mCommandQueue->Signal(mFence.Get(), mCurrentFence);
 }
-
 void SceneApp::OnMouseUp(WPARAM btnState, int x, int y)
 {
 // This function sounds like stop the rendering windows
 	ReleaseCapture();
 }
-
 void SceneApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 	SetCapture(mhMainWnd);
 }
-
 void SceneApp::OnMouseMove(WPARAM btnState, int x, int y)
 {
 // base on Mouse move to set viewSpace Change IFF When Left btn and right btn press down.
@@ -161,7 +159,6 @@ void SceneApp::OnMouseMove(WPARAM btnState, int x, int y)
 	mLastMousePos.x = x;
 	mLastMousePos.y = y;
 }
-
 void SceneApp::OnKeyBoardInput(const GameTimer& gt)
 {
 // this function is deal with keyboard input to show geometry wireframe or shader it
@@ -170,7 +167,6 @@ void SceneApp::OnKeyBoardInput(const GameTimer& gt)
 	else
 		isWireFrame = false;
 }
-
 void SceneApp::UpdateCamera(const GameTimer& gt)
 {
 // Convert spherical to cartesian coordinates
@@ -186,7 +182,6 @@ void SceneApp::UpdateCamera(const GameTimer& gt)
 	XMStoreFloat4x4(&mView, view);
 
 }
-
 void SceneApp::UpdateObjectCBs(const GameTimer& gt)
 {
 	auto currObjectCB = mCurrentFrameResources->ObjectCB.get();
@@ -205,7 +200,6 @@ void SceneApp::UpdateObjectCBs(const GameTimer& gt)
 		}
 	}
 }
-
 void SceneApp::UpdateMainPassCB(const GameTimer& gt)
 {
 	XMMATRIX view = XMLoadFloat4x4(&mView);
@@ -235,7 +229,6 @@ void SceneApp::UpdateMainPassCB(const GameTimer& gt)
 	auto currentPassCB = mCurrentFrameResources->PassCB.get();  
 	currentPassCB->CopyData(0, mMainPassCB);  //Copy data to framResources
 }
-
 /// <summary>
 /// This function like build every Constants buffer view for each object for each frame resource.
 /// </summary>
@@ -252,9 +245,8 @@ void SceneApp::BuildDescriptorHeaps()
 	cbvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	cbvHeapDesc.NodeMask = 0;
 // Using d3d device to create heap, and let class member hold pointer of it
-	md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&mCbvHeap));
+	md3dDevice->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&mCbvHeap));   // <---------------Check is create or not
 }
-
 void SceneApp::BuildConstantBufferViews()
 {
 	UINT objByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
@@ -285,7 +277,7 @@ void SceneApp::BuildConstantBufferViews()
 	{
 		auto passCB = mFrameResources[frameIndex]->PassCB->Resource();
 		D3D12_GPU_VIRTUAL_ADDRESS cbAddress = passCB->GetGPUVirtualAddress();  //<------------
-		int heapIndex = mPassCbvOffset * frameIndex;
+		int heapIndex = mPassCbvOffset + frameIndex;
 		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(mCbvHeap->GetCPUDescriptorHandleForHeapStart());
 		handle.Offset(heapIndex, mCbvSrvUavDescriptorSize);
 
@@ -297,7 +289,6 @@ void SceneApp::BuildConstantBufferViews()
 
 	}
 }
-
 void SceneApp::BuildRootSignature()
 {
 // first descritor table;
@@ -336,9 +327,10 @@ void SceneApp::BuildRootSignature()
 		serializeRootSig->GetBufferSize(),
 		IID_PPV_ARGS(mRootSignature.GetAddressOf())
 	);
+	if (mRootSignature != nullptr)
+		MessageBoxEx(NULL, L"Build Signature is Success!", L"SUCCESS", NULL, NULL);
 	
 }
-
 void SceneApp::BuildShadersAndInputLayout()
 {
 	mShaders["StandardVS"] = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_1");
@@ -351,8 +343,6 @@ void SceneApp::BuildShadersAndInputLayout()
 	};
 
 }
-
-
 void SceneApp::BuildShapeGeometry()
 {
 	GeometryGenerator geoGen;
@@ -436,12 +426,12 @@ void SceneApp::BuildShapeGeometry()
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 // Now Create geo pointer
 	auto geo = std::make_unique<MeshGeometry>();
-	geo->Name = "ShapeGeo";
+	geo->Name = "shapeGeo";
 //Create blob and copy data;
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
+	D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU);
 	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
 
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
+	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
 	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 // Upload buffer to GPU
 	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
@@ -467,7 +457,6 @@ void SceneApp::BuildShapeGeometry()
 
 	mGeometries[geo->Name] = std::move(geo);
 }
-
 void SceneApp::BuildPSOs()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePsoDesc;
@@ -477,8 +466,8 @@ void SceneApp::BuildPSOs()
 	opaquePsoDesc.pRootSignature = mRootSignature.Get();
 	opaquePsoDesc.VS =
 	{
-		reinterpret_cast<BYTE*>(mShaders["standardVS"]->GetBufferPointer()),
-		mShaders["standardVS"]->GetBufferSize()
+		reinterpret_cast<BYTE*>(mShaders["StandardVS"]->GetBufferPointer()),
+		mShaders["StandardVS"]->GetBufferSize()
 	};
 	opaquePsoDesc.PS =
 	{
@@ -497,15 +486,14 @@ void SceneApp::BuildPSOs()
 	opaquePsoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
 	opaquePsoDesc.DSVFormat = mDepthStencilFormat;
 // after all set. using d3ddevice to instance;
-	md3dDevice->CreateGraphicsPipelineState(&opaquePsoDesc, IID_PPV_ARGS(&mPSOs["opaque"]));
+	md3dDevice->CreateGraphicsPipelineState(&opaquePsoDesc, IID_PPV_ARGS(&mPSOs["Opaque"]));
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaqueWireframeDesc = opaquePsoDesc;
 	opaqueWireframeDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-	md3dDevice->CreateGraphicsPipelineState(&opaqueWireframeDesc, IID_PPV_ARGS(&mPSOs["wireframe"]));
+	md3dDevice->CreateGraphicsPipelineState(&opaqueWireframeDesc, IID_PPV_ARGS(&mPSOs["opaque_wireframe"]));
 
 
 }
-
 void SceneApp::BuildFrameResources()
 {
 	for (int i = 0; i < gNumFrameResources; ++i)
@@ -513,7 +501,6 @@ void SceneApp::BuildFrameResources()
 		mFrameResources.push_back(std::make_unique<FrameResource>(md3dDevice.Get(), 1, (UINT)mAllRItems.size()));
 	}
 }
-
 void SceneApp::BuildRenderItems()
 {
 	auto boxRitem = std::make_unique<RenderItem>();
