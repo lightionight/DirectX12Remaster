@@ -30,9 +30,9 @@ private:
 	virtual void OnResize()override;
 	virtual void Update(const GameTimer& gt)override; // MainLoop Function
 	virtual void Draw(const GameTimer& gt)override;   // MainLoop Function
-	virtual void OnMouseUp(const GameTimer& gt)override;
-	virtual void OnMouseUp(const GameTimer& gt)override;
-	virtual void OnMouseMove(const GameTimer& gt)override;
+	virtual void OnMouseDown(WPARAM btnState, int x, int y)override;
+	virtual void OnMouseUp(WPARAM btnState, int x, int y)override;
+	virtual void OnMouseMove(WPARAM btnState, int x, int y)override;
 // Custom Fucntion basely Need loop per Frame
 	void OnkeyBoardInput(const GameTimer& gt);
 	void UpdateCameraPosition(const GameTimer& gt);

@@ -21,64 +21,37 @@
     <ClCompile Include="ProgramEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Reference\DX12Common\Camera.cpp">
-      <Filter>d3dbook</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Reference\DX12Common\d3dApp.cpp">
-      <Filter>d3dbook</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Reference\DX12Common\d3dUtil.cpp">
-      <Filter>d3dbook</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Reference\DX12Common\DDSTextureLoader.cpp">
-      <Filter>d3dbook</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Reference\DX12Common\GameTimer.cpp">
-      <Filter>d3dbook</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Reference\DX12Common\GeometryGenerator.cpp">
-      <Filter>d3dbook</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Reference\DX12Common\MathHelper.cpp">
-      <Filter>d3dbook</Filter>
-    </ClCompile>
     <ClCompile Include="TerrainApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FrameResource.cpp">
       <Filter>d3dbook</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\Camera.cpp">
+      <Filter>d3dbook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\d3dApp.cpp">
+      <Filter>d3dbook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\d3dUtil.cpp">
+      <Filter>d3dbook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\DDSTextureLoader.cpp">
+      <Filter>d3dbook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\GameTimer.cpp">
+      <Filter>d3dbook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\GeometryGenerator.cpp">
+      <Filter>d3dbook</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Renference\DX12Common\MathHelper.cpp">
+      <Filter>d3dbook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TerrainApp.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\Camera.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\d3dApp.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\d3dUtil.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\d3dx12.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\DDSTextureLoader.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\GameTimer.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\GeometryGenerator.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\MathHelper.h">
-      <Filter>d3dbook</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\Reference\DX12Common\UploadBuffer.h">
-      <Filter>d3dbook</Filter>
     </ClInclude>
     <ClInclude Include="Waves.h">
       <Filter>Header Files</Filter>
@@ -87,6 +60,33 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FrameResource.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\Camera.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dApp.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dUtil.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\d3dx12.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\DDSTextureLoader.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\GameTimer.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\GeometryGenerator.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\MathHelper.h">
+      <Filter>d3dbook</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Renference\DX12Common\UploadBuffer.h">
       <Filter>d3dbook</Filter>
     </ClInclude>
   </ItemGroup>
