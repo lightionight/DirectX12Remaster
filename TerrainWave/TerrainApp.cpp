@@ -221,7 +221,7 @@ void TerrainApp::UpdateWaves(const GameTimer& gt)
 	mWaves->Update(gt.DeltaTime()); // update Geo using Time.
 
 	auto currentWavesVB = mCurrentFrameResource->WavesVB.get();
-	for (int i = 0; i < mWaves->vertexCount(), ++i)
+	for (int i = 0; i < mWaves->vertexCount(); ++i)
 	{
 		Vertex v;
 		v.Pos = mWaves->Position(i);
@@ -304,7 +304,7 @@ void TerrainApp::BuildGeometry()
 	std::vector<std::uint16_t> indices = grid.GetIndices16();
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
-	auto geo = std::make_unique<MeshGeometry>();
+	auto geo = std::make_unique<MeshGeometry>();// Create MeshGeometry Pointer
 	geo->Name = "landScape";
 	D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU);
 	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
@@ -334,5 +334,28 @@ void TerrainApp::BuildGeometry()
 	submesh.StartIndexLocation = 0;
 	geo->DrawArgs["landScape"] = submesh;
 	mGeometry["LandGeo"] = std::move(geo);
+}
 
+void TerrainApp::BuildGeometryBuffer()
+{
+	std::vector<std::uint16_t> indices(3 * mWaves->TriangleCount()); // a triangle need 3 indices
+	int m = mWaves->RowCount();
+	int n = mWaves->ColumnCount();
+	int k = 0;
+	for (int i = 0; i < m - 1; ++i)
+	{
+		for (int j = 0; j < n - 1; ++j)
+		{
+			indices[k] = i * n + j;
+			indices[k + 1] = i * n + j + 1;
+			indices[k + 2] = (i + 1) * n + j;
+
+			indices[k + 3] = (i + 1) * n + j;
+			indices[k + 4] = i * n + j + 1;
+			indices[k + 5] = (i + 1) * n + j + 1;
+
+			k += 6;
+
+		}
+	}
 }
