@@ -5,7 +5,7 @@
 #include <MathHelper.h>
 #include <UploadBuffer.h>
 #include <GeometryGenerator.h>
-#include "Waves.h"
+#include "Wave.h"
 #include "RenderItem.h"
 #include "FrameResource.h"
 
@@ -59,12 +59,15 @@ private:
 	int mCurrentFrameResourceIndex = 0;
 	UINT mCbvSrvDescriptorSize = 0;
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
+	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeometry;
 	std::unordered_map<std::string, ComPtr<ID3DBlob>> mShaders;
 	std::unordered_map<std::string, ComPtr<ID3D12PipelineState>> mPSOs;
 // This very Interesting
+	RenderItem* mWavesRitems = nullptr;
+	std::vector<std::unique_ptr<RenderItem>> mAllRItems;
 	std::vector<RenderItem*> mRItemLayer[(int)RenderLayer::Count];  
-// Std::unique_ptr<Waves> mWaves;
+    std::unique_ptr<Wave> mWaves;
 	PassConstants mMainPassCB;
 	bool _IsWireFrame = false;
 // Contain  three matrix

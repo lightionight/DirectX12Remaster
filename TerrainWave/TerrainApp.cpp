@@ -1,7 +1,9 @@
 #include "TerrainApp.h"
 
 TerrainApp::TerrainApp(HINSTANCE hInstace) : D3DApp(hInstace) { }
+
 TerrainApp::~TerrainApp() { }
+
 bool TerrainApp::Initialize()
 {
 // forword to base class deal with
@@ -23,6 +25,7 @@ bool TerrainApp::Initialize()
 	FlushCommandQueue();
 	return true;
 }
+
 // if window resize, need update viewport aspect Ratio and projection matrix
 void TerrainApp::OnResize()
 {
@@ -31,6 +34,7 @@ void TerrainApp::OnResize()
 // Update project matrix
 	XMStoreFloat4x4(&mProj, proj);
 }
+
 void TerrainApp::Update(const GameTimer& gt)
 {
 	OnkeyBoardInput(gt);
@@ -50,6 +54,7 @@ void TerrainApp::Update(const GameTimer& gt)
 	UpdateMainPassCB(gt);
     // UpdateWave(gt);
 }
+
 void TerrainApp::Draw(const GameTimer& gt)
 {
 	auto cmdListAlloc = mCurrentFrameResource->CmdListAlloc;
@@ -91,12 +96,14 @@ void TerrainApp::Draw(const GameTimer& gt)
 	mCurrentFrameResource->Fence = ++mCurrentFence;
 	mCommandQueue->Signal(mFence.Get(), mCurrentFence);
 }
+
 void TerrainApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mMousePos.x = x;
 	mMousePos.y = y;
 	SetCapture(mhMainWnd);  // what about this function?
 }
+
 void TerrainApp::OnMouseUp(WPARAM btnState, int x, int y)
 {
 	ReleaseCapture();
@@ -104,9 +111,228 @@ void TerrainApp::OnMouseUp(WPARAM btnState, int x, int y)
 
 void TerrainApp::OnMouseMove(WPARAM btnState, int x, int y)
 {
-	if ((btnState & MK_LBUTTON) != 0)
+	if ((btnState & MK_LBUTTON) != 0) // rotate
 	{
 // Calculate mouse move distance
-		float dx = XMConvertToRadians()
+		float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mMousePos.x));
+		float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mMousePos.y));
+// Using Calculate radians to add
+		mTheta += dx;
+		mPhi += dy;
+// add Restrict the angle
+		mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
 	}
+	else if((btnState && MK_RBUTTON) != 0) // Scale
+	{
+		float dx = 0.2f * static_cast<float>(x - mMousePos.x);
+		float dy = 0.2f * static_cast<float>(y - mMousePos.y);
+// Then using dx - dy to get move distance and update radius R
+		mRadius += dx - dy;
+// Restrict scale value, keep camera not move so far or so close
+		mRadius = MathHelper::Clamp(mRadius, 5.0f, 150.0f);
+	}
+	mMousePos.x = x;
+	mMousePos.y = y;
+}
+
+void TerrainApp::OnkeyBoardInput(const GameTimer& gt)
+{
+	if (GetAsyncKeyState('1') & 0x8000)
+		_IsWireFrame = true;
+	if (GetAsyncKeyState('2') & 0x8000)
+		_IsWireFrame = false;
+}
+
+void TerrainApp::UpdateCameraPosition(const GameTimer& gt)
+{
+	mEyePos.x = mRadius * sinf(mPhi) * cosf(mTheta);
+	mEyePos.z = mRadius * sinf(mPhi) * sinf(mTheta);
+	mEyePos.y = mRadius * cosf(mPhi);
+	XMVECTOR pos = DirectX::XMVectorSet(mEyePos.x, mEyePos.y, mEyePos.z, 1.0f);
+	XMVECTOR target = DirectX::XMVectorZero();
+	XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX view = DirectX::XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mView, view);
+}
+
+void TerrainApp::UpdateObjectsCB(const GameTimer& gt)
+{
+	auto currentObjectCB = mCurrentFrameResource->ObjectCB.get();
+	for (auto& e : mAllRItems)
+	{
+		if (e->NumFrameDirty > 0)
+		{
+// beacuse every object has them own offset position, so every object has own world matrix
+// World matrix is ojbect Constants
+			XMMATRIX world = XMLoadFloat4x4(&e->World);
+// and copy object Constant buffer to current for render
+			ObjectConstants objectConstants;
+			XMStoreFloat4x4(&objectConstants.World, XMMatrixTranspose(world));
+			currentObjectCB->CopyData(e->ObjIndex, objectConstants);
+// NumFramesDirty like sider Index to point out n frameResource need update or not.
+			e->NumFrameDirty--;
+		}
+	}
+}
+
+// this function using input parameter timer maybe will using future for animation, for now it's usless.
+void TerrainApp::UpdateMainPassCB(const GameTimer& gt)
+{
+// Matrix must load before using
+	XMMATRIX view = XMLoadFloat4x4(&mView);
+	XMMATRIX invVeiw = XMMatrixInverse(&XMMatrixDeterminant(view), view);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX viewproj = XMMatrixMultiply(view, proj);
+	XMMATRIX invViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewproj), viewproj);
+// after all calculate next step is store them
+	XMStoreFloat4x4(&mMainPassCB.View, XMMatrixTranspose(view));
+	XMStoreFloat4x4(&mMainPassCB.InvView, XMMatrixTranspose(invVeiw));
+	XMStoreFloat4x4(&mMainPassCB.Proj, XMMatrixTranspose(proj));
+	XMStoreFloat4x4(&mMainPassCB.InvProj, XMMatrixTranspose(invProj));
+	XMStoreFloat4x4(&mMainPassCB.ViewProj, XMMatrixTranspose(viewproj));
+	XMStoreFloat4x4(&mMainPassCB.InvViewProj, XMMatrixTranspose(invViewProj));
+	mMainPassCB.EyePosW = mEyePos;
+// Rendering client size also is Constants need to be set in constants buffer for rendering using
+	mMainPassCB.RenderTargetSize = XMFLOAT2((float)mClientWidth, (float)mClientHeight);
+	mMainPassCB.InvRenderTargetSize = XMFLOAT2(1.0f / mClientWidth, 1.0f / mClientHeight);
+// the far and near distance also is constants need to be set
+	mMainPassCB.NearZ = 1.0f;
+	mMainPassCB.FarZ = 1000.0f;
+	mMainPassCB.TotalTime = gt.TotalTime();
+	mMainPassCB.DeltaTime = gt.DeltaTime();
+// after all setdown, copy the data to current frame resource
+	auto currentPassCB = mCurrentFrameResource->PassCB.get();
+	currentPassCB->CopyData(0, mMainPassCB);
+}
+
+void TerrainApp::UpdateWaves(const GameTimer& gt)
+{
+	static float t_Base = 0.0f;
+	if ((mTimer.TotalTime()) - t_Base >= 0.25f)
+	{
+		t_Base += 0.25f;
+		int i = MathHelper::Rand(4, mWaves->RowCount() - 5);
+		int j = MathHelper::Rand(4, mWaves->ColumnCount() - 5);
+		float r = MathHelper::RandF(0.2f, 0.5f);
+		mWaves->Disturb(i, j, r);
+	}
+	mWaves->Update(gt.DeltaTime()); // update Geo using Time.
+
+	auto currentWavesVB = mCurrentFrameResource->WavesVB.get();
+	for (int i = 0; i < mWaves->vertexCount(), ++i)
+	{
+		Vertex v;
+		v.Pos = mWaves->Position(i);
+		v.Color = XMFLOAT4(DirectX::Colors::Azure);
+		currentWavesVB->CopyData(i, v);
+	}
+	mWavesRitems->Geo->VertexBufferGPU = currentWavesVB->Resource();
+}
+
+void TerrainApp::BuildRootSignature()
+{
+	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
+	// init as CBV
+	slotRootParameter[0].InitAsConstantBufferView(0);
+	slotRootParameter[1].InitAsConstantBufferView(1);
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, 
+		slotRootParameter, 
+		0, 
+		nullptr, 
+		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	ComPtr<ID3DBlob> serializedRootSig = nullptr;
+	ComPtr<ID3DBlob> errorBlob = nullptr;
+// serialize root signature
+	D3D12SerializeRootSignature(&rootSigDesc,
+		D3D_ROOT_SIGNATURE_VERSION_1,
+		serializedRootSig.GetAddressOf(),
+		errorBlob.GetAddressOf());
+// using device to create it.
+	md3dDevice->CreateRootSignature(
+		0,
+		serializedRootSig->GetBufferPointer(),
+		serializedRootSig->GetBufferSize(),
+		IID_PPV_ARGS(mRootSignature.GetAddressOf()));
+}
+void TerrainApp::BuildShaderAndInputLayout()
+{
+	mShaders["StandardVS"] = d3dUtil::CompileShader(
+		L"Shaders\\color.hlsl",
+		nullptr,
+		"VS",
+		"vs_5_0"
+	);
+	mShaders["PS"] = d3dUtil::CompileShader(
+		L"Shaders\\color.hlsl",
+		nullptr,
+		"PS",
+		"ps_5_0"
+	);
+	mInputLayout = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+	};
+}
+void TerrainApp::BuildGeometry()
+{
+	GeometryGenerator geoGen;
+	GeometryGenerator::MeshData grid = geoGen.CreateGrid(160.0f, 160.0f, 50, 50);
+	std::vector<Vertex> vertices(grid.Vertices.size());
+	for (size_t i = 0; i < grid.Vertices.size(); ++i)
+	{
+		// Transfer Data from geoGem to Current function variable
+		auto& p = grid.Vertices[i].Position;
+		vertices[i].Pos = p;
+		//from wave reset point height y
+		vertices[i].Pos.y = GetHillsHeight(p.x, p.z);
+		// Reference height to set vertice color
+		float currHeight = vertices[i].Pos.y;
+		if (currHeight < -10.0f)
+			vertices[i].Color = XMFLOAT4(1.0f, 0.96f, 0.62f, 1.0f);
+		else if (currHeight < 5.0f)
+			vertices[i].Color = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+		else if (currHeight < 12.0f)
+			vertices[i].Color = XMFLOAT4(0.1f, 0.2f, 0.35f, 1.0f);
+		else if (currHeight < 20.0f)
+			vertices[i].Color = XMFLOAT4(0.45f, 0.2f, 0.34f, 1.0f);
+		else
+			vertices[i].Color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+	const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
+	std::vector<std::uint16_t> indices = grid.GetIndices16();
+	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+
+	auto geo = std::make_unique<MeshGeometry>();
+	geo->Name = "landScape";
+	D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU);
+	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
+	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+	// Now Create GPU Buffer Copy Cpu buffer to GPU BUFFER
+	geo->VertexBufferCPU = d3dUtil::CreateDefaultBuffer(
+		md3dDevice.Get(),
+		mCommandList.Get(),
+		vertices.data(),
+		vbByteSize,
+		geo->VertexBufferUploader);
+	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
+		md3dDevice.Get(),
+		mCommandList.Get(),
+		indices.data(),
+		ibByteSize,
+		geo->IndexBufferUploader);
+	geo->VertexByteStride = sizeof(Vertex); // How big of Sigle vertex data;
+	geo->VertexBufferByteSize = vbByteSize;
+	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
+	geo->IndexBufferByteSize = ibByteSize;
+
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)indices.size();
+	submesh.BaseVertexLocation = 0;
+	submesh.StartIndexLocation = 0;
+	geo->DrawArgs["landScape"] = submesh;
+	mGeometry["LandGeo"] = std::move(geo);
+
 }
