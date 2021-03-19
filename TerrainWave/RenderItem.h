@@ -4,8 +4,6 @@
 #include <MathHelper.h>
 #include <UploadBuffer.h>
 
-const int gNumFrameResources = 3;
-
 // Using
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;

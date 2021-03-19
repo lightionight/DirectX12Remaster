@@ -86,7 +86,7 @@ void Wave::Update(float dt)
 		concurrency::parallel_for(
 			1, mNumRows - 1, [this](int i)
 			{
-				for (int j; j < mNumCols - 1; ++j)
+				for (int j = 0; j < mNumCols - 1; ++j)
 				{
 					//        - T - 
 					//   -L- current - R -
@@ -119,7 +119,7 @@ void Wave::Disturb(int i, int j, float magnitude)
 	assert(i > 1 && i < mNumRows - 2);
 	assert(j > 1 && j < mNumCols - 2);
 
-	float halfMag = 0.5 * magnitude;
+	float halfMag = 0.5f * magnitude;
 	mCurrentSolution[i * mNumCols + j].y += magnitude;
 	mCurrentSolution[i * mNumCols + j + 1].y += halfMag;
 	mCurrentSolution[i * mNumCols + j - 1].y += halfMag;

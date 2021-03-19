@@ -1,6 +1,8 @@
 #ifndef TERRAIN_APP_H
 #define TERRAIN_APP_H
 
+const int gNumFrameResources = 3;
+
 #include <d3dApp.h>
 #include <MathHelper.h>
 #include <UploadBuffer.h>

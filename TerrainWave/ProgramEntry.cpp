@@ -1,12 +1,13 @@
 #include "TerrainApp.h"
 
-int WINAPI
-wWinMain(
+int WINAPI wWinMain(
 	HINSTANCE hInstace,
 	HINSTANCE preHInstance,
-	PCWSTR nCmdLine,
-	int nCmdShow
-)
+	PWSTR nCmdLine,
+	int nCmdShow)
 {
-
+	TerrainApp theApp(hInstace);
+	if (!theApp.Initialize())
+		return 0;
+	return theApp.Run();
 }

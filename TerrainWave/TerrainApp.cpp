@@ -7,30 +7,29 @@ TerrainApp::~TerrainApp() { }
 bool TerrainApp::Initialize()
 {
 // forword to base class deal with
-	D3DApp::Initialize();
+	if (!D3DApp::Initialize())
+		return false;
 	mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr);
-
+	mWaves = std::make_unique<Wave>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
 	BuildRootSignature();
 	BuildShaderAndInputLayout();
 	BuildGeometry();
 	BuildGeometryBuffer();
+	//BuildRenderItems();
 	BuildRenderItems();
 	BuildFrameResource();
 	BuildPSOs();
-
 	mCommandList->Close();
 	ID3D12CommandList* cmdList[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
-
 	FlushCommandQueue();
 	return true;
 }
-
 // if window resize, need update viewport aspect Ratio and projection matrix
 void TerrainApp::OnResize()
 {
 	D3DApp::OnResize();
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.25 * MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, AspectRatio(), 1.0f, 1000.0f);
 // Update project matrix
 	XMStoreFloat4x4(&mProj, proj);
 }
@@ -52,7 +51,7 @@ void TerrainApp::Update(const GameTimer& gt)
 
 	UpdateObjectsCB(gt);
 	UpdateMainPassCB(gt);
-    // UpdateWave(gt);
+    UpdateWaves(gt);
 }
 
 void TerrainApp::Draw(const GameTimer& gt)
@@ -256,25 +255,17 @@ void TerrainApp::BuildRootSignature()
 		serializedRootSig->GetBufferSize(),
 		IID_PPV_ARGS(mRootSignature.GetAddressOf()));
 }
+
 void TerrainApp::BuildShaderAndInputLayout()
 {
-	mShaders["StandardVS"] = d3dUtil::CompileShader(
-		L"Shaders\\color.hlsl",
-		nullptr,
-		"VS",
-		"vs_5_0"
-	);
-	mShaders["PS"] = d3dUtil::CompileShader(
-		L"Shaders\\color.hlsl",
-		nullptr,
-		"PS",
-		"ps_5_0"
-	);
+	mShaders["StandardVS"] = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_0");
+	mShaders["PS"] = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_0");
 	mInputLayout = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 	};
 }
+
 void TerrainApp::BuildGeometry()
 {
 	GeometryGenerator geoGen;
@@ -305,13 +296,13 @@ void TerrainApp::BuildGeometry()
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
 	auto geo = std::make_unique<MeshGeometry>();// Create MeshGeometry Pointer
-	geo->Name = "landScape";
+	geo->Name = "landGeo";
 	D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU);
 	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
 	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
 	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 	// Now Create GPU Buffer Copy Cpu buffer to GPU BUFFER
-	geo->VertexBufferCPU = d3dUtil::CreateDefaultBuffer(
+	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
 		md3dDevice.Get(),
 		mCommandList.Get(),
 		vertices.data(),
@@ -332,8 +323,8 @@ void TerrainApp::BuildGeometry()
 	submesh.IndexCount = (UINT)indices.size();
 	submesh.BaseVertexLocation = 0;
 	submesh.StartIndexLocation = 0;
-	geo->DrawArgs["landScape"] = submesh;
-	mGeometry["LandGeo"] = std::move(geo);
+	geo->DrawArgs["grid"] = submesh;
+	mGeometry["landGeo"] = std::move(geo);
 }
 
 void TerrainApp::BuildGeometryBuffer()
@@ -358,4 +349,140 @@ void TerrainApp::BuildGeometryBuffer()
 
 		}
 	}
+	UINT vbByteSize = mWaves->vertexCount() * sizeof(Vertex);
+	UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
+
+	auto geo = std::make_unique<MeshGeometry>();
+	geo->Name = "waterGeo";
+// Reset for dymatic show 
+	geo->VertexBufferCPU = nullptr;
+	geo->VertexBufferGPU = nullptr;
+
+	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
+	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+
+	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+		mCommandList.Get(),
+		indices.data(),
+		ibByteSize,
+		geo->IndexBufferUploader);
+// set index data format and one big step
+	geo->VertexByteStride = sizeof(Vertex); // single
+	geo->VertexBufferByteSize = vbByteSize; // total
+	geo->IndexFormat = DXGI_FORMAT_R16_UINT; // single 
+	geo->IndexBufferByteSize = ibByteSize;  // total
+
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)indices.size();
+	submesh.BaseVertexLocation = 0;
+	submesh.StartIndexLocation = 0;
+
+	geo->DrawArgs["grid"] = submesh;
+	mGeometry["waterGeo"] = std::move(geo); // 
+}
+
+void TerrainApp::BuildPSOs()
+{
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePsoDesc;
+	ZeroMemory(&opaquePsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+	opaquePsoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
+	opaquePsoDesc.pRootSignature = mRootSignature.Get();
+	opaquePsoDesc.VS = {
+		reinterpret_cast<BYTE*>(mShaders["StandardVS"]->GetBufferPointer()),
+		mShaders["StandardVS"]->GetBufferSize()
+	};
+	opaquePsoDesc.PS = {
+		reinterpret_cast<BYTE*>(mShaders["PS"]->GetBufferPointer()),
+		mShaders["PS"]->GetBufferSize()
+	};
+	opaquePsoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+	opaquePsoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+	opaquePsoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+	opaquePsoDesc.SampleMask = UINT_MAX;
+	opaquePsoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	opaquePsoDesc.NumRenderTargets = 1;
+	opaquePsoDesc.RTVFormats[0] = mBackBufferFormat;
+	opaquePsoDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
+	opaquePsoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+	opaquePsoDesc.DSVFormat = mDepthStencilFormat;
+	// Now using D3Ddevice to create pipeline state ojbect
+	md3dDevice->CreateGraphicsPipelineState(&opaquePsoDesc, IID_PPV_ARGS(&mPSOs["opaque"]));
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaqueWireframePsoDesc = opaquePsoDesc;
+	opaqueWireframePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	md3dDevice->CreateGraphicsPipelineState(&opaqueWireframePsoDesc, IID_PPV_ARGS(&mPSOs["opaque_wireframe"]));
+
+}
+
+void TerrainApp::BuildFrameResource()
+{
+	for (int i = 0; i < gNumFrameResources; ++i)
+	{
+		mFrameResources.push_back(std::make_unique<FrameResource>(md3dDevice.Get(),
+			1, (UINT)mAllRItems.size(), mWaves->vertexCount()));
+	};
+}
+
+void TerrainApp::BuildRenderItems()
+{
+	auto wavesRitem = std::make_unique<RenderItem>();
+	wavesRitem->World = MathHelper::Identity4x4();
+	wavesRitem->ObjIndex = 0;
+	wavesRitem->Geo = mGeometry["waterGeo"].get();
+	wavesRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
+	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+
+	mWavesRitems = wavesRitem.get();
+	mRItemLayer[(int)RenderLayer::Opaque].push_back(wavesRitem.get());
+	
+	auto gridRitem = std::make_unique<RenderItem>();
+	gridRitem->World = MathHelper::Identity4x4();
+	gridRitem->ObjIndex = 1;
+	gridRitem->Geo = mGeometry["landGeo"].get();
+	gridRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
+	
+	mRItemLayer[(int)RenderLayer::Opaque].push_back(gridRitem.get());
+	mAllRItems.push_back(std::move(wavesRitem));
+	mAllRItems.push_back(std::move(gridRitem));
+}
+
+void TerrainApp::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
+{
+	UINT objCBSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	auto objectCB = mCurrentFrameResource->ObjectCB->Resource();
+	// cycle each item
+	for (size_t i = 0; i < ritems.size(); ++i)
+	{
+		auto ri = ritems[i];
+		cmdList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
+		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
+		cmdList->IASetPrimitiveTopology(ri->Topology);
+		// Offset object Constant GPU adress base on object index
+		D3D12_GPU_VIRTUAL_ADDRESS objectCBAderss = objectCB->GetGPUVirtualAddress();
+		objectCBAderss += ri->ObjIndex * objCBSize;
+		cmdList->SetGraphicsRootConstantBufferView(0, objectCBAderss);
+		cmdList->DrawIndexedInstanced(ri->IndexCount, 1, ri->StartIndexLocation, ri->BaseVertexLocation, 0);
+	}
+}
+
+float TerrainApp::GetHillsHeight(float x, float z)const
+{
+	return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
+}
+
+XMFLOAT3 TerrainApp::GetHillNormal(float x, float z)const
+{
+	XMFLOAT3 n(
+		-0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z),
+		1.0f,
+		-0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z));
+
+	XMVECTOR unitNormal = XMVector3Normalize(XMLoadFloat3(&n));
+	XMStoreFloat3(&n, unitNormal);
+
+	return n;
 }
