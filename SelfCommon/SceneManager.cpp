@@ -57,3 +57,51 @@ Shader* SceneManager::UseShader(const std::string& name)
 {
 	return mShaders[name].get();
 }
+
+void SceneManager::Render(ID3D12GraphicsCommandList)
+{
+
+}
+
+void SceneManager::AddGeo(
+	ComPtr<ID3D12Device> d3ddeivce,
+	ComPtr<ID3D12GraphicsCommandList> commandList,
+	const std::string& meshGeometryName,
+	const std::string& drawArgs,
+	GeometryGenerator::MeshData* mesh,
+	const UINT vbByteSize,
+	const UINT ibByteSize,
+	const std::vector<Vertex>& vertices,
+	const std::vector<std::uint16_t>& indices)
+{
+	auto geo = std::make_unique<MeshGeometry>();
+	geo->Name = meshGeometryName;
+	D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU);
+	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
+	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+	//Copy CPU-> GPU
+	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
+		d3ddeivce.Get(),
+		commandList.Get(),
+		vertices.data(),
+		vbByteSize,
+		geo->VertexBufferUploader);
+	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
+		d3ddeivce.Get(),
+		commandList.Get(),
+		indices.data(),
+		ibByteSize,
+		geo->IndexBufferUploader);
+	geo->VertexByteStride = sizeof(Vertex);
+	geo->VertexBufferByteSize = vbByteSize;
+	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
+	geo->IndexBufferByteSize = ibByteSize;
+
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)indices.size();
+	submesh.BaseVertexLocation = 0;
+	submesh.StartIndexLocation = 0;
+	geo->DrawArgs[drawArgs] = submesh;
+	mGeos[meshGeometryName] = std::move(geo);
+}

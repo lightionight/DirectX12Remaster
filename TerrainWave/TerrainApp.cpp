@@ -295,36 +295,7 @@ void TerrainApp::BuildLandGeometry()
 	std::vector<std::uint16_t> indices = grid.GetIndices16();
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
-	auto geo = std::make_unique<MeshGeometry>();// Create MeshGeometry Pointer
-	geo->Name = "landGeo";
-	D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU);
-	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
-	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
-	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
-	// Now Create GPU Buffer Copy Cpu buffer to GPU BUFFER
-	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(
-		md3dDevice.Get(),
-		mCommandList.Get(),
-		vertices.data(),
-		vbByteSize,
-		geo->VertexBufferUploader);
-	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
-		md3dDevice.Get(),
-		mCommandList.Get(),
-		indices.data(),
-		ibByteSize,
-		geo->IndexBufferUploader);
-	geo->VertexByteStride = sizeof(Vertex); // How big of Sigle vertex data;
-	geo->VertexBufferByteSize = vbByteSize;
-	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	geo->IndexBufferByteSize = ibByteSize;
-
-	SubmeshGeometry submesh;
-	submesh.IndexCount = (UINT)indices.size();
-	submesh.BaseVertexLocation = 0;
-	submesh.StartIndexLocation = 0;
-	geo->DrawArgs["grid"] = submesh;
-	mGeometry["landGeo"] = std::move(geo);
+	mSceneManager->AddGeo(md3dDevice, mCommandList, "LandGeo", "LandGeo", &grid, vbByteSize, ibByteSize, vertices, indices);
 }
 
 void TerrainApp::BuildWaterGeometry()
@@ -352,6 +323,8 @@ void TerrainApp::BuildWaterGeometry()
 	UINT vbByteSize = mWaves->vertexCount() * sizeof(Vertex);
 	UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
+	mSceneManager->AddGeo(md3dDevice, mCommandList, "WaterGeo", "WaterGeo", nullptr, vbByteSize, ibByteSize, )
+// Tomorrow From there.
 	auto geo = std::make_unique<MeshGeometry>();
 	geo->Name = "waterGeo";
 // Reset for dymatic show 
