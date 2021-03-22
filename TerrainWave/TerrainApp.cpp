@@ -11,10 +11,11 @@ bool TerrainApp::Initialize()
 		return false;
 	mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr);
 	mWaves = std::make_unique<Wave>(128, 128, 1.0f, 0.03f, 4.0f, 0.2f);
+	mSceneManager = std::make_unique<SceneManager>();
 	BuildRootSignature();
 	BuildShaderAndInputLayout();
-	BuildGeometry();
-	BuildGeometryBuffer();
+	BuildLandGeometry();
+	BuildWaterGeometry();
 	//BuildRenderItems();
 	BuildRenderItems();
 	BuildFrameResource();
@@ -70,7 +71,7 @@ void TerrainApp::Draw(const GameTimer& gt)
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 // Clear Render buffer and depth buffer
-	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Blue, 0, nullptr);
+	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Black, 0, nullptr);
 	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());
@@ -227,7 +228,7 @@ void TerrainApp::UpdateWaves(const GameTimer& gt)
 		v.Color = XMFLOAT4(DirectX::Colors::Azure);
 		currentWavesVB->CopyData(i, v);
 	}
-	mWavesRitems->Geo->VertexBufferGPU = currentWavesVB->Resource();
+	//mWavesRitems->Geo->VertexBufferGPU = currentWavesVB->Resource();
 }
 
 void TerrainApp::BuildRootSignature()
@@ -258,15 +259,14 @@ void TerrainApp::BuildRootSignature()
 
 void TerrainApp::BuildShaderAndInputLayout()
 {
-	mShaders["StandardVS"] = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "VS", "vs_5_0");
-	mShaders["PS"] = d3dUtil::CompileShader(L"Shaders\\color.hlsl", nullptr, "PS", "ps_5_0");
+	// Using Path Create Shader
+	mSceneManager->AddShader("Default", L"Shaders\\color.hlsl", L"Shaders\\color.hlsl");
 	mInputLayout = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-	};
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 } };
 }
 
-void TerrainApp::BuildGeometry()
+void TerrainApp::BuildLandGeometry()
 {
 	GeometryGenerator geoGen;
 	GeometryGenerator::MeshData grid = geoGen.CreateGrid(160.0f, 160.0f, 50, 50);
@@ -327,7 +327,7 @@ void TerrainApp::BuildGeometry()
 	mGeometry["landGeo"] = std::move(geo);
 }
 
-void TerrainApp::BuildGeometryBuffer()
+void TerrainApp::BuildWaterGeometry()
 {
 	std::vector<std::uint16_t> indices(3 * mWaves->TriangleCount()); // a triangle need 3 indices
 	int m = mWaves->RowCount();
@@ -383,35 +383,15 @@ void TerrainApp::BuildGeometryBuffer()
 
 void TerrainApp::BuildPSOs()
 {
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaquePsoDesc;
-	ZeroMemory(&opaquePsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-	opaquePsoDesc.InputLayout = { mInputLayout.data(), (UINT)mInputLayout.size() };
-	opaquePsoDesc.pRootSignature = mRootSignature.Get();
-	opaquePsoDesc.VS = {
-		reinterpret_cast<BYTE*>(mShaders["StandardVS"]->GetBufferPointer()),
-		mShaders["StandardVS"]->GetBufferSize()
-	};
-	opaquePsoDesc.PS = {
-		reinterpret_cast<BYTE*>(mShaders["PS"]->GetBufferPointer()),
-		mShaders["PS"]->GetBufferSize()
-	};
-	opaquePsoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-	opaquePsoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	opaquePsoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	opaquePsoDesc.SampleMask = UINT_MAX;
-	opaquePsoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	opaquePsoDesc.NumRenderTargets = 1;
-	opaquePsoDesc.RTVFormats[0] = mBackBufferFormat;
-	opaquePsoDesc.SampleDesc.Count = m4xMsaaState ? 4 : 1;
-	opaquePsoDesc.SampleDesc.Quality = m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
-	opaquePsoDesc.DSVFormat = mDepthStencilFormat;
-	// Now using D3Ddevice to create pipeline state ojbect
-	md3dDevice->CreateGraphicsPipelineState(&opaquePsoDesc, IID_PPV_ARGS(&mPSOs["opaque"]));
-
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC opaqueWireframePsoDesc = opaquePsoDesc;
-	opaqueWireframePsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-	md3dDevice->CreateGraphicsPipelineState(&opaqueWireframePsoDesc, IID_PPV_ARGS(&mPSOs["opaque_wireframe"]));
-
+	mSceneManager->AddPso(L"Default",
+		md3dDevice,
+		mRootSignature,
+		mInputLayout,
+		mSceneManager->UseShader("ShaderName"),
+		mBackBufferFormat,
+		mDepthStencilFormat,
+		m4xMsaaState,
+		m4xMsaaQuality);
 }
 
 void TerrainApp::BuildFrameResource()

@@ -12,19 +12,19 @@ using namespace DirectX::PackedVector;
 struct RenderItem
 {
 	RenderItem() = default;
-// WorldMatrix
 	XMFLOAT4X4 World = MathHelper::Identity4x4();
 	int NumFrameDirty = gNumFrameResources;
 	UINT ObjIndex = -1;
-// Big Mesh Pointer
+    // Big Mesh Pointer
 	MeshGeometry* Geo = nullptr;
-// Primitive topology is draw line or draw triangle
+    // Primitive topology is draw line or draw triangle
 	D3D_PRIMITIVE_TOPOLOGY Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; // This need sperate out this structure.
-
-// Draw Instance Parameter
+    // Draw Instance Parameter
 	UINT IndexCount         = 0;
 	UINT StartIndexLocation = 0;
 	int BaseVertexLocation  = 0;
+	//Geometry Statu
+	bool _isDymatic = false;
 };
 
 // NEW ADD

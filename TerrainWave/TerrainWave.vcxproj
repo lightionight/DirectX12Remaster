@@ -148,6 +148,9 @@
     <ClCompile Include="..\Common\GameTimer.cpp" />
     <ClCompile Include="..\Common\GeometryGenerator.cpp" />
     <ClCompile Include="..\Common\MathHelper.cpp" />
+    <ClCompile Include="..\SelfCommon\PipelineStateCreator.cpp" />
+    <ClCompile Include="..\SelfCommon\SceneManager.cpp" />
+    <ClCompile Include="..\SelfCommon\Shader.cpp" />
     <ClCompile Include="ProgramEntry.cpp" />
     <ClCompile Include="TerrainApp.cpp" />
     <ClCompile Include="Wave.cpp" />
@@ -163,9 +166,24 @@
     <ClInclude Include="..\Common\GeometryGenerator.h" />
     <ClInclude Include="..\Common\MathHelper.h" />
     <ClInclude Include="..\Common\UploadBuffer.h" />
-    <ClInclude Include="RenderItem.h" />
+    <ClInclude Include="..\SelfCommon\DymaticGeometry.h" />
+    <ClInclude Include="..\SelfCommon\InputData.h" />
+    <ClInclude Include="..\SelfCommon\IRenderItem.h" />
+    <ClInclude Include="..\SelfCommon\PipelineStateCreator.h" />
+    <ClInclude Include="..\SelfCommon\RenderItem.h" />
+    <ClInclude Include="..\SelfCommon\SceneManager.h" />
+    <ClInclude Include="..\SelfCommon\Shader.h" />
+    <ClInclude Include="..\SelfCommon\StaticGeometry.h" />
     <ClInclude Include="TerrainApp.h" />
     <ClInclude Include="Wave.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\HLSL\BasicVertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

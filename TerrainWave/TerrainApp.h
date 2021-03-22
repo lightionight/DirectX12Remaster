@@ -10,6 +10,8 @@ const int gNumFrameResources = 3;
 #include "Wave.h"
 #include "RenderItem.h"
 #include "FrameResource.h"
+#include <SceneManager.h>
+#include <Shader.h>
 
 // Using
 using Microsoft::WRL::ComPtr;
@@ -46,8 +48,8 @@ private:
 	void BuildRootSignature();
 	void BuildShaderAndInputLayout();
 	void BuildDescriptorHeap();
-	void BuildGeometry();
-	void BuildGeometryBuffer();
+	void BuildLandGeometry();
+	void BuildWaterGeometry();
 	void BuildFrameResource();
 	void BuildPSOs();
 	void BuildRenderItems();
@@ -56,6 +58,7 @@ private:
 	XMFLOAT3 GetHillNormal(float x, float z)const;
 
 private:
+	std::unique_ptr<SceneManager> mSceneManager;
 	FrameResource* mCurrentFrameResource;
 	std::vector<std::unique_ptr<FrameResource>> mFrameResources;
 	int mCurrentFrameResourceIndex = 0;
@@ -63,12 +66,12 @@ private:
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeometry;
-	std::unordered_map<std::string, ComPtr<ID3DBlob>> mShaders;
-	std::unordered_map<std::string, ComPtr<ID3D12PipelineState>> mPSOs;
+	//std::unordered_map<std::string, ComPtr<ID3DBlob>> mShaders;
+	//std::unordered_map<std::string, ComPtr<ID3D12PipelineState>> mPSOs;
 // This very Interesting
 	RenderItem* mWavesRitems = nullptr;
 	std::vector<std::unique_ptr<RenderItem>> mAllRItems;
-	std::vector<RenderItem*> mRItemLayer[(int)RenderLayer::Count];  
+	std::vector<RenderItem*> mRItemLayer[(int)RenderLayer::Count];
     std::unique_ptr<Wave> mWaves;
 	PassConstants mMainPassCB;
 	bool _IsWireFrame = false;

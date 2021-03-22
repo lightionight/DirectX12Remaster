@@ -16,6 +16,12 @@
     <Filter Include="d3dbook">
       <UniqueIdentifier>{d1743298-131b-46f1-81a4-0ba8ed989be5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SelfLibrary">
+      <UniqueIdentifier>{5bc6facb-ecb9-409d-a892-49de81ad9552}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSLLibrary">
+      <UniqueIdentifier>{a91df015-75ad-4a32-bc3e-bb4825a3f7d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TerrainApp.cpp">
@@ -51,12 +57,18 @@
     <ClCompile Include="..\Common\MathHelper.cpp">
       <Filter>d3dbook</Filter>
     </ClCompile>
+    <ClCompile Include="..\SelfCommon\PipelineStateCreator.cpp">
+      <Filter>SelfLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SelfCommon\SceneManager.cpp">
+      <Filter>SelfLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SelfCommon\Shader.cpp">
+      <Filter>SelfLibrary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TerrainApp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Wave.h">
@@ -92,5 +104,34 @@
     <ClInclude Include="..\Common\UploadBuffer.h">
       <Filter>d3dbook</Filter>
     </ClInclude>
+    <ClInclude Include="..\SelfCommon\DymaticGeometry.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\PipelineStateCreator.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\SceneManager.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\StaticGeometry.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\RenderItem.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\IRenderItem.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\Shader.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\InputData.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\HLSL\BasicVertex.hlsl">
+      <Filter>HLSLLibrary</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
