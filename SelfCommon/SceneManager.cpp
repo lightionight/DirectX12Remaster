@@ -2,13 +2,13 @@
 
 SceneManager::SceneManager()
 {
-	//mPSOs = std::make_unique<PipelineStateCreator>();
+	mPSOs = std::make_unique<PipelineStateCreator>();
 }
 SceneManager::~SceneManager() { }
 
 void SceneManager::Update()
 {
-	for (int i = 0; i < mRenderLayer[(UINT)mDefaultRenderLayter].size(); ++i)
+	for (size_t i = 0; i < mRenderLayer[(UINT)mDefaultRenderLayter].size(); ++i)
 	{
 		auto rItem = mRenderLayer[(UINT)mDefaultRenderLayter][i];
 		if (rItem->_isDymatic)
@@ -19,18 +19,27 @@ void SceneManager::Update()
 }
 
 // name = Shader Name, VsPath = vertex shader path, psPath = pixel Shader path
-void SceneManager::AddShader(const std::string& name, const std::wstring& vsPath, const std::wstring& psPath, const std::wstring& gsPath = nullptr)
+void SceneManager::AddShader(const std::string& name, const std::wstring& vsPath, const std::wstring& psPath, const std::wstring& gsPath)
 {
-	if (gsPath.empty())
-	{
-		mShaders[name] = std::make_unique<Shader>(name, vsPath, psPath);
-	}
 	mShaders[name] = std::make_unique<Shader>(name, vsPath, psPath);
+	//if (gsPath.empty())
+	//{
+		
+	//}
+	//else
+	//{
+	//	mShaders[name] = std::make_unique<Shader>(name, vsPath, psPath, gsPath);
+	//}
 }
 
-void SceneManager::UsePso(const std::wstring& Name)
+ID3D12PipelineState* SceneManager::UsePSO(const std::string& name)
 {
-	mPSOs->SwiftPSO(Name);
+	if (name == "Default")
+		return mPSOs->DefaultPSO();
+	else
+	{
+		return mPSOs->SwiftPSO(name);
+	}
 }
 void SceneManager::AddPso(
 	const std::wstring& name,
@@ -58,17 +67,11 @@ Shader* SceneManager::UseShader(const std::string& name)
 	return mShaders[name].get();
 }
 
-void SceneManager::Render(ID3D12GraphicsCommandList)
-{
-
-}
-
 void SceneManager::AddGeo(
 	ComPtr<ID3D12Device> d3ddeivce,
 	ComPtr<ID3D12GraphicsCommandList> commandList,
 	const std::string& meshGeometryName,
 	const std::string& drawArgs,
-	GeometryGenerator::MeshData* mesh,
 	const UINT vbByteSize,
 	const UINT ibByteSize,
 	const std::vector<Vertex>& vertices,
@@ -104,4 +107,65 @@ void SceneManager::AddGeo(
 	submesh.StartIndexLocation = 0;
 	geo->DrawArgs[drawArgs] = submesh;
 	mGeos[meshGeometryName] = std::move(geo);
+}
+
+// Not Set vertex buffer suit for dymatic object add
+void SceneManager::AddGeo(
+	ComPtr<ID3D12Device> d3ddeivce,
+	ComPtr<ID3D12GraphicsCommandList> commandList,
+	const std::string& meshGeometryName,
+	const std::string& drawArgs,
+	const UINT vbByteSize,
+	const UINT ibByteSize,
+	//const std::vector<Vertex>& vertices,
+	const std::vector<std::uint16_t>& indices)
+{
+	auto geo = std::make_unique<MeshGeometry>();
+	geo->Name = meshGeometryName;
+	//how To update it??
+	geo->VertexBufferCPU = nullptr;
+	geo->VertexBufferGPU = nullptr;
+
+	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
+	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
+		d3ddeivce.Get(),
+		commandList.Get(),
+		indices.data(),
+		ibByteSize,
+		geo->IndexBufferGPU);
+	geo->VertexByteStride = sizeof(Vertex);
+	geo->VertexBufferByteSize = vbByteSize;
+	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
+	geo->IndexBufferByteSize = ibByteSize;
+
+	SubmeshGeometry submesh;
+	submesh.IndexCount = (UINT)indices.size();
+	submesh.StartIndexLocation = 0;
+	submesh.BaseVertexLocation = 0;
+	geo->DrawArgs[drawArgs] = submesh;
+	mGeos[meshGeometryName] = std::move(geo);
+}
+MeshGeometry* SceneManager::GetGeoPointer(const std::string& geoName)
+{
+	if (mGeos[geoName] != nullptr)
+		return mGeos[geoName].get();
+}
+
+void SceneManager::AddToRenderLayer(RenderLayer renderlayer, RenderItem* additem)
+{
+	mRenderLayer[(int)renderlayer].push_back(additem);
+}
+void SceneManager::AddToSceneitems(std::unique_ptr<RenderItem>* additem)
+{
+	mSceneItems.push_back(std::move(*additem));
+}
+
+std::vector<RenderItem*> SceneManager::RenderLayerItem(RenderLayer renderlayer)
+{
+	return mRenderLayer[(int)renderlayer];
+}
+std::vector<std::unique_ptr<RenderItem>>* SceneManager::AllRenderItem()
+{
+	return &mSceneItems;
 }

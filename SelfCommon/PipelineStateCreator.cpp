@@ -1,41 +1,6 @@
 #include "PipelineStateCreator.h"
 
-PipelineStateCreator::PipelineStateCreator(
-    const std::wstring& name,
-    ComPtr<ID3D12Device> currentd3dDevice,
-    ComPtr<ID3D12RootSignature> currentRootSignature,
-    const std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,
-    Shader* shader,
-    DXGI_FORMAT backBufferFormat,
-    DXGI_FORMAT depthStencilBufferFormat,
-    bool m4xMsaa,
-    UINT m4xMsaaQuality
-)
-{
-    if (name != L"Default")
-    {
-        CreatePipelineState(name,
-            currentd3dDevice,
-            currentRootSignature,
-            inputLayout,
-            shader,
-            backBufferFormat,
-            depthStencilBufferFormat,
-            m4xMsaa,
-            m4xMsaaQuality);
-    }
-    else
-    {
-        BuildRegularPipelineState(currentd3dDevice,
-            currentRootSignature,
-            inputLayout,
-            shader,
-            backBufferFormat,
-            depthStencilBufferFormat,
-            m4xMsaa,
-            m4xMsaaQuality);
-    }
-}
+PipelineStateCreator::PipelineStateCreator() { }
 PipelineStateCreator::~PipelineStateCreator() { }
 
 void PipelineStateCreator::BuildRegularPipelineState(
@@ -72,12 +37,7 @@ void PipelineStateCreator::BuildRegularPipelineState(
     regularPsoDesc.SampleDesc.Quality = m4xMsaa ? (m4xMsaaQuality - 1) : 0;
     regularPsoDesc.DSVFormat = depthStencilBufferFormat;
     // now Using d3ddevice to Create pipeline state object
-    currentD3dDevice->CreateGraphicsPipelineState(&regularPsoDesc, IID_PPV_ARGS(&PSOLibrary[L"Default"]));
-}
-
-PipelineStateCreator::PipelineStateCreator()
-{
-
+    currentD3dDevice->CreateGraphicsPipelineState(&regularPsoDesc, IID_PPV_ARGS(&PSOLibrary["Default"]));
 }
 
 void PipelineStateCreator::CreatePipelineState(
@@ -91,18 +51,41 @@ void PipelineStateCreator::CreatePipelineState(
     bool m4xMsaa,
     UINT m4xMsaaQuality)
 {
-    D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDesc;
-}
-
-void PipelineStateCreator::SwiftPSO(const std::wstring& name)
-{
-    if (PSOLibrary[name] != nullptr)
+    if (name != L"Default")
     {
-        mCurrentPso = PSOLibrary[name].Get();
+        CreatePipelineState(name,
+            currentd3dDevice,
+            currentRootSignature,
+            inputLayout,
+            shader,
+            backBufferFormat,
+            depthStencilBufferFormat,
+            m4xMsaa,
+            m4xMsaaQuality);
     }
     else
     {
-        mCurrentPso = PSOLibrary[L"Default"].Get();
+        BuildRegularPipelineState(currentd3dDevice,
+            currentRootSignature,
+            inputLayout,
+            shader,
+            backBufferFormat,
+            depthStencilBufferFormat,
+            m4xMsaa,
+            m4xMsaaQuality);
+    }
+}
+
+ID3D12PipelineState* PipelineStateCreator::SwiftPSO(const std::string& name)
+{
+    if (PSOLibrary[name] != nullptr)
+    {
+        mCurrentPso = PSOLibrary[name];
+    }
+    else
+    {
+        mCurrentPso = PSOLibrary["Default"];
         // or Set PSO to Error PSO
     }
+    return mCurrentPso;
 }

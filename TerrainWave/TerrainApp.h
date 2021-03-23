@@ -43,7 +43,7 @@ private:
 	void UpdateObjectsCB(const GameTimer& gt);
 	void UpdateMainPassCB(const GameTimer& gt);
 	void UpdateWaves(const GameTimer& gt);
-	void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& rItems);
+	void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
 // Builds Function Runing once
 	void BuildRootSignature();
 	void BuildShaderAndInputLayout();
@@ -58,7 +58,7 @@ private:
 	XMFLOAT3 GetHillNormal(float x, float z)const;
 
 private:
-	std::unique_ptr<SceneManager> mSceneManager;
+	std::unique_ptr<SceneManager> mSceneManager;  // new Add self Manager Class
 	FrameResource* mCurrentFrameResource;
 	std::vector<std::unique_ptr<FrameResource>> mFrameResources;
 	int mCurrentFrameResourceIndex = 0;
@@ -70,7 +70,7 @@ private:
 	//std::unordered_map<std::string, ComPtr<ID3D12PipelineState>> mPSOs;
 // This very Interesting
 	RenderItem* mWavesRitems = nullptr;
-	std::vector<std::unique_ptr<RenderItem>> mAllRItems;
+	//std::vector<std::unique_ptr<RenderItem>> mAllRItems;
 	//std::vector<RenderItem*> mRItemLayer[(int)RenderLayer::Count];
     std::unique_ptr<Wave> mWaves;
 	PassConstants mMainPassCB;

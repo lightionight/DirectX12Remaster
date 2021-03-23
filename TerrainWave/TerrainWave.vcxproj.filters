@@ -19,9 +19,6 @@
     <Filter Include="SelfLibrary">
       <UniqueIdentifier>{5bc6facb-ecb9-409d-a892-49de81ad9552}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HLSLLibrary">
-      <UniqueIdentifier>{a91df015-75ad-4a32-bc3e-bb4825a3f7d8}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TerrainApp.cpp">
@@ -116,9 +113,6 @@
     <ClInclude Include="..\SelfCommon\StaticGeometry.h">
       <Filter>SelfLibrary</Filter>
     </ClInclude>
-    <ClInclude Include="..\SelfCommon\RenderItem.h">
-      <Filter>SelfLibrary</Filter>
-    </ClInclude>
     <ClInclude Include="..\SelfCommon\IRenderItem.h">
       <Filter>SelfLibrary</Filter>
     </ClInclude>
@@ -128,10 +122,8 @@
     <ClInclude Include="..\SelfCommon\InputData.h">
       <Filter>SelfLibrary</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\HLSL\BasicVertex.hlsl">
-      <Filter>HLSLLibrary</Filter>
-    </FxCompile>
+    <ClInclude Include="..\SelfCommon\RenderItem.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

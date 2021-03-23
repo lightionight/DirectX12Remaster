@@ -19,23 +19,12 @@ class PipelineStateCreator
 {
     //Constructor
 public:
-    PipelineStateCreator(
-        const std::wstring& name,
-        ComPtr<ID3D12Device> currentd3dDevice,
-        ComPtr<ID3D12RootSignature> currentRootSignature,
-        const std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,
-        Shader* shader,
-        DXGI_FORMAT backBufferFormat,
-        DXGI_FORMAT depthStencilBufferFormat,
-        bool m4xMsaa,
-        UINT m4xMsaaQuality
-    );
-    PipelineStateCreator();
-    ~PipelineStateCreator();
+    PipelineStateCreator( );
+    ~PipelineStateCreator( );
 private:
     D3D12_GRAPHICS_PIPELINE_STATE_DESC* mCurrentPsoDesc = nullptr;
     ID3D12PipelineState* mCurrentPso = nullptr;
-    std::unordered_map<std::wstring, ComPtr<ID3D12PipelineState>> PSOLibrary;
+    std::unordered_map<std::string, ID3D12PipelineState*> PSOLibrary;
     //ID3D12PipelineLibrary
     //ID3D12PipelineLibrary* mPSOLibrary = nullptr;
 public:
@@ -60,11 +49,13 @@ public:
             bool m4xMsaa,
             INT m4xMsaaQuality);
 
-    void SwiftPSO(const std::wstring& name);
+    ID3D12PipelineState* SwiftPSO(const std::string& name);
     void Initialize();
     //paramter
 public:
     const ID3D12PipelineState* CurrentPipelineState() const { return mCurrentPso; }
+    ID3D12PipelineState* DefaultPSO() { return PSOLibrary["Default"]; }
+
     //ComPtr<ID3D12PipelineLibrary>
 
 

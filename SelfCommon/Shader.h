@@ -7,7 +7,7 @@ using Microsoft::WRL::ComPtr;
 class Shader
 {
 public:
-	Shader(std::string Name, std::wstring vsPath, std::wstring psPath, std::wstring gsPath = NULL);
+	Shader(const std::string& Name, const std::wstring& vsPath, const std::wstring& psPath, const std::wstring& gsPath = std::wstring());
 	~Shader();
 	std::string Name()const { return mName;}
 	D3D12_SHADER_BYTECODE VS();

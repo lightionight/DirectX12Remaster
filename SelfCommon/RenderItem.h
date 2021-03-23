@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RENDER_ITEM_H
+#define RENDER_ITEM_H
+
 
 #include <d3dApp.h>
 #include <MathHelper.h>
@@ -34,3 +36,4 @@ enum class RenderLayer : int
 	Count
 };
 
+#endif // !RENDER_ITEM_H

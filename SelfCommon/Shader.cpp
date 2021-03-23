@@ -1,7 +1,7 @@
 #include <Shader.h>
 
 // Shader_MODEL_5.0
-Shader::Shader(std::string name, std::wstring vspath, std::wstring psPath, std::wstring gsPath)
+Shader::Shader(const std::string& name, const std::wstring& vspath, const std::wstring& psPath, const std::wstring& gsPath)
 {
 	mName = name;
 	mVS = d3dUtil::CompileShader(vspath, nullptr, "vert", "vs_5_0");
@@ -13,9 +13,9 @@ Shader::Shader(std::string name, std::wstring vspath, std::wstring psPath, std::
 }
 Shader::~Shader()
 {
-	mVS->Release();
-	mPS->Release();
-	mGS->Release();
+	//mVS->Release();
+	//mPS->Release();
+	//mGS->Release();
 }
 D3D12_SHADER_BYTECODE Shader::VS()
 {
