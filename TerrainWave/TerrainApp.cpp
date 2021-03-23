@@ -182,26 +182,6 @@ void TerrainApp::OnResize()
 	XMStoreFloat4x4(&mProj, proj);
 }
 
-void TerrainApp::Update(const GameTimer& gt)
-{
-	OnkeyBoardInput(gt);
-	UpdateCameraPosition(gt);
-	//cycle frame resourece
-	mCurrentFrameResourceIndex = (mCurrentFrameResourceIndex + 1) % gNumFrameResources;
-	mCurrentFrameResource = mFrameResources[mCurrentFrameResourceIndex].get();
-	if (mCurrentFrameResource->Fence != 0 && mFence->GetCompletedValue() < mCurrentFrameResource->Fence)
-	{
-		HANDLE handle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
-		mFence->SetEventOnCompletion(mCurrentFrameResource->Fence, handle);
-		WaitForSingleObject(handle, INFINITE);
-		CloseHandle(handle);
-	}
-
-	UpdateObjectsCB(gt);
-	UpdateMainPassCB(gt);
-	UpdateWaves(gt);
-}
-
 void TerrainApp::OnMouseDown(WPARAM btnState, int x, int y)
 {
 	mMousePos.x = x;
@@ -333,7 +313,8 @@ void TerrainApp::UpdateWaves(const GameTimer& gt)
 		v.Color = XMFLOAT4(DirectX::Colors::Azure);
 		currentWavesVB->CopyData(i, v);
 	}
-	//mWavesRitems->Geo->VertexBufferGPU = currentWavesVB->Resource();
+
+	mWavesRitems->Geo->VertexBufferGPU = currentWavesVB->Resource();
 }
 
 float TerrainApp::GetHillsHeight(float x, float z)const
@@ -356,6 +337,26 @@ XMFLOAT3 TerrainApp::GetHillNormal(float x, float z)const
 
 //---------------------------------------------Loop Function----------------------------------------------------------//
 
+void TerrainApp::Update(const GameTimer& gt)
+{
+	OnkeyBoardInput(gt);
+	UpdateCameraPosition(gt);
+	//cycle frame resourece
+	mCurrentFrameResourceIndex = (mCurrentFrameResourceIndex + 1) % gNumFrameResources;
+	mCurrentFrameResource = mFrameResources[mCurrentFrameResourceIndex].get();
+	if (mCurrentFrameResource->Fence != 0 && mFence->GetCompletedValue() < mCurrentFrameResource->Fence)
+	{
+		HANDLE handle = CreateEventEx(nullptr, false, false, EVENT_ALL_ACCESS);
+		mFence->SetEventOnCompletion(mCurrentFrameResource->Fence, handle);
+		WaitForSingleObject(handle, INFINITE);
+		CloseHandle(handle);
+	}
+
+	UpdateObjectsCB(gt);
+	UpdateMainPassCB(gt);
+	UpdateWaves(gt);
+}
+
 void TerrainApp::Draw(const GameTimer& gt)
 {
 	auto cmdListAlloc = mCurrentFrameResource->CmdListAlloc;
@@ -369,7 +370,7 @@ void TerrainApp::Draw(const GameTimer& gt)
 		D3D12_RESOURCE_STATE_PRESENT,
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 	// Clear Render buffer and depth buffer
-	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::Black, 0, nullptr);
+	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), Colors::LightSteelBlue, 0, nullptr);
 	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 	mCommandList->SetGraphicsRootSignature(mRootSignature.Get());

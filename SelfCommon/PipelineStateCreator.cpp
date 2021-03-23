@@ -1,6 +1,8 @@
 #include "PipelineStateCreator.h"
 
-PipelineStateCreator::PipelineStateCreator() { }
+PipelineStateCreator::PipelineStateCreator() {
+
+}
 PipelineStateCreator::~PipelineStateCreator() { }
 
 void PipelineStateCreator::BuildRegularPipelineState(
