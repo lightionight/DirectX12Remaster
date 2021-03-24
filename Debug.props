@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)$(Configuration)\Bin\</OutDir>
+    <OutDir>$(ProjectDir)$(Configuration)\Bin\</OutDir>
     <IncludePath>$(SolutionDir)Common;$(SolutionDir)SelfCommon;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
