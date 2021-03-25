@@ -10,33 +10,32 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 int main()
 {
-	WNDCLASS wc;
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.lpfnWndProc = MainProc;
-	wc.lpszClassName = L"App";
-	wc.hIcon = LoadIcon(0, IDI_APPLICATION);
-	wc.hCursor = LoadIcon(0, IDC_ARROW);
-	wc.cbWndExtra = 0;
-	wc.cbClsExtra = 0;
-
-	RegisterClass(&wc);
+	std::cout << "hello World Debug Console. " << std::endl;
+	WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, MainProc, NULL, NULL, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, L"App", NULL };
+	RegisterClassEx(&wc);
 
 	RECT r = { 0, 0, 1980, 1080 };
 	AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
 	int width = r.right - r.left;
 	int height = r.bottom - r.top;
+	
 
-	HWND hwnd = CreateWindow(L"App", L"Hello World", WS_OVERLAPPEDWINDOW,
-		CW_DEFAULT, CW_DEFAULT, width, height, NULL, NULL, wc.hInstance, NULL);
-	ShowWindow(hwnd, SW_SHOW);
+	HWND hwnd = CreateWindow(wc.lpszClassName, L"Hello World", WS_OVERLAPPEDWINDOW,
+		100, 100, width, height, NULL, NULL, wc.hInstance, NULL);
+
+	ShowWindow(hwnd, SW_SHOWDEFAULT);
 	UpdateWindow(hwnd);
 
-	MSG msg = { 0 };
-	while ((int)msg.wParam != WM_DESTROY)
+	MSG msg;
+	ZeroMemory(&msg, sizeof(msg));
+	while (msg.message != WM_QUIT)
 	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+		if (PeekMessage(&msg, NULL, NULL, NULL, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		
 	}
 
 	return 0;
@@ -48,8 +47,16 @@ LRESULT CALLBACK MainProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
-	default:
-		break;
+	case WM_CREATE:
+	{
+		return 0;
+	}
+	case WM_DESTROY:
+	{
+		PostQuitMessage(NULL);
+		return 0;
+	}
+
 	}
 	return DefWindowProc(hwnd, msg, wParam, lParam);
 }

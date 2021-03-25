@@ -12,8 +12,8 @@ const int gNumFrameResources = 3;
 #include "FrameResource.h"
 #include <SceneManager.h>
 #include <Shader.h>
+#include <d3d12sdklayers.h>
 
-// Using
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;
@@ -58,35 +58,35 @@ private:
 	XMFLOAT3 GetHillNormal(float x, float z)const;
 
 private:
-	std::unique_ptr<SceneManager> mSceneManager;  // new Add self Manager Class
-	FrameResource* mCurrentFrameResource;
-	std::vector<std::unique_ptr<FrameResource>> mFrameResources;
-	int mCurrentFrameResourceIndex = 0;
-	UINT mCbvSrvDescriptorSize = 0;
+	std::unique_ptr<SceneManager> mSceneManager;
 	ComPtr<ID3D12RootSignature> mRootSignature = nullptr;
+
+	FrameResource* mCurrentFrameResource;
+	int mCurrentFrameResourceIndex = 0;
+	std::vector<std::unique_ptr<FrameResource>> mFrameResources;
+
+	UINT mCbvSrvDescriptorSize = 0;
 	std::vector<D3D12_INPUT_ELEMENT_DESC> mInputLayout;
-	//std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeometry;
-	//std::unordered_map<std::string, ComPtr<ID3DBlob>> mShaders;
-	//std::unordered_map<std::string, ComPtr<ID3D12PipelineState>> mPSOs;
-// This very Interesting
+
 	RenderItem* mWavesRitems = nullptr;
-	//std::vector<std::unique_ptr<RenderItem>> mAllRItems;
-	//std::vector<RenderItem*> mRItemLayer[(int)RenderLayer::Count];
+
     std::unique_ptr<Wave> mWaves;
 	PassConstants mMainPassCB;
 	bool _IsWireFrame = false;
-// Contain  three matrix
-	XMFLOAT3 mEyePos = { 0.0f, 0.0f, 0.0f };
-	XMFLOAT4X4 mView = MathHelper::Identity4x4();
-	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+
+	XMFLOAT3   mEyePos = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT4X4 mView   = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj   = MathHelper::Identity4x4();
+
 // Self Position Calculate need Parameter
 	float mTheta = 1.5f * XM_PI;
 	float mPhi = XM_PIDIV2 - 0.1f;
 	float mRadius = 50.0f;
-// Why need sun 
+
 	float mSunTheta = 1.25f * XM_PI;
 	float mSunPhi = XM_PIDIV4;
-	POINT mMousePos;  // not init
+	POINT mMousePos;
 };
 
 

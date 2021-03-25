@@ -1,18 +1,6 @@
-﻿  Camera.cpp
-  d3dApp.cpp
-  d3dUtil.cpp
-D:\PROJECT\Github\DirectX12Remaster\Common\d3dUtil.cpp(30,5): warning C4244: 'argument': conversion from 'std::streamoff' to 'SIZE_T', possible loss of data
-D:\PROJECT\Github\DirectX12Remaster\Common\d3dUtil.cpp(70,32): warning C4244: '=': conversion from 'UINT64' to 'LONG_PTR', possible loss of data
-  DDSTextureLoader.cpp
-  FrameResource.cpp
-  GameTimer.cpp
-  GeometryGenerator.cpp
-  MathHelper.cpp
-  PipelineStateCreator.cpp
-  SceneManager.cpp
-  Shader.cpp
-  ProgramEntry.cpp
-  TerrainApp.cpp
-  Wave.cpp
-MSVCRT.lib(exe_main.obj) : error LNK2001: unresolved external symbol _main
-D:\PROJECT\Github\DirectX12Remaster\Release\Bin\TerrainWave.exe : fatal error LNK1120: 1 unresolved externals
+﻿  Generating code
+  Previous IPDB not found, fall back to full compilation.
+D:\SelfProject\DirectX12Remaster\SelfCommon\SceneManager.cpp(153): warning C4715: 'SceneManager::GetGeoPointer': not all control paths return a value
+  All 1906 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  TerrainWave.vcxproj -> D:\SelfProject\DirectX12Remaster\TerrainWave\Release\Bin\TerrainWave.exe
