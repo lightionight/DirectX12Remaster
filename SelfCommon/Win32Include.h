@@ -1,0 +1,19 @@
+//////////////////////////////////////////////////////////////////////////////////
+/////
+/////      this Head Files Main Include  Win32 Program need be include head files
+/////
+//////////////////////////////////////////////////////////////////////////////////
+
+#ifndef WIN32_INCLUDE_H
+#define WIN32_INCLUDE_H
+
+
+#include <Windows.h>
+#include <windowsx.h>
+
+// ComPtr using
+#include <wrl.h>  
+
+
+
+#endif // !Win32_INCLUDE_H

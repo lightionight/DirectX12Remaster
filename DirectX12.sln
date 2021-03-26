@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imguiUsing", "imguiUsing\im
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestWindowsMain", "TestWindowsMain\TestWindowsMain.vcxproj", "{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SelfD3D", "SelfD3D\SelfD3D.vcxproj", "{62958294-1A3C-4196-95A8-71B9AF470E6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -74,13 +76,20 @@ Global
 		{80EC3DA8-6400-40F8-80AD-2B517C92D527}.Release|x64.ActiveCfg = Release|x64
 		{80EC3DA8-6400-40F8-80AD-2B517C92D527}.Release|x64.Build.0 = Release|x64
 		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Debug|Win32.Build.0 = Debug|Win32
 		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Debug|x64.ActiveCfg = Debug|x64
 		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Debug|x64.Build.0 = Debug|x64
 		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Release|Win32.ActiveCfg = Release|Win32
 		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Release|Win32.Build.0 = Release|Win32
 		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Release|x64.ActiveCfg = Release|x64
 		{A33FC496-FC70-415B-9D1D-ECE52BF41AAE}.Release|x64.Build.0 = Release|x64
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Debug|Win32.Build.0 = Debug|Win32
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Debug|x64.ActiveCfg = Debug|x64
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Debug|x64.Build.0 = Debug|x64
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Release|Win32.ActiveCfg = Release|Win32
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Release|Win32.Build.0 = Release|Win32
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Release|x64.ActiveCfg = Release|x64
+		{62958294-1A3C-4196-95A8-71B9AF470E6A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

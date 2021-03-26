@@ -43,7 +43,7 @@ private:
 	void UpdateObjectsCB(const GameTimer& gt);
 	void UpdateMainPassCB(const GameTimer& gt);
 	void UpdateWaves(const GameTimer& gt);
-	void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
+	void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderLayer renderlayer);
 // Builds Function Runing once
 	void BuildRootSignature();
 	void BuildShaderAndInputLayout();

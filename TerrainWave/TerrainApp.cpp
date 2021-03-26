@@ -16,12 +16,12 @@ bool TerrainApp::Initialize()
 	mSceneManager = std::make_unique<SceneManager>();
 	BuildRootSignature();
 	BuildShaderAndInputLayout();
+	BuildPSOs();
 	BuildLandGeometry();
 	BuildWaterGeometry();
 	//BuildRenderItems();
 	BuildRenderItems();
 	BuildFrameResource();
-	BuildPSOs();
 	mCommandList->Close();
 	ID3D12CommandList* cmdList[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
@@ -93,7 +93,7 @@ void TerrainApp::BuildLandGeometry()
 	std::vector<std::uint16_t> indices = grid.GetIndices16();
 	const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
-	mSceneManager->AddGeo(md3dDevice, mCommandList, "Land", "Land", vbByteSize, ibByteSize, vertices, indices);
+	mSceneManager->AddGeo(md3dDevice, mCommandList, "LandGeo", "grid", vbByteSize, ibByteSize, vertices, indices);
 }
 
 void TerrainApp::BuildWaterGeometry()
@@ -121,7 +121,7 @@ void TerrainApp::BuildWaterGeometry()
 	UINT vbByteSize = mWaves->vertexCount() * sizeof(Vertex);
 	UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
-	mSceneManager->AddGeo(md3dDevice, mCommandList, "Water", "Water", vbByteSize, ibByteSize, indices);
+	mSceneManager->AddGeo(md3dDevice, mCommandList, "WaterGeo", "grid", vbByteSize, ibByteSize, indices);
 }
 
 void TerrainApp::BuildPSOs()
@@ -142,7 +142,7 @@ void TerrainApp::BuildFrameResource()
 	for (int i = 0; i < gNumFrameResources; ++i)
 	{
 		mFrameResources.push_back(std::make_unique<FrameResource>(md3dDevice.Get(),
-			1, (UINT)(*mSceneManager->AllRenderItem()).size(), mWaves->vertexCount()));
+			1, (*(mSceneManager->AllRenderItem())).size(), mWaves->vertexCount()));
 	};
 }
 
@@ -152,16 +152,16 @@ void TerrainApp::BuildRenderItems()
 	auto wavesRitem = std::make_unique<RenderItem>();
 	wavesRitem->World = MathHelper::Identity4x4();
 	wavesRitem->ObjIndex = 0;
-	wavesRitem->Geo = mSceneManager->GetGeoPointer("Water");
+	wavesRitem->Geo = mSceneManager->GetGeoPointer("WaterGeo");
 	wavesRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["Water"].IndexCount;
-	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["Water"].StartIndexLocation;
-	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["Water"].BaseVertexLocation;
+	wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
+	wavesRitem->StartIndexLocation = wavesRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	wavesRitem->BaseVertexLocation = wavesRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
 
 	// Give pointer to another
 	mWavesRitems = wavesRitem.get();
 	// Add to Scene All item
-	mSceneManager->AddToSceneitems(&wavesRitem);
+	mSceneManager->AddToSceneitems(&(wavesRitem));
 	// Addto RenderLayer Item
 	mSceneManager->AddToRenderLayer(RenderLayer::Opaque, wavesRitem.get());
 
@@ -169,14 +169,15 @@ void TerrainApp::BuildRenderItems()
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
 	gridRitem->ObjIndex = 1;
-	gridRitem->Geo = mSceneManager->GetGeoPointer("Land");
+	gridRitem->Geo = mSceneManager->GetGeoPointer("LandGeo");
 	gridRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["Land"].StartIndexLocation;
-	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["Land"].StartIndexLocation;
-	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["Land"].BaseVertexLocation;
+	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
+	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
 
 	// Add to scene item
-	mSceneManager->AddToSceneitems(&gridRitem);
+	mSceneManager->AddToSceneitems(&(gridRitem));
+
 	// Add to Render Layer
 	mSceneManager->AddToRenderLayer(RenderLayer::Opaque, gridRitem.get());
 
@@ -320,7 +321,7 @@ void TerrainApp::UpdateWaves(const GameTimer& gt)
 	{
 		Vertex v;
 		v.Pos = mWaves->Position(i);
-		v.Color = XMFLOAT4(DirectX::Colors::Azure);
+		v.Color = XMFLOAT4(Colors::Chocolate);
 		currentWavesVB->CopyData(i, v);
 	}
 
@@ -393,7 +394,7 @@ void TerrainApp::Draw(const GameTimer& gt)
 
 
 	// Now we can Draw our current pass all object
-	DrawRenderItems(mCommandList.Get(), mSceneManager->RenderLayerItem(RenderLayer::Opaque));
+	DrawRenderItems(mCommandList.Get(), RenderLayer::Opaque);
 
 	// after all command set
 	// indicate resource state transition for resource usage let cpu and gpu both know that
@@ -414,19 +415,19 @@ void TerrainApp::Draw(const GameTimer& gt)
 	mCommandQueue->Signal(mFence.Get(), mCurrentFence);
 }
 
-void TerrainApp::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems)
+void TerrainApp::DrawRenderItems(ID3D12GraphicsCommandList* cmdList, RenderLayer renderlayer)
 {
 	UINT objCBSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
 
 	auto objectCB = mCurrentFrameResource->ObjectCB->Resource();
 
 	// cycle each item
-	for (size_t i = 0; i < ritems.size(); ++i)
+	for (size_t i = 0; i < mSceneManager->RenderLayerItem(renderlayer).size(); ++i)
 	{
-		auto ri = ritems[i];
+		auto ri = mSceneManager->RenderLayerItem(renderlayer)[i];
 
 		// set Vertex buffer
-		cmdList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
+		cmdList->IASetVertexBuffers(0, 1, &(ri->Geo->VertexBufferView()));
 		// set index buffer
 		cmdList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
 		// Set draw topology
