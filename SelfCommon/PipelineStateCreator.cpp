@@ -38,6 +38,7 @@ void PipelineStateCreator::BuildRegularPipelineState(
     regularPsoDesc.SampleDesc.Count = m4xMsaa ? 4 : 1;
     regularPsoDesc.SampleDesc.Quality = m4xMsaa ? (m4xMsaaQuality - 1) : 0;
     regularPsoDesc.DSVFormat = depthStencilBufferFormat;
+    regularPsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
     // now Using d3ddevice to Create pipeline state object
     currentD3dDevice->CreateGraphicsPipelineState(&regularPsoDesc, IID_PPV_ARGS(&PSOLibrary["Default"]));
 }

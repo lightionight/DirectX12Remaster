@@ -10,4 +10,6 @@ int WINAPI wWinMain(
 	if (!theApp.Initialize())
 		return 0;
 	return theApp.Run();
+
+
 }

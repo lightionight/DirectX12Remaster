@@ -7,6 +7,17 @@
 
 #include "Win32Include.h"
 
+struct WindowsData
+{
+	HINSTANCE Hinstace;
+	HWND Hwnd;
+};
+
+
+
+
+LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 class WinCreator
 {
 public:
@@ -17,15 +28,16 @@ public:
     static WinCreator* winCreator;
 	
 protected:
-	HISNTACE GetHinstace() { return mHisntace; };
+	HINSTANCE GetHinstace() { return mHinstace; };
 
 private:
-	HINSTACE mHinstace;
+	
+	HINSTANCE mHinstace;
 	HWND   mHwnd;
 	int mClientWidth;
 	int mClientHeight;
 };
 
-WinCreator::winCreator = nullptr;
+WinCreator* WinCreator::winCreator = nullptr;
 
 #endif // !WINCREATOR_H

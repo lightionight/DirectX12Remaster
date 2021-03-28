@@ -21,9 +21,60 @@
     <ClCompile Include="ProgramEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\SelfCommon\PipelineStateCreator.cpp">
+      <Filter>Header Files\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SelfCommon\SceneManager.cpp">
+      <Filter>Header Files\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SelfCommon\Shader.cpp">
+      <Filter>Header Files\Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SelfCommon\WinCreator.cpp">
+      <Filter>Header Files\Include</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\SelfCommon\SelfInclude.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\dx12Container.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\DymaticGeometry.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\InputData.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\IRenderItem.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\PipelineStateCreator.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\RenderItem.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\SceneManager.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\SelfConfig.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\Shader.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\StaticGeometry.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\stdInclude.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\Win32Include.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SelfCommon\WinCreator.h">
       <Filter>Header Files\Include</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,30 +12,38 @@ Wave::Wave(int numRows, int numCols, float dx, float dt, float speed, float damp
 	mNumCols = numCols;
 	mVertexCount = mNumRows * mNumCols;
 	mTriangleCount = (mNumRows - 1) * (mNumCols - 1) * 2;
+
 	mTimeStep = dt;
 	mSpatialStep = dx;
+
 	float d = damping * dt + 2.0f;//??????????????
 	float e = (speed * speed) * (dt * dt) / (dx * dx);//?????????????????????
 	mk1 = (damping * dt - 2.0f) / d;
 	mk2 = (4.0f - 8.0f * e) / d;
 	mk3 = (2.0f * e) / d;
+
 	mPrevSolution.resize(mNumRows * mNumCols);
 	mCurrentSolution.resize(mNumRows * mNumCols);
+
 	mNormals.resize(mNumRows * mNumCols);
 	mTangents.resize(mNumRows * mNumCols);
+
 // using reGenerate vertices
 	float halfWidth = (numCols - 1) * dx * 0.5f;
 	float haifDepth = (numRows - 1) * dx * 0.5f;
 	for (int i = 0; i < numRows; ++i)
 	{
 		float z = haifDepth - i * dx;
+
 		for (int j = 0; j < numCols; ++j)
 		{
 			float x = -halfWidth + j * dx;
 
 			mPrevSolution[i * numCols + j] = XMFLOAT3(x, 0.0f, z);
 			mCurrentSolution[i * numCols + j] = XMFLOAT3(x, 0.0f, z);
+
 			mNormals[i * numCols + j] = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
 			mTangents[i * numCols + j] = XMFLOAT3(1.0f, 0.0f, 0.0f);
 // after this function all variable will be initialize.
 		}
@@ -57,7 +65,9 @@ float Wave::Depth()const { return mNumRows * mSpatialStep; }
 void Wave::Update(float dt)
 {
 	static float t = 0;
+
 	t += dt;
+
 	if (t >= mTimeStep) // if Big then TimeStep
 	{
 // Parallel computer

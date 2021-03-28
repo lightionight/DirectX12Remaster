@@ -120,14 +120,14 @@ void SceneManager::AddGeo(ComPtr<ID3D12Device> d3ddeivce, ComPtr<ID3D12GraphicsC
 	geo->VertexBufferCPU = nullptr;
 	geo->VertexBufferGPU = nullptr;
 
-	D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU);
+	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
 	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(
 		d3ddeivce.Get(),
 		commandList.Get(),
 		indices.data(),
 		ibByteSize,
-		geo->IndexBufferGPU);
+		geo->IndexBufferUploader);
 	geo->VertexByteStride = sizeof(Vertex);
 	geo->VertexBufferByteSize = vbByteSize;
 	geo->IndexFormat = DXGI_FORMAT_R16_UINT;

@@ -143,10 +143,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\SelfCommon\PipelineStateCreator.cpp" />
+    <ClCompile Include="..\SelfCommon\SceneManager.cpp" />
+    <ClCompile Include="..\SelfCommon\Shader.cpp" />
+    <ClCompile Include="..\SelfCommon\WinCreator.cpp" />
     <ClCompile Include="ProgramEntry.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\SelfCommon\dx12Container.h" />
+    <ClInclude Include="..\SelfCommon\DymaticGeometry.h" />
+    <ClInclude Include="..\SelfCommon\InputData.h" />
+    <ClInclude Include="..\SelfCommon\IRenderItem.h" />
+    <ClInclude Include="..\SelfCommon\PipelineStateCreator.h" />
+    <ClInclude Include="..\SelfCommon\RenderItem.h" />
+    <ClInclude Include="..\SelfCommon\SceneManager.h" />
+    <ClInclude Include="..\SelfCommon\SelfConfig.h" />
     <ClInclude Include="..\SelfCommon\SelfInclude.h" />
+    <ClInclude Include="..\SelfCommon\Shader.h" />
+    <ClInclude Include="..\SelfCommon\StaticGeometry.h" />
+    <ClInclude Include="..\SelfCommon\stdInclude.h" />
+    <ClInclude Include="..\SelfCommon\Win32Include.h" />
+    <ClInclude Include="..\SelfCommon\WinCreator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
