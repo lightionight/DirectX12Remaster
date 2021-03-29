@@ -17,15 +17,15 @@ public:
     static WinCreator* winCreator;
 	
 protected:
-	HISNTACE GetHinstace() { return mHisntace; };
+	HINSTANCE GetHinstace() { return mHinstace; };
 
 private:
-	HINSTACE mHinstace;
+	HINSTANCE mHinstace;
 	HWND   mHwnd;
 	int mClientWidth;
 	int mClientHeight;
 };
 
-WinCreator::winCreator = nullptr;
+WinCreator* WinCreator::winCreator = nullptr;
 
 #endif // !WINCREATOR_H

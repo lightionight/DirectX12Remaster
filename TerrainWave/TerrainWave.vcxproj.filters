@@ -125,5 +125,8 @@
     <ClInclude Include="..\SelfCommon\RenderItem.h">
       <Filter>SelfLibrary</Filter>
     </ClInclude>
+    <ClInclude Include="MatCreator.h">
+      <Filter>SelfLibrary</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
