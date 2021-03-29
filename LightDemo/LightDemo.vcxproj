@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{92ecd2d1-ef11-4071-a658-54d9cb729e75}</ProjectGuid>
-    <RootNamespace>TerrainWave</RootNamespace>
+    <ProjectGuid>{bd3ffcb2-1840-4d5b-8a79-0517cd5cb3c8}</ProjectGuid>
+    <RootNamespace>LightDemo</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -59,11 +59,9 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\Debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\Debug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -74,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\..\DirectX12Remaster\Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -88,11 +87,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -103,10 +102,10 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -141,43 +140,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Common\Camera.cpp" />
-    <ClCompile Include="..\Common\d3dApp.cpp" />
-    <ClCompile Include="..\Common\d3dUtil.cpp" />
-    <ClCompile Include="..\Common\DDSTextureLoader.cpp" />
-    <ClCompile Include="..\Common\FrameResource.cpp" />
-    <ClCompile Include="..\Common\GameTimer.cpp" />
-    <ClCompile Include="..\Common\GeometryGenerator.cpp" />
-    <ClCompile Include="..\Common\MathHelper.cpp" />
-    <ClCompile Include="..\SelfCommon\PipelineStateCreator.cpp" />
-    <ClCompile Include="..\SelfCommon\SceneManager.cpp" />
-    <ClCompile Include="..\SelfCommon\Shader.cpp" />
-    <ClCompile Include="ProgramEntry.cpp" />
-    <ClCompile Include="TerrainApp.cpp" />
-    <ClCompile Include="Wave.cpp" />
+    <ClCompile Include="LightApp.cpp" />
+    <ClCompile Include="LightDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Common\Camera.h" />
-    <ClInclude Include="..\Common\d3dApp.h" />
-    <ClInclude Include="..\Common\d3dUtil.h" />
-    <ClInclude Include="..\Common\d3dx12.h" />
-    <ClInclude Include="..\Common\DDSTextureLoader.h" />
-    <ClInclude Include="..\Common\FrameResource.h" />
-    <ClInclude Include="..\Common\GameTimer.h" />
-    <ClInclude Include="..\Common\GeometryGenerator.h" />
-    <ClInclude Include="..\Common\MathHelper.h" />
-    <ClInclude Include="..\Common\UploadBuffer.h" />
-    <ClInclude Include="..\SelfCommon\DymaticGeometry.h" />
-    <ClInclude Include="..\SelfCommon\InputData.h" />
-    <ClInclude Include="..\SelfCommon\IRenderItem.h" />
-    <ClInclude Include="..\SelfCommon\PipelineStateCreator.h" />
-    <ClInclude Include="..\SelfCommon\RenderItem.h" />
-    <ClInclude Include="..\SelfCommon\SceneManager.h" />
-    <ClInclude Include="..\SelfCommon\Shader.h" />
-    <ClInclude Include="..\SelfCommon\StaticGeometry.h" />
-    <ClInclude Include="MatCreator.h" />
-    <ClInclude Include="TerrainApp.h" />
-    <ClInclude Include="Wave.h" />
+    <ClInclude Include="LightApp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

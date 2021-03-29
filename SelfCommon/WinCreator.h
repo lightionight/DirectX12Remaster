@@ -31,7 +31,10 @@ protected:
 	HINSTANCE GetHinstace() { return mHinstace; };
 
 private:
+<<<<<<< HEAD
 	
+=======
+>>>>>>> dc5072727d2546974ff253f2917c5a445c00f317
 	HINSTANCE mHinstace;
 	HWND   mHwnd;
 	int mClientWidth;
