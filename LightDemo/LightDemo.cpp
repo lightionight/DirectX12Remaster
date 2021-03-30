@@ -1,11 +1,16 @@
 #include <iostream>
 #include "LightApp.h"
 
+
+LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return LightApp::GetLightApp()->MsgProc(hwnd, uMsg, wParam, lParam);
+}
+
 int main()
 {
-	LightApp lightApp(GetModuleHandle(NULL));
+	LightApp theapp;
 
-	if (!lightApp.Initialize()))
-
-	return LightApp.Run();
+	theapp.Initialize();
+	return theapp.Run();
 }
