@@ -1,10 +1,10 @@
-#pragma once
+#ifndef LIGHT_APP_H
+#define LIGHT_APP_H
 
 
 #include <d3dApp.h>
 #include "Data.h"
 #include "Inputhandle.h"
-
 
 LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -20,13 +20,13 @@ public:
 	static LightApp* GetLightApp();
 	bool Get4xMsaaState()const { return m4xMsaaState; }
 	void Set4xMsaaState(bool value) { m4xMsaaState = value; }
-	
-	
+
+
 	virtual LRESULT CALLBACK MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	virtual void InitializeDesc();
-	virtual bool subInitlize();
+	virtual void subInitlize();
 
 	virtual void Update(GameTimer& gt);
 	virtual void Draw(GameTimer& gt);
@@ -40,7 +40,7 @@ protected:
 
 
 public:
-	static LightApp*  mLightApp;
+	static LightApp* mLightApp;
 protected:
 	std::unique_ptr<WindowData> mWindow;
 	std::unique_ptr<DirectData> mDirectX;
@@ -53,8 +53,7 @@ protected:
 
 };
 
-LightApp* LightApp::mLightApp = nullptr;
 
-LightApp* LightApp::GetLightApp() { return mLightApp; }
+#endif // !LIGHT_APP_H
 
-bool LightApp::subInitlize() { }
+

@@ -143,10 +143,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\d3dcoder\d3d12book\Common\GameTimer.cpp" />
     <ClCompile Include="LightApp.cpp" />
     <ClCompile Include="LightDemo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\d3dcoder\d3d12book\Common\GameTimer.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="Inputhandle.h" />
     <ClInclude Include="LightApp.h" />

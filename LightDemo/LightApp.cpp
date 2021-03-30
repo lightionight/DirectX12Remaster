@@ -1,18 +1,26 @@
+#include <windowsx.h>
+
+
 #include "LightApp.h"
 #include <iostream>
-#include <windowsx.h>
+
+LightApp* LightApp::mLightApp = nullptr;
+
+LightApp* LightApp::GetLightApp() { return mLightApp; }
+
+void LightApp::subInitlize() { };
+
 
 LightApp::LightApp()
 {
-	
-	
+
 }
 
 LightApp::~LightApp() { }
 
 bool LightApp::Initialize()
 {
-	if (mLightApp != nullptr)
+	if (mLightApp == nullptr)
 		mLightApp = this;
 	mWindow = std::make_unique<WindowData>();
 	mDesc = std::make_unique<DirectDesc>();
@@ -21,9 +29,8 @@ bool LightApp::Initialize()
 
 	mWindow->Initialize(L"LightApp", L"LightDemo", 1280, 720, GlobalProc);
 	mInputHandle->Initialize(mWindow->ClientWidth, mWindow->ClientHeight, true);
-
-	mDesc->Initialize();
 	m4xMsaaQuality =  mDirectX->CheckFeatureSupport(mDesc->BackBufferFormat);
+	mDesc->Initialize();
 	InitializeDesc();
 	mDirectX->Initialize(*mDesc.get());
 	// For Inhert Desin
@@ -195,3 +202,22 @@ void LightApp::OnResize()
 	mDirectX->ResizeWindow(*mDesc.get(), mWindow->ClientWidth, mWindow->ClientHeight);
 }
 
+void LightApp::Update(GameTimer& gt)
+{
+
+}
+
+void LightApp::Draw(GameTimer& gt)
+{
+
+}
+
+void LightApp::CalculateFrameStates()
+{
+
+}
+
+LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return LightApp::GetLightApp()->MsgProc(hwnd, uMsg, wParam, lParam);
+}

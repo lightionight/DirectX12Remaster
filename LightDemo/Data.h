@@ -1,5 +1,7 @@
 #pragma once
+
 #include <d3dUtil.h>
+#include <iostream>
 
 using Microsoft::WRL::ComPtr;
 
@@ -16,7 +18,9 @@ struct WindowData
 		ClassName = className;
 		WindowName = windowName;
 		Hinstance = GetModuleHandle(NULL);
-		WNDCLASSEX wc = { NULL, CS_CLASSDC, wndProc, NULL, NULL, Hinstance, NULL, NULL, NULL, NULL, ClassName, NULL };
+		if (Hinstance == nullptr)
+			std::cout << "HInstace Get ERROr";
+		WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, wndProc, NULL, NULL, Hinstance, NULL, NULL, NULL, NULL, ClassName, NULL };
 		RegisterClassEx(&wc);
 
 		ClientHeight = width;
@@ -24,12 +28,14 @@ struct WindowData
 
 		// Adjust Windows Size;
 		RECT r = { 0 , 0 , ClientWidth, ClientHeight };
-		AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
+		::AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, false);
 		int w = r.right - r.left;
 		int h = r.bottom - r.top;
 
-		Hwnd = CreateWindowEx(NULL, ClassName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, w, h, NULL, NULL, Hinstance, NULL);
-		ShowWindow(Hwnd, SW_SHOW);
+		Hwnd = ::CreateWindow(ClassName, WindowName, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, w, h, NULL, NULL, Hinstance, NULL);
+		
+		::ShowWindow(Hwnd, SW_SHOWDEFAULT);
+
 		UpdateWindow(Hwnd);
 	}
 };
@@ -171,7 +177,7 @@ public:
 	ComPtr<ID3D12Debug> DebugController;
 #endif
 
-	DirectData()
+	void Initialize(const DirectDesc& desc)
 	{
 #if defined(DEBUG) || defined(_DEBUG)
 		D3D12GetDebugInterface(IID_PPV_ARGS(&DebugController));
@@ -182,9 +188,6 @@ public:
 		D3D12CreateDevice(nullptr, FeatureLevel, IID_PPV_ARGS(&Device));
 
 		Device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&Fence));
-	}
-	void Initialize(const DirectDesc& desc)
-	{
 		// Create Resource
 		RtvDescriptorSize = Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 		DsvDescriptorSize = Device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
@@ -197,9 +200,11 @@ public:
 		Device->CreateCommandList(NULL, desc.CommandListType, CommandListAlloc.Get(), nullptr,
 			                      IID_PPV_ARGS(CommandList.GetAddressOf()));
 		CommandList->Close();
+		
 		SwapChain.Reset();
 
-		DxgiFactory->CreateSwapChain(CommandQueue.Get(), desc.SwapChainDesc, SwapChain.GetAddressOf());
+		if (FAILED(DxgiFactory->CreateSwapChain(CommandQueue.Get(), desc.SwapChainDesc, SwapChain.GetAddressOf())))
+			std::cout << "Create SwapChain Error" << std::endl;
 
 		Device->CreateDescriptorHeap(desc.RtvHeapDesc, IID_PPV_ARGS(RtvHeap.GetAddressOf()));
 
@@ -234,17 +239,17 @@ public:
 			CloseHandle(eventHandle);
 		}
 	}
-	UINT CheckFeatureSupport(DXGI_FORMAT backBufferFormat)
+	UINT CheckFeatureSupport(const DXGI_FORMAT& backBufferFormat)
 	{
 		D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS qualityLevels;
 		qualityLevels.Format = backBufferFormat;
 		qualityLevels.SampleCount = 4;
 		qualityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
 		qualityLevels.NumQualityLevels = 0;
-		ThrowIfFailed(Device->CheckFeatureSupport(
+		Device->CheckFeatureSupport(
 			D3D12_FEATURE_MULTISAMPLE_QUALITY_LEVELS,
 			&qualityLevels,
-			sizeof(qualityLevels)));
+			sizeof(qualityLevels));
 		return qualityLevels.NumQualityLevels;
 	}
 	void ResizeWindow(const DirectDesc& desc, int clientWidth, int clientHeight)
@@ -252,7 +257,9 @@ public:
 		assert(Device);
 		assert(SwapChain);
 		assert(CommandListAlloc);
+
 		FlushCommandQueue();
+
 		CommandList->Reset(CommandListAlloc.Get(), nullptr);
 		
 		for (int i = 0; i < SwapChainBufferCount; ++i)

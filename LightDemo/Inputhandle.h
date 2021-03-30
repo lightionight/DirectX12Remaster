@@ -4,7 +4,7 @@
 
 #include <gainput\gainput.h>
 #include <memory>
-#pragma comment(lib, "gainInput\gainput-d.lib")
+#pragma comment(lib, "gainput\\gainput-d.lib")
 
 enum Button
 {
@@ -20,19 +20,17 @@ enum MapType
 
 struct InputHandle
 {
-	std::unique_ptr<gainput::InputDevice> Device = nullptr;
-	std::unique_ptr<gainput::InputManager> Manager = nullptr; // Manager Need In update loop for lister
-	std::unique_ptr<gainput::InputMap> Map = nullptr;
+	std::unique_ptr<gainput::InputManager> Manager; // Manager Need In update loop for lister
+	std::unique_ptr<gainput::InputMap> Map;
 	gainput::DeviceId KeyBoardId = NULL;
-	gainput::DeviceId MouseID = NULL;
+	gainput::DeviceId MouseId = NULL;
 	void Initialize(int windowWidth, int windowHeight, bool defaultSettings)
 	{
-		Device = std::make_unique<gainput::InputDevice>()
 		Manager = std::make_unique<gainput::InputManager>();
 		Manager->SetDisplaySize(windowWidth, windowHeight);
 		Map = std::make_unique<gainput::InputMap>(*Manager.get());
-		MouseID = Manager->CreateDevice<gainput::InputDevice>();
-		KeyBoardId = Manager->CreateDevice<gainput::InputDevice>();
+		KeyBoardId = Manager->CreateDevice<gainput::InputDeviceKeyboard>();
+		MouseId = Manager->CreateDevice<gainput::InputDeviceMouse>();
 		if (defaultSettings)
 			BasicMap();
 	}
@@ -46,8 +44,8 @@ struct InputHandle
 private:
 	void BasicMap()
 	{
-		AddMap(MapType::B, MOUSE_L, MouseID, gainput::MouseButtonLeft);
-		AddMap(MapType::B, MOUSE_R, MouseID, gainput::MouseButtonRight);
+		AddMap(MapType::B, MOUSE_L, MouseId, gainput::MouseButtonLeft);
+		AddMap(MapType::B, MOUSE_R, MouseId, gainput::MouseButtonRight);
 		//AddMap(MapType::FLOAT, MOUSE_MOVE, MouseID, gainput::MouseAxisCount)
 	}
 };
