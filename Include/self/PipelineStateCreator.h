@@ -10,7 +10,7 @@
 #define PIPELINE_STATE_CREATOR_H
 
 #include <d3d12.h>
-#include "d3dUtil.h"
+#include <dx12book\d3dUtil.h>
 #include "Shader.h"
 
 using Microsoft::WRL::ComPtr;

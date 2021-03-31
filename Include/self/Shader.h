@@ -1,6 +1,6 @@
 #pragma once
 //-------------------
-#include <d3dUtil.h>
+#include <dx12book\d3dUtil.h>
 
 using Microsoft::WRL::ComPtr;
 

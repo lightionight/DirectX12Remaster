@@ -1,5 +1,6 @@
+
 #include <iostream>
-#include "LightApp.h"
+#include "lightApp.h"
 
 int main()
 {
@@ -7,3 +8,4 @@ int main()
 	theapp.Initialize();
 	return theapp.Run();
 }
+

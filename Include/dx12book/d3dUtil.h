@@ -29,6 +29,10 @@
 #include "DDSTextureLoader.h"
 #include "MathHelper.h"
 
+#pragma comment(lib, "D3D12.lib")
+#pragma comment(lib, "d3dcompiler.lib")
+#pragma comment(lib, "dxgi.lib")
+
 extern const int gNumFrameResources;
 
 inline void d3dSetDebugName(IDXGIObject* obj, const char* name)

@@ -2,11 +2,13 @@
 #define RENDER_ITEM_H
 
 
-#include <d3dApp.h>
-#include <MathHelper.h>
-#include <UploadBuffer.h>
-#include <PipelineStateCreator.h>
-// Using
+#include <dx12book\d3dApp.h>
+#include <dx12book\MathHelper.h>
+#include <dx12book\UploadBuffer.h>
+
+#include "PipelineStateCreator.h"
+
+
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DirectX::PackedVector;

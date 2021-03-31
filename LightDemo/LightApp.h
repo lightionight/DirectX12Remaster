@@ -1,59 +1,51 @@
 #ifndef LIGHT_APP_H
 #define LIGHT_APP_H
 
+#include <self\DxApp.h>
+#include <self\SceneManager.h>
+#include <dx12book\FrameResource.h>
 
-#include <d3dApp.h>
-#include "Data.h"
-#include "Inputhandle.h"
-
-LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-class LightApp
+class LightApp : public DXApp
 {
 public:
 	LightApp();
 	~LightApp();
 public:
-	bool Initialize();
-	int Run();
-
-	static LightApp* GetLightApp();
-	bool Get4xMsaaState()const { return m4xMsaaState; }
-	void Set4xMsaaState(bool value) { m4xMsaaState = value; }
-
-
-	virtual LRESULT CALLBACK MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-protected:
-	virtual void InitializeDesc();
-	virtual void subInitlize();
-
-	virtual void Update(GameTimer& gt);
-	virtual void Draw(GameTimer& gt);
-	virtual void OnResize();
-
-	void CalculateFrameStates();
-
-	virtual void OnMouseDown(WPARAM btnState, int x, int y) { };
-	virtual void OnMouseUp(WPARAM btnState, int x, int y) { };
-	virtual void OnMouseMove(WPARAM btnState, int x, int y) { };
-
-
+	virtual void Initialize()override;
+	virtual void Update(GameTimer& gt)override;
+	virtual void Draw(GameTimer& gt)override;
 public:
-	static LightApp* mLightApp;
-protected:
-	std::unique_ptr<WindowData> mWindow;
-	std::unique_ptr<DirectData> mDirectX;
-	std::unique_ptr<DirectDesc> mDesc;
-	std::unique_ptr<InputHandle> mInputHandle;
-	WindowStatu mWinStatu;
-	bool m4xMsaaState = false;
-	UINT m4xMsaaQuality = 0;
-	GameTimer mTimer;
+	void BuildShaderAndInputLayout();
+	void BuildGeo();
 
+protected:
+	std::unique_ptr<SceneManager> mSceneManager;
+	
+	//Frame Resource
+	std::vector<std::unique_ptr<FrameResource>> mFrameResources;
+	FrameResource* mCurrentFrameResource = nullptr;
+	int mCurrentFrameResourceIndex = 0;
+
+	//InputLayOut
+	std::vector<D3D12_INPUT_LAYOUT_DESC> mInputLayout;
+
+	XMFLOAT3 mEyePos = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT4X4 mView = MathHelper::Identity4x4();
+	XMFLOAT4X4 mProj = MathHelper::Identity4x4();
+
+	float mTheta = 1.5f * XM_PI;
+	float mPhi = 0.2f * XM_PI;
+	float mRadius = 15.0f;
+
+	POINT mMousePos;
 };
 
 
+
+
+
+
+
+
+
 #endif // !LIGHT_APP_H
-
-

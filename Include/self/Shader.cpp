@@ -1,4 +1,4 @@
-#include <Shader.h>
+#include "Shader.h"
 
 // Shader_MODEL_5.0
 Shader::Shader(const std::string& name, const std::wstring& vspath, const std::wstring& psPath, const std::wstring& gsPath)

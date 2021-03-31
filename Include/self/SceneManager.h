@@ -1,12 +1,13 @@
 #pragma once
 
-#include <d3dUtil.h>
-#include <MathHelper.h>
-#include <UploadBuffer.h>
-#include <GeometryGenerator.h>
-#include <RenderItem.h>
-#include <FrameResource.h>
-#include <PipelineStateCreator.h>
+#include <dx12book\d3dUtil.h>
+#include <dx12book\MathHelper.h>
+#include <dx12book\UploadBuffer.h>
+#include <dx12book\GeometryGenerator.h>
+#include <dx12book\FrameResource.h>
+
+#include "RenderItem.h"
+#include "PipelineStateCreator.h"
 
 class SceneManager
 {
