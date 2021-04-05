@@ -25,15 +25,15 @@ public:
 	virtual LRESULT CALLBACK MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
-	virtual void Update(GameTimer& gt) = 0;
-	virtual void Draw(GameTimer& gt) = 0;
+	virtual void Update(const GameTimer& gt) = 0;
+	virtual void Draw(const GameTimer& gt) = 0;
 	virtual void OnResize();
 
 	void CalculateFrameStates();
 
-	virtual void OnMouseDown(WPARAM btnState, int x, int y) { };
-	virtual void OnMouseUp(WPARAM btnState, int x, int y) { };
-	virtual void OnMouseMove(WPARAM btnState, int x, int y) { };
+	virtual void OnMouseDown(WPARAM btnState, int x, int y) = 0;
+	virtual void OnMouseUp(WPARAM btnState, int x, int y) = 0;
+	virtual void OnMouseMove(WPARAM btnState, int x, int y)  = 0;
 
 
 public:

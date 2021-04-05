@@ -29,6 +29,7 @@ typedef struct WinDesc
 		ClientHeight = height;
 		WndProc = wndproc;
 	}
+	float AspectRadio() const { return static_cast<float> (ClientWidth) / ClientHeight; }
 } WinDesc;
 
 

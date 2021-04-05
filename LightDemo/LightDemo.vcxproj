@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>$(LIBRARY);$(LibraryPath)</LibraryPath>
-    <IncludePath>$(INCLUDE);$(IncludePath)</IncludePath>
+    <LibraryPath>$(DX12MASTERLIBRARY);$(LibraryPath)</LibraryPath>
+    <IncludePath>$(DX12MASTERINCLUDE);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -151,6 +151,7 @@
     <ClCompile Include="..\Include\dx12book\GameTimer.cpp" />
     <ClCompile Include="..\Include\dx12book\GeometryGenerator.cpp" />
     <ClCompile Include="..\Include\dx12book\MathHelper.cpp" />
+    <ClCompile Include="..\Include\self\Dx12Context.cpp" />
     <ClCompile Include="..\Include\self\DxApp.cpp" />
     <ClCompile Include="..\Include\self\PipelineStateCreator.cpp" />
     <ClCompile Include="..\Include\self\SceneManager.cpp" />

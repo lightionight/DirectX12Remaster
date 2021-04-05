@@ -43,7 +43,7 @@ public:
 		const UINT vbByteSize,
 		const UINT ibByteSize,
 		const std::vector<Vertex>& vertices,
-		const std::vector<std::uint16_t>& indices);
+		const std::vector<std::uint32_t>& indices);
 	void AddGeo(
 		ComPtr<ID3D12Device> d3ddeivce,
 		ComPtr<ID3D12GraphicsCommandList> commandList,
@@ -53,21 +53,36 @@ public:
 		const UINT ibByteSize,
 		//const std::vector<Vertex>& vertices,
 		const std::vector<std::uint16_t>& indices);
+
+	// this function is using add big mesh data but not add draw mesh
+	template <typename T>
+	void AddGeo(ComPtr<ID3D12Device> device, ComPtr<ID3D12GraphicsCommandList> commandlist,
+		const std::string& meshName, const UINT vbByteSize, const UINT ibByteSzie,
+		const std::vector<Vertex>& vertices, const std::vector<T>& indices);
+
+	void AddDraw(const std::string& GeometryName, const std::string& DrawName, const SubmeshGeometry& drawMesh);
+
 	void AddToRenderLayer(RenderLayer renderlayer, RenderItem* additem);
 	void AddToSceneitems(std::unique_ptr<RenderItem>* additem);
 	// Render Item  using for render layer
 	std::vector<RenderItem*> RenderLayerItem(RenderLayer renderlayer);
 	std::vector<std::unique_ptr<RenderItem>>* AllRenderItem();
-	void AddMat(std::unique_ptr<Material>* newMaterial);
+	void AddMat(const std::string& name, const int cbIndex, const int diffHeapIndex, const XMFLOAT4& diffuse, const XMFLOAT3& fresnel, const float roughness);
+	std::vector<Material*>* AllMaterials();
+	
 public: // Parameter
 	MeshGeometry* GetGeoPointer(const std::string& geoName);
+	Material* GetMatPointer(const std::string& matName);
 	
 	
 private:
 	std::unordered_map<std::string, std::unique_ptr<Shader>> mShaders; // Shader Files
-	std::vector<std::unique_ptr<Material>> mMats;    // Include Materials
+	std::vector<std::unique_ptr<Material>> mAllMats;    // Include Materials
 	std::unique_ptr<PipelineStateCreator> mPSOs;
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeos;
+	std::unordered_map<std::string, std::unique_ptr<Material>> mMats;
+
+	std::vector<Material*> mAllMaterial;
 	std::vector<std::unique_ptr<RenderItem>> mSceneItems;
 	std::vector<RenderItem*> mRenderLayer[(UINT)RenderLayer::Count];
 	RenderLayer mDefaultRenderLayter = RenderLayer::Opaque;

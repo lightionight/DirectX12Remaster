@@ -201,3 +201,5 @@ LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return DXApp::GetLightApp()->MsgProc(hwnd, uMsg, wParam, lParam);
 }
+
+

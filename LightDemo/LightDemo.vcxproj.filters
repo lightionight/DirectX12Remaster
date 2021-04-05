@@ -53,6 +53,9 @@
     <ClCompile Include="lightapp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Include\self\Dx12Context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Include\self\Dx12Context.h">
