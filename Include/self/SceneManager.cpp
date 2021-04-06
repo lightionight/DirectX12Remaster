@@ -38,7 +38,7 @@ ID3D12PipelineState* SceneManager::UsePSO(const std::string& name)
 	return mPSOs->SwiftPSO(name);
 }
 
-void SceneManager::AddPso(const std::wstring& name, ComPtr<ID3D12Device> currentD3dDevice,
+void SceneManager::AddPso(const std::string& name, ComPtr<ID3D12Device> currentD3dDevice,
 	ComPtr<ID3D12RootSignature> currentRootSignature, const std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,
 	Shader* shader, DXGI_FORMAT backbufferFormat, DXGI_FORMAT depthStencilbufferFormat,
 	bool m4xMsaa, UINT m4xMsaaQuality)

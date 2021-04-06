@@ -26,7 +26,7 @@ public:
 	ID3D12PipelineState* UsePSO(const std::string& name);
 	void CreatePSO(const std::string& name);
 
-	void AddPso(const std::wstring& name,
+	void AddPso(const std::string& name,
 	    ComPtr<ID3D12Device> currentD3dDevice,
 		ComPtr<ID3D12RootSignature> currentRootSignature,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,

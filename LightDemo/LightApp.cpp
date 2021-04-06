@@ -177,7 +177,7 @@ void LightApp::BuildSkullGeometry()
 
 void LightApp::BuildPSO()
 {
-	mSceneManager->AddPso(L"Default", mDirectX->Device, mDxBind->RootSignnature, mInputLayout,
+	mSceneManager->AddPso("Default", mDirectX->Device, mDxBind->RootSignnature, mInputLayout,
 		mSceneManager->UseShader("Default"), mDXDesc->BackBufferFormat, mDXDesc->DepthStencilFormat, m4xMsaaState, m4xMsaaQuality);
 }
 
@@ -221,6 +221,10 @@ void LightApp::BuildRenderItems()
 	skullRitem->ObjIndex = 2;
 	skullRitem->Geo = mSceneManager->GetGeoPointer("SkullGeo");
 	skullRitem->Mat = mSceneManager->GetMatPointer("SkullMat");
+	skullRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["Skull"].IndexCount;
+	skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["Skull"].BaseVertexLocation;
+	skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["Skull"].StartIndexLocation;
 	mSceneManager->AddToSceneitems(&skullRitem);
 
 	XMMATRIX brickTexTransform = XMMatrixScaling(1.0f, 1.0f, 1.0f);
@@ -328,7 +332,7 @@ void LightApp::PerPassDrawItems()
 
 void LightApp::Draw(const GameTimer& gt)
 {
-	mDirectX->PrepareRender(mSceneManager->UsePSO("Default"));
+	mDirectX->PrepareRender(mSceneManager->UsePSO("Default"), mCurrentFrameResource->CmdListAlloc);
 
 	mDirectX->CommandList->SetGraphicsRootSignature(mDxBind->RootSignnature.Get());
 

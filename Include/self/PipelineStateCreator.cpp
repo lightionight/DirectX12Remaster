@@ -38,13 +38,13 @@ void PipelineStateCreator::BuildRegularPipelineState(
     regularPsoDesc.SampleDesc.Count = m4xMsaa ? 4 : 1;
     regularPsoDesc.SampleDesc.Quality = m4xMsaa ? (m4xMsaaQuality - 1) : 0;
     regularPsoDesc.DSVFormat = depthStencilBufferFormat;
-    regularPsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+    regularPsoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
     // now Using d3ddevice to Create pipeline state object
     currentD3dDevice->CreateGraphicsPipelineState(&regularPsoDesc, IID_PPV_ARGS(&PSOLibrary["Default"]));
 }
 
 void PipelineStateCreator::CreatePipelineState(
-    const std::wstring& name,
+    const std::string& name,
     ComPtr<ID3D12Device> currentd3dDevice,
     ComPtr<ID3D12RootSignature> currentRootSignature,
     const std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,
@@ -54,7 +54,7 @@ void PipelineStateCreator::CreatePipelineState(
     bool m4xMsaa,
     UINT m4xMsaaQuality)
 {
-    if (name != L"Default")
+    if (name != "Default")
     {
         CreatePipelineState(name,
             currentd3dDevice,
@@ -81,7 +81,7 @@ void PipelineStateCreator::CreatePipelineState(
 
 ID3D12PipelineState* PipelineStateCreator::SwiftPSO(const std::string& name)
 {
-    if (PSOLibrary[name] != nullptr)
+    if (PSOLibrary[name])
     {
         mCurrentPso = PSOLibrary[name];
     }

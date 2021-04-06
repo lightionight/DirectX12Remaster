@@ -34,6 +34,7 @@
     <ClCompile Include="..\Include\self\PipelineStateCreator.cpp" />
     <ClCompile Include="..\Include\self\SceneManager.cpp" />
     <ClCompile Include="..\Include\self\Shader.cpp" />
+    <ClCompile Include="..\Include\self\Win32Context.cpp" />
     <ClCompile Include="LightApp.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>

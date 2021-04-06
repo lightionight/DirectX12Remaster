@@ -104,7 +104,7 @@ public:
 	void ResizeWindow(const DxDesc* , int , int);
 	void EnableShaderBasedValidation();
 
-	void PrepareRender(ID3D12PipelineState*);
+	void PrepareRender(ID3D12PipelineState*, ComPtr<ID3D12CommandAllocator>);
 	void AfterRender(FrameResource*);
 };
 

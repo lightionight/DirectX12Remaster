@@ -29,7 +29,7 @@ private:
     //ID3D12PipelineLibrary* mPSOLibrary = nullptr;
 public:
     void CreatePipelineState(
-             const std::wstring& name,
+             const std::string& name,
              ComPtr<ID3D12Device> currentd3dDevice,
              ComPtr<ID3D12RootSignature> currentRootSignature,
              const std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,

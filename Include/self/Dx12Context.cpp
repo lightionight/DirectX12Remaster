@@ -156,31 +156,32 @@ void DxData::ResizeWindow(const DxDesc* desc, int clientWidth, int clientHeight)
 
 	FlushCommandQueue();
 
-	CommandList->Reset(CommandListAlloc.Get(), nullptr);
+	ThrowIfFailed(CommandList->Reset(CommandListAlloc.Get(), nullptr));
 
 	for (int i = 0; i < SwapChainBufferCount; ++i)
 	{
 		SwapChainBuffer[i].Reset();
 	}
+
 	DepthStencilBuffer.Reset();
 
-	SwapChain->ResizeBuffers(
+	ThrowIfFailed(SwapChain->ResizeBuffers(
 		SwapChainBufferCount,
 		clientWidth,
 		clientHeight,
 		desc->BackBufferFormat,
-		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+		DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
 
 	CurrentBackBufferIndex = 0;
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHeapHandle(RtvHeap->GetCPUDescriptorHandleForHeapStart());
 
-	for (UINT i = 0; i < SwapChainBufferCount; ++i)
+	for (UINT i = 0; i < SwapChainBufferCount; i++)
 	{
 		SwapChain->GetBuffer(i, IID_PPV_ARGS(&SwapChainBuffer[i]));
 		Device->CreateRenderTargetView(SwapChainBuffer[i].Get(), nullptr, rtvHeapHandle);
+		rtvHeapHandle.Offset(1, RtvDescriptorSize);
 	}
-
 
 	Device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
@@ -196,6 +197,7 @@ void DxData::ResizeWindow(const DxDesc* desc, int clientWidth, int clientHeight)
 
 	CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(DepthStencilBuffer.Get(),
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
+
 	CommandList->Close();
 	ID3D12CommandList* cmdList[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
@@ -212,18 +214,17 @@ void DxData::ResizeWindow(const DxDesc* desc, int clientWidth, int clientHeight)
 	ScissorRect = { 0 , 0, (long)ScreenViewPort.Width, (long)ScreenViewPort.Height };
 }
 
-void DxData::PrepareRender(ID3D12PipelineState* pso)
+void DxData::PrepareRender(ID3D12PipelineState* pso , ComPtr<ID3D12CommandAllocator> cmdListAlloc)
 {
-	CommandListAlloc->Reset();
-	CommandList->Reset(CommandListAlloc.Get(), pso);
+	ThrowIfFailed(cmdListAlloc->Reset());
+
+	ThrowIfFailed(CommandList->Reset(cmdListAlloc.Get(), pso));
 
 	CommandList->RSSetScissorRects(1, &ScissorRect);
 	CommandList->RSSetViewports(1, &ScreenViewPort);
 
 	CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-			D3D12_RESOURCE_STATE_PRESENT,
-			D3D12_RESOURCE_STATE_RENDER_TARGET));
-
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 	CommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::LightSteelBlue, 0, nullptr);
 	CommandList->ClearDepthStencilView(DepthStecilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 	CommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStecilView());
@@ -232,11 +233,9 @@ void DxData::PrepareRender(ID3D12PipelineState* pso)
 void DxData::AfterRender(FrameResource* framesource)
 {
 	CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET,
-		D3D12_RESOURCE_STATE_PRESENT)
-	);
-	ThrowIfFailed(CommandList->Close());
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
+	ThrowIfFailed(CommandList->Close());
 	ID3D12CommandList* cmdlist[] = { CommandList.Get() };
 	CommandQueue->ExecuteCommandLists(_countof(cmdlist), cmdlist);
 
@@ -252,7 +251,6 @@ void DxData::EnableShaderBasedValidation()
 {
 	
 }
-
 
 void DxBind::Initialize(const DxData* dxData)
 {

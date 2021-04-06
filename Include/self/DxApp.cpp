@@ -66,7 +66,6 @@ int DXApp::Run()
 				CalculateFrameStates();
 				// Handle Input
 				InputDetect();
-
 				// Update Scene
 				Update(mTimer);
 				Draw(mTimer);

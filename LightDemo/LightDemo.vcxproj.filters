@@ -25,40 +25,43 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\self\Shader.cpp">
-      <Filter>Source Files\include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Include\self\SceneManager.cpp">
-      <Filter>Source Files\include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Include\self\PipelineStateCreator.cpp">
+    <ClCompile Include="..\Include\self\Dx12Context.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\self\DxApp.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\self\Dx12Context.cpp">
+    <ClCompile Include="..\Include\self\PipelineStateCreator.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\dx12book\MathHelper.cpp">
+    <ClCompile Include="..\Include\self\SceneManager.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\dx12book\GeometryGenerator.cpp">
+    <ClCompile Include="..\Include\self\Shader.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\dx12book\GameTimer.cpp">
-      <Filter>Source Files\include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Include\dx12book\FrameResource.cpp">
-      <Filter>Source Files\include</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Include\dx12book\DDSTextureLoader.cpp">
+    <ClCompile Include="..\Include\dx12book\Camera.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
     <ClCompile Include="..\Include\dx12book\d3dUtil.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
-    <ClCompile Include="..\Include\dx12book\Camera.cpp">
+    <ClCompile Include="..\Include\dx12book\DDSTextureLoader.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\dx12book\FrameResource.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\dx12book\GameTimer.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\dx12book\GeometryGenerator.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\dx12book\MathHelper.cpp">
+      <Filter>Source Files\include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Include\self\Win32Context.cpp">
       <Filter>Source Files\include</Filter>
     </ClCompile>
   </ItemGroup>
