@@ -18,6 +18,25 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LightApp.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Include\dx12book\Camera.cpp" />
+    <ClCompile Include="..\Include\dx12book\d3dUtil.cpp" />
+    <ClCompile Include="..\Include\dx12book\DDSTextureLoader.cpp" />
+    <ClCompile Include="..\Include\dx12book\FrameResource.cpp" />
+    <ClCompile Include="..\Include\dx12book\GameTimer.cpp" />
+    <ClCompile Include="..\Include\dx12book\GeometryGenerator.cpp" />
+    <ClCompile Include="..\Include\dx12book\MathHelper.cpp" />
+    <ClCompile Include="..\Include\self\Dx12Context.cpp" />
+    <ClCompile Include="..\Include\self\DxApp.cpp" />
+    <ClCompile Include="..\Include\self\PipelineStateCreator.cpp" />
+    <ClCompile Include="..\Include\self\SceneManager.cpp" />
+    <ClCompile Include="..\Include\self\Shader.cpp" />
+    <ClCompile Include="LightApp.cpp" />
+    <ClCompile Include="Program.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -142,45 +161,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Include\dx12book\Camera.cpp" />
-    <ClCompile Include="..\Include\dx12book\d3dApp.cpp" />
-    <ClCompile Include="..\Include\dx12book\d3dUtil.cpp" />
-    <ClCompile Include="..\Include\dx12book\DDSTextureLoader.cpp" />
-    <ClCompile Include="..\Include\dx12book\FrameResource.cpp" />
-    <ClCompile Include="..\Include\dx12book\GameTimer.cpp" />
-    <ClCompile Include="..\Include\dx12book\GeometryGenerator.cpp" />
-    <ClCompile Include="..\Include\dx12book\MathHelper.cpp" />
-    <ClCompile Include="..\Include\self\Dx12Context.cpp" />
-    <ClCompile Include="..\Include\self\DxApp.cpp" />
-    <ClCompile Include="..\Include\self\PipelineStateCreator.cpp" />
-    <ClCompile Include="..\Include\self\SceneManager.cpp" />
-    <ClCompile Include="..\Include\self\Shader.cpp" />
-    <ClCompile Include="lightapp.cpp" />
-    <ClCompile Include="Program.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Include\dx12book\Camera.h" />
-    <ClInclude Include="..\Include\dx12book\d3dApp.h" />
-    <ClInclude Include="..\Include\dx12book\d3dUtil.h" />
-    <ClInclude Include="..\Include\dx12book\DDSTextureLoader.h" />
-    <ClInclude Include="..\Include\dx12book\DXSampleHelper.h" />
-    <ClInclude Include="..\Include\dx12book\FrameResource.h" />
-    <ClInclude Include="..\Include\dx12book\GameTimer.h" />
-    <ClInclude Include="..\Include\dx12book\GeometryGenerator.h" />
-    <ClInclude Include="..\Include\dx12book\MathHelper.h" />
-    <ClInclude Include="..\Include\dx12book\UploadBuffer.h" />
-    <ClInclude Include="..\Include\self\Dx12Context.h" />
-    <ClInclude Include="..\Include\self\DxApp.h" />
-    <ClInclude Include="..\Include\self\Inputhandle.h" />
-    <ClInclude Include="..\Include\self\PipelineStateCreator.h" />
-    <ClInclude Include="..\Include\self\RenderItem.h" />
-    <ClInclude Include="..\Include\self\SceneManager.h" />
-    <ClInclude Include="..\Include\self\SelfConfig.h" />
-    <ClInclude Include="..\Include\self\Shader.h" />
-    <ClInclude Include="..\Include\self\Win32Context.h" />
-    <ClInclude Include="lightApp.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

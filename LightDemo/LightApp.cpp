@@ -21,6 +21,11 @@ void LightApp::Initialize()
 
 	BuildShaderAndInputLayout();
 	BuildGeo();
+	BuildSkullGeometry();
+	BuildPSO();
+	BuildMaterials();
+	BuildRenderItems();
+	BuildFrameResources();
 }
 
 void LightApp::BuildShaderAndInputLayout()
@@ -31,7 +36,7 @@ void LightApp::BuildShaderAndInputLayout()
 		NULL, NULL
 	};
 
-	mSceneManager->AddShader("Standard", L"Shaders\\Default.hlsl", L"Shader\\Default.hlsl");
+	mSceneManager->AddShader("Default", L"Shaders\\Default.hlsl", L"Shaders\\Default.hlsl");
 
 	mInputLayout = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
@@ -104,8 +109,8 @@ void LightApp::BuildGeo()
 	}
 	for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
 	{
-		vertices[k].Pos = sphere.Vertices[i].Position;
-		vertices[k].Normal = sphere.Vertices[i].Normal;
+		vertices[k].Pos = cylinder.Vertices[i].Position;
+		vertices[k].Normal = cylinder.Vertices[i].Normal;
 	}
 
 	std::vector<std::uint16_t> indices;
@@ -176,15 +181,6 @@ void LightApp::BuildPSO()
 		mSceneManager->UseShader("Default"), mDXDesc->BackBufferFormat, mDXDesc->DepthStencilFormat, m4xMsaaState, m4xMsaaQuality);
 }
 
-void LightApp::BuildFrameResources()
-{
-	for (int i = 0; i < gNumFrameResources; ++i)
-	{
-		mFrameResources.push_back(std::make_unique<FrameResource>(mDirectX->Device.Get(),
-			1, (UINT)mSceneManager->AllRenderItem()->size(), (UINT)mSceneManager->AllMaterials()));
-	}
-}
-
 void LightApp::BuildMaterials()
 {
 	mSceneManager->AddMat("bricks0", 0, 0, XMFLOAT4(Colors::ForestGreen), XMFLOAT3(0.05f, 0.05f, 0.05f), 0.1f);
@@ -211,7 +207,7 @@ void LightApp::BuildRenderItems()
 	gridRitem->World = MathHelper::Identity4x4();
 	XMStoreFloat4x4(&gridRitem->TexTransform, XMMatrixScaling(8.0f, 8.0f, 1.0f));
 	gridRitem->ObjIndex = 1;
-	gridRitem->Mat = mSceneManager->GetMatPointer("tile0");
+	gridRitem->Mat = mSceneManager->GetMatPointer("tiles0");
 	gridRitem->Geo = mSceneManager->GetGeoPointer("Scene");
 	gridRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
@@ -225,6 +221,7 @@ void LightApp::BuildRenderItems()
 	skullRitem->ObjIndex = 2;
 	skullRitem->Geo = mSceneManager->GetGeoPointer("SkullGeo");
 	skullRitem->Mat = mSceneManager->GetMatPointer("SkullMat");
+	mSceneManager->AddToSceneitems(&skullRitem);
 
 	XMMATRIX brickTexTransform = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	UINT objCBindex = 3;
@@ -244,7 +241,7 @@ void LightApp::BuildRenderItems()
 		XMStoreFloat4x4(&leftCylRitem->World, leftCyWorld);
 		XMStoreFloat4x4(&leftCylRitem->TexTransform, brickTexTransform);
 		leftCylRitem->ObjIndex = objCBindex++;
-		leftCylRitem->Mat = mSceneManager->GetMatPointer("brick0");
+		leftCylRitem->Mat = mSceneManager->GetMatPointer("bricks0");
 		leftCylRitem->Geo = mSceneManager->GetGeoPointer("Scene");
 		leftCylRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		leftCylRitem->IndexCount = leftCylRitem->Geo->DrawArgs["cylinder"].IndexCount;
@@ -254,7 +251,7 @@ void LightApp::BuildRenderItems()
 		XMStoreFloat4x4(&rightCylRitem->World, rightCyWorld);
 		rightCylRitem->TexTransform = MathHelper::Identity4x4();
 		rightCylRitem->ObjIndex = objCBindex++;
-		rightCylRitem->Mat = mSceneManager->GetMatPointer("brick0");
+		rightCylRitem->Mat = mSceneManager->GetMatPointer("bricks0");
 		rightCylRitem->Geo = mSceneManager->GetGeoPointer("Scene");
 		rightCylRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		rightCylRitem->IndexCount = rightCylRitem->Geo->DrawArgs["cylinder"].IndexCount;
@@ -264,7 +261,7 @@ void LightApp::BuildRenderItems()
 		XMStoreFloat4x4(&leftSphereRitem->World, leftSphereWorld);
 		leftSphereRitem->TexTransform = MathHelper::Identity4x4();
 		leftSphereRitem->ObjIndex = objCBindex++;
-		leftSphereRitem->Mat = mSceneManager->GetMatPointer("stone0");
+		leftSphereRitem->Mat = mSceneManager->GetMatPointer("Stone0");
 		leftSphereRitem->Geo = mSceneManager->GetGeoPointer("Scene");
 		leftSphereRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		leftSphereRitem->IndexCount = leftSphereRitem->Geo->DrawArgs["sphere"].IndexCount;
@@ -275,7 +272,7 @@ void LightApp::BuildRenderItems()
 		XMStoreFloat4x4(&rightSphereRitem->World, rightSphereWorld);
 		rightSphereRitem->TexTransform = MathHelper::Identity4x4();
 		rightSphereRitem->ObjIndex = objCBindex++;
-		rightSphereRitem->Mat = mSceneManager->GetMatPointer("stone0");
+		rightSphereRitem->Mat = mSceneManager->GetMatPointer("Stone0");
 		rightSphereRitem->Geo = mSceneManager->GetGeoPointer("Scene");
 		rightSphereRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		rightSphereRitem->IndexCount = rightSphereRitem->Geo->DrawArgs["sphere"].IndexCount;
@@ -291,6 +288,15 @@ void LightApp::BuildRenderItems()
 	for (auto& e : *mSceneManager->AllRenderItem())
 	{
 		mSceneManager->AddToRenderLayer(RenderLayer::Opaque, e.get());
+	}
+}
+
+void LightApp::BuildFrameResources()
+{
+	for (int i = 0; i < gNumFrameResources; ++i)
+	{
+		mFrameResources.push_back(std::make_unique<FrameResource>(mDirectX->Device.Get(),
+			1, (UINT)mSceneManager->AllRenderItem()->size(), (UINT)mSceneManager->MaterialCount()));
 	}
 }
 
@@ -311,7 +317,7 @@ void LightApp::PerPassDrawItems()
 		mDirectX->CommandList->IASetPrimitiveTopology(ri->Topology);
 
 		D3D12_GPU_VIRTUAL_ADDRESS objCbAddress = objectCB->GetGPUVirtualAddress() + ri->ObjIndex * objCBByteSize;
-		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->ObjIndex * matCBByteSize;
+		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
 
 		mDirectX->CommandList->SetGraphicsRootConstantBufferView(0, objCbAddress);
 		mDirectX->CommandList->SetGraphicsRootConstantBufferView(1, matCBAddress);
@@ -326,11 +332,11 @@ void LightApp::Draw(const GameTimer& gt)
 
 	mDirectX->CommandList->SetGraphicsRootSignature(mDxBind->RootSignnature.Get());
 
-	auto passCB = mCurrentFrameResource->PassCB->Resource();
-	mDirectX->CommandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());
-
+	mDirectX->CommandList->SetGraphicsRootConstantBufferView(2, mCurrentFrameResource->PassCB->Resource()->GetGPUVirtualAddress());
+	
 	PerPassDrawItems();
-	mDirectX->AfterRender(mCurrentFrameResource->Fence);
+
+	mDirectX->AfterRender(mCurrentFrameResource);
 }
 
 void LightApp::Update(const GameTimer& gt)
@@ -401,8 +407,9 @@ void LightApp::UpdateMaterialCBs(const GameTimer& gt)
 {
 	auto currentMaterialCB = mCurrentFrameResource->MaterialCB.get();
 
-	for (auto& e : *mSceneManager->AllMaterials())
+	for (auto& mats : *mSceneManager->GetAllMats())
 	{
+		Material* e = mats.second.get();
 		if (e->NumFramesDirty > 0)
 		{
 			XMMATRIX matTransform = XMLoadFloat4x4(&e->MatTransform);
@@ -464,3 +471,33 @@ void LightApp::OnResize()
 	XMStoreFloat4x4(&mProj, Proj);
 
 }
+
+void LightApp::OnRotate(int x, int y)
+{
+	float dx = XMConvertToRadians(0.25f * static_cast<float>(x - mMousePos.x));
+	float dy = XMConvertToRadians(0.25f * static_cast<float>(y - mMousePos.y));
+	
+	mTheta +=  dx;
+	mPhi += dy;
+
+	mPhi = MathHelper::Clamp(mPhi, 0.1f, MathHelper::Pi - 0.1f);
+
+}
+
+void LightApp::OnScale(int x, int y)
+{
+	float dx = 0.05f * static_cast<float>(x - mMousePos.x);
+	float dy = 0.05f * static_cast<float>(y - mMousePos.y);
+
+	mRadius += dx - dy;
+
+	mRadius = MathHelper::Clamp(mRadius, 5.0f, 150.0f);
+}
+
+void LightApp::OnMouseMove(int x, int y)
+{
+	mMousePos.x = x;
+	mMousePos.y = y;
+}
+
+

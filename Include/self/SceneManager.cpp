@@ -210,9 +210,13 @@ std::vector<std::unique_ptr<RenderItem>>* SceneManager::AllRenderItem()
 	return &mSceneItems;
 }
 
-std::vector<Material*>* SceneManager::AllMaterials()
+size_t SceneManager::MaterialCount()
 {
-	return &mAllMaterial;
+	return mMats.size();
+}
+std::unordered_map<std::string, std::unique_ptr<Material>>* SceneManager::GetAllMats()
+{
+	return &mMats;
 }
 
 void SceneManager::AddMat(const std::string& name, const int cbIndex, const int diffHeapIndex, const XMFLOAT4& diffuse, const XMFLOAT3& fresnel, const float roughness)
@@ -226,12 +230,10 @@ void SceneManager::AddMat(const std::string& name, const int cbIndex, const int 
 	mat->Roughness = roughness;
 
 	mMats[name] = std::move(mat);
-
-	mAllMaterial.push_back(mMats[name].get());
-
 }
 
 Material* SceneManager::GetMatPointer(const std::string& matName)
 {
 	return mMats[matName].get();
+
 }

@@ -68,11 +68,13 @@ public:
 	std::vector<RenderItem*> RenderLayerItem(RenderLayer renderlayer);
 	std::vector<std::unique_ptr<RenderItem>>* AllRenderItem();
 	void AddMat(const std::string& name, const int cbIndex, const int diffHeapIndex, const XMFLOAT4& diffuse, const XMFLOAT3& fresnel, const float roughness);
-	std::vector<Material*>* AllMaterials();
 	
 public: // Parameter
 	MeshGeometry* GetGeoPointer(const std::string& geoName);
 	Material* GetMatPointer(const std::string& matName);
+	std::unordered_map<std::string, std::unique_ptr<Material>>* GetAllMats();
+	size_t MaterialCount();
+
 	
 	
 private:

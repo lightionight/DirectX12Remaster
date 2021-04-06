@@ -2,6 +2,11 @@
 #ifndef DX_APP_H
 #define DX_APP_H
 
+#if defined(DEBUG) || defined(_DEBUG)
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#endif
+
 #include "Dx12Context.h"
 #include "Win32Context.h"
 #include "Inputhandle.h"
@@ -30,10 +35,14 @@ protected:
 	virtual void OnResize();
 
 	void CalculateFrameStates();
+	void InputDetect();
 
-	virtual void OnMouseDown(WPARAM btnState, int x, int y) = 0;
-	virtual void OnMouseUp(WPARAM btnState, int x, int y) = 0;
-	virtual void OnMouseMove(WPARAM btnState, int x, int y)  = 0;
+	virtual void OnRotate(int x, int y) = 0;
+	virtual void OnScale(int x, int y) = 0;
+	//virtual void OnPaddle(int x, int y)  = 0;
+	virtual void OnMouseMove(int x, int y) = 0;
+
+
 
 
 public:
@@ -44,6 +53,7 @@ protected:
 	std::unique_ptr<DxData> mDirectX;
 	std::unique_ptr<DxDesc> mDXDesc;
 	std::unique_ptr<DxBind> mDxBind;
+	// not to handle input in virtual class left behind in sub class to deal with.
 	std::unique_ptr<InputHandle> mInputHandle;
 
 	bool m4xMsaaState = false;

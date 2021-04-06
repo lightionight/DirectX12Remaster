@@ -1,8 +1,7 @@
 #ifndef RENDER_ITEM_H
 #define RENDER_ITEM_H
 
-
-#include <dx12book\d3dApp.h>
+#include <dx12book\d3dUtil.h>
 #include <dx12book\MathHelper.h>
 #include <dx12book\UploadBuffer.h>
 

@@ -6,7 +6,6 @@
 #include <dx12book\FrameResource.h>
 
 
-
 class LightApp : public DXApp
 {
 public:
@@ -20,7 +19,9 @@ private:
 	virtual void Draw(const GameTimer& gt)override;
 	virtual void OnResize()override;
 
-	//virtual void OnMouseDown(WPARAM btnState, int x, int y)override;
+	virtual void OnRotate(int x, int y)override;
+	virtual void OnScale(int x, int y)override;
+	virtual void OnMouseMove(int x, int y)override;
 
 	void BuildShaderAndInputLayout();
 	void BuildGeo();

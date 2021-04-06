@@ -30,14 +30,19 @@ void DXApp::Initialize()
 	mDirectX     = std::make_unique<DxData>();
 	mInputHandle = std::make_unique<InputHandle>();
 	mWinDesc     = std::make_unique<WinDesc>();
-	mDxBind = std::make_unique<DxBind>();
+	mDxBind      = std::make_unique<DxBind>();
 
+	// Win32 Init
 	mWinDesc->Initialize(L"LightApp", L"LightDemo", 1280, 720, GlobalProc);
 	mWindow->Initialize(mWinDesc.get());
+	mInputHandle->Initialize(mWinDesc->ClientWidth, mWinDesc->ClientHeight, true);
+
+	// DirectX Init
 	m4xMsaaQuality =  mDirectX->CheckFeatureSupport(mDXDesc->BackBufferFormat);
 	mDXDesc->Initialize(mWinDesc.get(), mDirectX.get(), mWindow.get(), m4xMsaaState, m4xMsaaQuality);
 	mDirectX->Initialize(mDXDesc.get());
-	mInputHandle->Initialize(mWinDesc->ClientWidth, mWinDesc->ClientHeight, true);
+	mDxBind->Initialize(mDirectX.get());
+	OnResize();
 }
 
 int DXApp::Run()
@@ -60,10 +65,7 @@ int DXApp::Run()
 			{
 				CalculateFrameStates();
 				// Handle Input
-				if (mInputHandle->Map->GetBoolWasDown(Button::MOUSE_L || Button::MOUSE_R))
-				{
-					std::cout << "Mouse Button is Press" << std::endl;
-				}
+				InputDetect();
 
 				// Update Scene
 				Update(mTimer);
@@ -161,19 +163,6 @@ LRESULT DXApp::MsgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.x = 200;
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
-	case WM_LBUTTONDOWN:
-	case WM_MBUTTONDOWN:
-	case WM_RBUTTONDOWN:
-		OnMouseDown(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
-	case WM_LBUTTONUP:
-	case WM_MBUTTONUP:
-	case WM_RBUTTONUP:
-		OnMouseUp(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
-	case WM_MOUSEMOVE:
-		OnMouseMove(wParam, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-		return 0;
 	case WM_KEYUP:
 		if (wParam == VK_ESCAPE)
 		{
@@ -200,6 +189,32 @@ void DXApp::CalculateFrameStates()
 LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return DXApp::GetLightApp()->MsgProc(hwnd, uMsg, wParam, lParam);
+}
+
+void DXApp::InputDetect()
+{
+	// if button have press
+	if (mInputHandle->Map->GetBoolWasDown(MouseL | MouseR))
+	{
+		ReleaseCapture();
+	}
+	    
+	if(mInputHandle->Map->GetBool(MouseL))
+	{
+		OnMouseMove(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
+		SetCapture(mWindow->Hwnd);
+	    OnRotate(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
+	}
+	else if(mInputHandle->Map->GetBool(MouseR))
+	{
+		OnMouseMove(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
+		SetCapture(mWindow->Hwnd);
+	    OnScale(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
+	}
+	else
+	{
+		
+	}
 }
 
 

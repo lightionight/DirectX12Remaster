@@ -8,9 +8,10 @@
 
 enum Button
 {
-	MOUSE_L,
-	MOUSE_R,
-	MOUSE_MOVE
+	MouseL,
+	MouseR,
+	MouseX,
+	MouseY
 };
 enum MapType
 {
@@ -44,9 +45,10 @@ struct InputHandle
 private:
 	void BasicMap()
 	{
-		AddMap(MapType::B, MOUSE_L, MouseId, gainput::MouseButtonLeft);
-		AddMap(MapType::B, MOUSE_R, MouseId, gainput::MouseButtonRight);
-		//AddMap(MapType::FLOAT, MOUSE_MOVE, MouseID, gainput::MouseAxisCount)
+		AddMap(MapType::B, MouseL, MouseId, gainput::MouseButtonLeft);
+		AddMap(MapType::B, MouseR, MouseId, gainput::MouseButtonRight);
+		AddMap(MapType::F, MouseX, MouseId, gainput::MouseAxisX);
+		AddMap(MapType::F, MouseY, MouseId, gainput::MouseAxisY);
 	}
 };
 

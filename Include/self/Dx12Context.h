@@ -18,6 +18,9 @@
 #include <array>
 #include <unordered_map>
 #include <iostream>
+#include <d3d12sdklayers.h>
+
+#include <dx12book\FrameResource.h>
 
 
 //Self Include 
@@ -27,6 +30,7 @@
 // Library Include
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "d3d12.lib")
+#pragma comment(lib,"d3dcompiler.lib")
 
 using Microsoft::WRL::ComPtr;
 
@@ -77,24 +81,31 @@ public:
 #endif
 	DxData();
 	void Initialize(const DxDesc*);
+
 public:  // Parameter
-	ID3D12Resource* CurrentBackBuffer()const{ return SwapChainBuffer[CurrentBackBufferIndex].Get(); }
-	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const {
-		return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-			RtvHeap->GetCPUDescriptorHandleForHeapStart(),
-			CurrentBackBufferIndex,
-			RtvDescriptorSize);
+	ID3D12Resource* CurrentBackBuffer() const 
+	{ 
+		return SwapChainBuffer[CurrentBackBufferIndex].Get(); 
 	}
 
-	D3D12_CPU_DESCRIPTOR_HANDLE DepthStecilView() const {
+	D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const 
+	{
+		return CD3DX12_CPU_DESCRIPTOR_HANDLE(RtvHeap->GetCPUDescriptorHandleForHeapStart(), CurrentBackBufferIndex, RtvDescriptorSize);
+	}
+
+	D3D12_CPU_DESCRIPTOR_HANDLE DepthStecilView() const
+	{
 		return DsvHeap->GetCPUDescriptorHandleForHeapStart();
 	}
-	void PrepareRender(ID3D12PipelineState* pso);
-	void AfterRender(UINT64& currentFramesourceFence);
+
 public:
 	void FlushCommandQueue();
 	UINT CheckFeatureSupport(const DXGI_FORMAT&);
 	void ResizeWindow(const DxDesc* , int , int);
+	void EnableShaderBasedValidation();
+
+	void PrepareRender(ID3D12PipelineState*);
+	void AfterRender(FrameResource*);
 };
 
 struct DxDesc
