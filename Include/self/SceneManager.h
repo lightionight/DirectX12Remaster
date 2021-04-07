@@ -63,7 +63,7 @@ public:
 	void AddDraw(const std::string& GeometryName, const std::string& DrawName, const SubmeshGeometry& drawMesh);
 
 	void AddToRenderLayer(RenderLayer renderlayer, RenderItem* additem);
-	void AddToSceneitems(std::unique_ptr<RenderItem>* additem);
+	void AddToSceneitems(std::unique_ptr<RenderItem>& additem);
 	// Render Item  using for render layer
 	std::vector<RenderItem*> RenderLayerItem(RenderLayer renderlayer);
 	std::vector<std::unique_ptr<RenderItem>>* AllRenderItem();

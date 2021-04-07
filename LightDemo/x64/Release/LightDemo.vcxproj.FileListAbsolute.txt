@@ -1,1 +1,2 @@
 D:\SelfProject\DirectX12Remaster\LightDemo\x64\Release\LightDemo.exe
+D:\PROJECT\Github\DirectX12Remaster\LightDemo\x64\Release\LightDemo.exe

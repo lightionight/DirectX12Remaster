@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\SelfProject\DirectX12Remaster\LightDemo\x64\Release\LightDemo.exe</FullPath>
+      <FullPath>D:\PROJECT\Github\DirectX12Remaster\LightDemo\x64\Release\LightDemo.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

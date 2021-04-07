@@ -201,7 +201,7 @@ void LightApp::BuildRenderItems()
 	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
 	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
 	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
-	mSceneManager->AddToSceneitems(&boxRitem);
+	mSceneManager->AddToSceneitems(boxRitem);
 
 	auto gridRitem = std::make_unique<RenderItem>();
 	gridRitem->World = MathHelper::Identity4x4();
@@ -213,7 +213,7 @@ void LightApp::BuildRenderItems()
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
 	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
 	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
-	mSceneManager->AddToSceneitems(&gridRitem);
+	mSceneManager->AddToSceneitems(gridRitem);
 
 	auto skullRitem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&skullRitem->World, XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(0.0f, 1.0f, 0.0f));
@@ -225,7 +225,7 @@ void LightApp::BuildRenderItems()
 	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["Skull"].IndexCount;
 	skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["Skull"].BaseVertexLocation;
 	skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["Skull"].StartIndexLocation;
-	mSceneManager->AddToSceneitems(&skullRitem);
+	mSceneManager->AddToSceneitems(skullRitem);
 
 	XMMATRIX brickTexTransform = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	UINT objCBindex = 3;
@@ -283,10 +283,10 @@ void LightApp::BuildRenderItems()
 		rightSphereRitem->StartIndexLocation = rightSphereRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
 		rightSphereRitem->BaseVertexLocation = rightSphereRitem->Geo->DrawArgs["sphere"].BaseVertexLocation;
 
-		mSceneManager->AddToSceneitems(&leftCylRitem);
-		mSceneManager->AddToSceneitems(&rightCylRitem);
-		mSceneManager->AddToSceneitems(&leftSphereRitem);
-		mSceneManager->AddToSceneitems(&rightSphereRitem);
+		mSceneManager->AddToSceneitems(leftCylRitem);
+		mSceneManager->AddToSceneitems(rightCylRitem);
+		mSceneManager->AddToSceneitems(leftSphereRitem);
+		mSceneManager->AddToSceneitems(rightSphereRitem);
 	}
 
 	for (auto& e : *mSceneManager->AllRenderItem())
@@ -315,7 +315,7 @@ void LightApp::PerPassDrawItems()
 	for (size_t i = 0; i < mSceneManager->RenderLayerItem(RenderLayer::Opaque).size(); ++i)
 	{
 		auto ri = mSceneManager->RenderLayerItem(RenderLayer::Opaque)[i];
-		
+
 		mDirectX->CommandList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
 		mDirectX->CommandList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
 		mDirectX->CommandList->IASetPrimitiveTopology(ri->Topology);

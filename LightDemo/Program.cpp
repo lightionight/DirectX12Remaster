@@ -11,7 +11,6 @@ int main()
 	MoveWindow(GetConsoleWindow(), r.left, r.top, 800, 600, TRUE);
 	std::cout << "now Start Program" << std::endl;
 
-
 	LightApp theapp;
 	theapp.Initialize();
 	std::cout << "Done Initialize " << std::endl;

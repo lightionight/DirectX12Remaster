@@ -200,9 +200,9 @@ void SceneManager::AddToRenderLayer(RenderLayer renderlayer, RenderItem* additem
 	mRenderLayer[(int)renderlayer].push_back(additem);
 	//MessageBox(NULL, L"Add Render item", L"INFO", NULL);
 }
-void SceneManager::AddToSceneitems(std::unique_ptr<RenderItem>* additem)
+void SceneManager::AddToSceneitems(std::unique_ptr<RenderItem>& additem)
 {
-	mSceneItems.push_back(std::move(*additem));
+	mSceneItems.push_back(std::move(additem));
 }
 
 std::vector<RenderItem*> SceneManager::RenderLayerItem(RenderLayer renderlayer)
