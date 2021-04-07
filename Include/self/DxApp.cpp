@@ -77,6 +77,7 @@ int DXApp::Run()
 			}
 		}
 	}
+	
 	return (int)msg.wParam;
 }
 	
@@ -200,15 +201,15 @@ void DXApp::InputDetect()
 	    
 	if(mInputHandle->Map->GetBool(MouseL))
 	{
-		OnMouseMove(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
-		SetCapture(mWindow->Hwnd);
-	    OnRotate(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
+		OnMouseMove((int)mInputHandle->Map->GetFloat(MouseX), (int)mInputHandle->Map->GetFloat(MouseY));
+		//SetCapture(mWindow->Hwnd);
+	    OnRotate((int)mInputHandle->Map->GetFloat(MouseX), (int)mInputHandle->Map->GetFloat(MouseY));
 	}
 	else if(mInputHandle->Map->GetBool(MouseR))
 	{
-		OnMouseMove(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
-		SetCapture(mWindow->Hwnd);
-	    OnScale(mInputHandle->Map->GetFloat(MouseX), mInputHandle->Map->GetFloat(MouseY));
+		OnMouseMove((int)mInputHandle->Map->GetFloat(MouseX), (int)mInputHandle->Map->GetFloat(MouseY));
+		//SetCapture(mWindow->Hwnd);
+	    OnScale((int)mInputHandle->Map->GetFloat(MouseX), (int)mInputHandle->Map->GetFloat(MouseY));
 	}
 	else
 	{

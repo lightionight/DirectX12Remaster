@@ -8,7 +8,7 @@
 #include <windowsx.h>
 #include <iostream>
 
-typedef struct WinDesc
+struct WinDesc
 {
 	bool Paused = false;
 	bool Minimized = false;
@@ -22,15 +22,20 @@ typedef struct WinDesc
 	WNDPROC WndProc = nullptr;
 
 	void Initialize(const LPCWSTR className, const  LPCWSTR windowName, int width, int height, WNDPROC wndproc);
-	float AspectRadio() const { return static_cast<float> (ClientWidth) / ClientHeight; }
-} WinDesc;
+
+	//Parameter
+	float AspectRadio() const
+	{ 
+		return static_cast<float> (ClientWidth) / ClientHeight;
+	}
+};
 
 
-typedef struct WindowData
+struct WindowData
 {
 	HINSTANCE Hinstance;
 	HWND Hwnd = nullptr;
 
 	WindowData();
 	void Initialize(const WinDesc* desc);
-} WindowData;
+};

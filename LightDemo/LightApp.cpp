@@ -159,10 +159,10 @@ void LightApp::BuildSkullGeometry()
 	fin >> ignore;
 	fin >> ignore;
 
-	std::vector<std::uint32_t> indices(3 * tCount);
+	std::vector<std::uint32_t> indices((3 * tCount));
 	for (UINT i = 0; i < tCount; ++i)
 	{
-		fin >> indices[i * 3 + 0] >> indices[i * 3 + 1] >> indices[i * 3 + 2];
+		fin >> indices[(i * 3) + 0] >> indices[(i * 3) + 1] >> indices[(i * 3) + 2];
 	}
 
 	fin.close();
@@ -197,7 +197,7 @@ void LightApp::BuildRenderItems()
 	boxRitem->ObjIndex = 0;
 	boxRitem->Mat = mSceneManager->GetMatPointer("Stone0");
 	boxRitem->Geo = mSceneManager->GetGeoPointer("Scene");
-	boxRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	boxRitem->Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
 	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
 	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
@@ -209,7 +209,7 @@ void LightApp::BuildRenderItems()
 	gridRitem->ObjIndex = 1;
 	gridRitem->Mat = mSceneManager->GetMatPointer("tiles0");
 	gridRitem->Geo = mSceneManager->GetGeoPointer("Scene");
-	gridRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	gridRitem->Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
 	gridRitem->StartIndexLocation = gridRitem->Geo->DrawArgs["grid"].StartIndexLocation;
 	gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
@@ -221,7 +221,7 @@ void LightApp::BuildRenderItems()
 	skullRitem->ObjIndex = 2;
 	skullRitem->Geo = mSceneManager->GetGeoPointer("SkullGeo");
 	skullRitem->Mat = mSceneManager->GetMatPointer("SkullMat");
-	skullRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	skullRitem->Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	skullRitem->IndexCount = skullRitem->Geo->DrawArgs["Skull"].IndexCount;
 	skullRitem->BaseVertexLocation = skullRitem->Geo->DrawArgs["Skull"].BaseVertexLocation;
 	skullRitem->StartIndexLocation = skullRitem->Geo->DrawArgs["Skull"].StartIndexLocation;
@@ -247,7 +247,7 @@ void LightApp::BuildRenderItems()
 		leftCylRitem->ObjIndex = objCBindex++;
 		leftCylRitem->Mat = mSceneManager->GetMatPointer("bricks0");
 		leftCylRitem->Geo = mSceneManager->GetGeoPointer("Scene");
-		leftCylRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		leftCylRitem->Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		leftCylRitem->IndexCount = leftCylRitem->Geo->DrawArgs["cylinder"].IndexCount;
 		leftCylRitem->BaseVertexLocation = leftCylRitem->Geo->DrawArgs["cylinder"].BaseVertexLocation;
 		leftCylRitem->StartIndexLocation = leftCylRitem->Geo->DrawArgs["cylinder"].StartIndexLocation;
@@ -257,7 +257,7 @@ void LightApp::BuildRenderItems()
 		rightCylRitem->ObjIndex = objCBindex++;
 		rightCylRitem->Mat = mSceneManager->GetMatPointer("bricks0");
 		rightCylRitem->Geo = mSceneManager->GetGeoPointer("Scene");
-		rightCylRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		rightCylRitem->Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		rightCylRitem->IndexCount = rightCylRitem->Geo->DrawArgs["cylinder"].IndexCount;
 		rightCylRitem->StartIndexLocation = rightCylRitem->Geo->DrawArgs["cylinder"].StartIndexLocation;
 		rightCylRitem->BaseVertexLocation = rightCylRitem->Geo->DrawArgs["cylinder"].BaseVertexLocation;
@@ -267,7 +267,7 @@ void LightApp::BuildRenderItems()
 		leftSphereRitem->ObjIndex = objCBindex++;
 		leftSphereRitem->Mat = mSceneManager->GetMatPointer("Stone0");
 		leftSphereRitem->Geo = mSceneManager->GetGeoPointer("Scene");
-		leftSphereRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		leftSphereRitem->Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		leftSphereRitem->IndexCount = leftSphereRitem->Geo->DrawArgs["sphere"].IndexCount;
 		leftSphereRitem->StartIndexLocation = leftSphereRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
 		leftSphereRitem->BaseVertexLocation = leftSphereRitem->Geo->DrawArgs["sphere"].BaseVertexLocation;
@@ -278,7 +278,7 @@ void LightApp::BuildRenderItems()
 		rightSphereRitem->ObjIndex = objCBindex++;
 		rightSphereRitem->Mat = mSceneManager->GetMatPointer("Stone0");
 		rightSphereRitem->Geo = mSceneManager->GetGeoPointer("Scene");
-		rightSphereRitem->Topology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		rightSphereRitem->Topology = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		rightSphereRitem->IndexCount = rightSphereRitem->Geo->DrawArgs["sphere"].IndexCount;
 		rightSphereRitem->StartIndexLocation = rightSphereRitem->Geo->DrawArgs["sphere"].StartIndexLocation;
 		rightSphereRitem->BaseVertexLocation = rightSphereRitem->Geo->DrawArgs["sphere"].BaseVertexLocation;
@@ -321,8 +321,9 @@ void LightApp::PerPassDrawItems()
 		mDirectX->CommandList->IASetPrimitiveTopology(ri->Topology);
 
 		D3D12_GPU_VIRTUAL_ADDRESS objCbAddress = objectCB->GetGPUVirtualAddress() + ri->ObjIndex * objCBByteSize;
-		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
+		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + (UINT)ri->Mat->MatCBIndex * matCBByteSize;
 
+		// For Per Object Draw add root signature constant buffer [1] [2]
 		mDirectX->CommandList->SetGraphicsRootConstantBufferView(0, objCbAddress);
 		mDirectX->CommandList->SetGraphicsRootConstantBufferView(1, matCBAddress);
 
@@ -334,8 +335,9 @@ void LightApp::Draw(const GameTimer& gt)
 {
 	mDirectX->PrepareRender(mSceneManager->UsePSO("Default"), mCurrentFrameResource->CmdListAlloc);
 
+	// Set rootSignature and create 3 constant buffer
 	mDirectX->CommandList->SetGraphicsRootSignature(mDxBind->RootSignnature.Get());
-
+	// Add root signature constant buffer[3]
 	mDirectX->CommandList->SetGraphicsRootConstantBufferView(2, mCurrentFrameResource->PassCB->Resource()->GetGPUVirtualAddress());
 	
 	PerPassDrawItems();
@@ -347,7 +349,6 @@ void LightApp::Update(const GameTimer& gt)
 {
 	OnKeyBoradInput(gt);
 	UpdateCamera(gt);
-
 	mCurrentFrameResourceIndex = (mCurrentFrameResourceIndex + 1) % gNumFrameResources;
 	mCurrentFrameResource = mFrameResources[mCurrentFrameResourceIndex].get();
 

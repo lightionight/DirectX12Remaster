@@ -24,7 +24,7 @@ void PipelineStateCreator::BuildRegularPipelineState(
     //                   for create it.
     D3D12_GRAPHICS_PIPELINE_STATE_DESC regularPsoDesc;
     ZeroMemory(&regularPsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
-    regularPsoDesc.InputLayout = { inputLayout.data(), inputLayout.size() };
+    regularPsoDesc.InputLayout = { inputLayout.data(), (UINT)inputLayout.size() };
     regularPsoDesc.pRootSignature = currentRootSignature.Get();
     regularPsoDesc.VS = shader->VS();
     regularPsoDesc.PS = shader->PS();

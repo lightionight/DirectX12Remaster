@@ -164,7 +164,7 @@ template <typename T> void SceneManager::AddGeo(ComPtr<ID3D12Device> device, Com
 	}
 	else
 	{
-		geo->IndexFormat == DXGI_FORMAT_R32_UINT;
+		geo->IndexFormat = DXGI_FORMAT_R32_UINT;
 	}
 	geo->IndexBufferByteSize = ibByteSzie;
 	mGeos[meshName] = std::move(geo);
@@ -189,6 +189,10 @@ MeshGeometry* SceneManager::GetGeoPointer(const std::string& geoName)
 {
 	if (mGeos[geoName] != nullptr)
 		return mGeos[geoName].get();
+	else
+	{
+		return nullptr;
+	}
 }
 
 void SceneManager::AddToRenderLayer(RenderLayer renderlayer, RenderItem* additem)
