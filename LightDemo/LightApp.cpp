@@ -19,6 +19,8 @@ void LightApp::Initialize()
 {
 	DXApp::Initialize();
 
+	mDirectX->InitCommand();
+
 	BuildShaderAndInputLayout();
 	BuildGeo();
 	BuildSkullGeometry();
@@ -26,6 +28,9 @@ void LightApp::Initialize()
 	BuildMaterials();
 	BuildRenderItems();
 	BuildFrameResources();
+
+	mDirectX->CommandExcute();
+
 }
 
 void LightApp::BuildShaderAndInputLayout()
@@ -289,7 +294,7 @@ void LightApp::BuildRenderItems()
 		mSceneManager->AddToSceneitems(rightSphereRitem);
 	}
 
-	for (auto& e : *mSceneManager->AllRenderItem())
+	for (auto& e : *mSceneManager->AllSceneItem())
 	{
 		mSceneManager->AddToRenderLayer(RenderLayer::Opaque, e.get());
 	}
@@ -300,7 +305,7 @@ void LightApp::BuildFrameResources()
 	for (int i = 0; i < gNumFrameResources; ++i)
 	{
 		mFrameResources.push_back(std::make_unique<FrameResource>(mDirectX->Device.Get(),
-			1, (UINT)mSceneManager->AllRenderItem()->size(), (UINT)mSceneManager->MaterialCount()));
+			1, (UINT)mSceneManager->AllSceneItem()->size(), (UINT)mSceneManager->MaterialCount()));
 	}
 }
 
@@ -393,7 +398,7 @@ void LightApp::AnimateMaterials(const GameTimer& gt)
 void LightApp::UpdateObjectCBs(const GameTimer& gt)
 {
 	auto currentObjectCB = mCurrentFrameResource->ObjectCB.get();
-	for (auto& e : *mSceneManager->AllRenderItem())
+	for (auto& e : *mSceneManager->AllSceneItem())
 	{
 		XMMATRIX world = XMLoadFloat4x4(&e->World);
 		XMMATRIX texTransform = XMLoadFloat4x4(&e->TexTransform);

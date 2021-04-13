@@ -78,6 +78,7 @@ public:
 
 #if defined(DEBUG) || defined(_DEBUG)
 	ComPtr<ID3D12Debug> DebugController;
+	ComPtr<ID3D12Debug1> DebugController1;
 #endif
 	DxData();
 	void Initialize(const DxDesc*);
@@ -106,6 +107,8 @@ public:
 
 	void PrepareRender(ID3D12PipelineState*, ComPtr<ID3D12CommandAllocator>);
 	void AfterRender(FrameResource*);
+	void InitCommand(ComPtr<ID3D12CommandAllocator> cmdListAlloc = nullptr);
+	void CommandExcute();
 };
 
 struct DxDesc

@@ -60,13 +60,13 @@ public:
 		const std::string& meshName, const UINT vbByteSize, const UINT ibByteSzie,
 		const std::vector<Vertex>& vertices, const std::vector<T>& indices);
 
-	void AddDraw(const std::string& GeometryName, const std::string& DrawName, const SubmeshGeometry& drawMesh);
+	void AddDraw(const std::string& GeometryName, const std::string& DrawName, SubmeshGeometry& drawMesh);
 
 	void AddToRenderLayer(RenderLayer renderlayer, RenderItem* additem);
 	void AddToSceneitems(std::unique_ptr<RenderItem>& additem);
 	// Render Item  using for render layer
 	std::vector<RenderItem*> RenderLayerItem(RenderLayer renderlayer);
-	std::vector<std::unique_ptr<RenderItem>>* AllRenderItem();
+	std::vector<std::unique_ptr<RenderItem>>* AllSceneItem();
 	void AddMat(const std::string& name, const int cbIndex, const int diffHeapIndex, const XMFLOAT4& diffuse, const XMFLOAT3& fresnel, const float roughness);
 	
 public: // Parameter

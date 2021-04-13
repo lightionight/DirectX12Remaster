@@ -4,7 +4,14 @@
 
 #include <gainput\gainput.h>
 #include <memory>
-#pragma comment(lib, "gainput\\gainput.lib")
+#if defined _DEBUG | DEBUG
+    #pragma comment(lib, "gainput\\gainput-d.lib")
+#else
+    #pragma comment(lib, "gainput\\gainput.lib")
+#endif
+
+
+
 
 enum Button
 {

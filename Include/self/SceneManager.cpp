@@ -180,7 +180,7 @@ template void SceneManager::AddGeo<std::uint32_t>(ComPtr<ID3D12Device> device, C
 
 
 // give the mesh name and draw arg to disrible how to draw mesh using part of geometry
-void SceneManager::AddDraw(const std::string& GeometryName, const std::string& DrawName, const SubmeshGeometry& drawMesh)
+void SceneManager::AddDraw(const std::string& GeometryName, const std::string& DrawName, SubmeshGeometry& drawMesh)
 {
 	mGeos[GeometryName]->DrawArgs[DrawName] = drawMesh;
 }
@@ -209,7 +209,7 @@ std::vector<RenderItem*> SceneManager::RenderLayerItem(RenderLayer renderlayer)
 {
 	return mRenderLayer[(int)renderlayer];
 }
-std::vector<std::unique_ptr<RenderItem>>* SceneManager::AllRenderItem()
+std::vector<std::unique_ptr<RenderItem>>* SceneManager::AllSceneItem()
 {
 	return &mSceneItems;
 }

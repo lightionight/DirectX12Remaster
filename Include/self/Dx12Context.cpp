@@ -84,8 +84,11 @@ DxData::DxData()
 {
 #if defined(DEBUG) || defined(_DEBUG)
     D3D12GetDebugInterface(IID_PPV_ARGS(&DebugController));
+	DebugController->QueryInterface(IID_PPV_ARGS(&DebugController1));
+	DebugController1->SetEnableGPUBasedValidation(true);
     DebugController->EnableDebugLayer();
 #endif
+
     CreateDXGIFactory2(NULL, IID_PPV_ARGS(&DxgiFactory));
 
     D3D12CreateDevice(nullptr, FeatureLevel, IID_PPV_ARGS(&Device));
@@ -199,7 +202,9 @@ void DxData::ResizeWindow(const DxDesc* desc, int clientWidth, int clientHeight)
 		D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
 	CommandList->Close();
+
 	ID3D12CommandList* cmdList[] = { CommandList.Get() };
+
 	CommandQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
 
 	FlushCommandQueue();
@@ -240,12 +245,31 @@ void DxData::AfterRender(FrameResource* framesource)
 	CommandQueue->ExecuteCommandLists(_countof(cmdlist), cmdlist);
 
 	ThrowIfFailed(SwapChain->Present(0, 0));
+
 	CurrentBackBufferIndex = (CurrentBackBufferIndex + 1) % SwapChainBufferCount;
 
 	framesource->Fence = ++CurrentFence;
 
 	CommandQueue->Signal(Fence.Get(), CurrentFence);
 }
+
+void DxData::InitCommand(ComPtr<ID3D12CommandAllocator> cmdListAlloc)
+{
+	if (cmdListAlloc)
+		CommandList->Reset(cmdListAlloc.Get(), nullptr);
+	else
+		CommandList->Reset(CommandListAlloc.Get(), nullptr);
+}
+
+void DxData::CommandExcute()
+{
+	ThrowIfFailed(CommandList->Close());
+	ID3D12CommandList* cmdList[] = { CommandList.Get() };
+	CommandQueue->ExecuteCommandLists(_countof(cmdList), cmdList);
+
+	FlushCommandQueue();
+}
+
 
 void DxData::EnableShaderBasedValidation()
 {

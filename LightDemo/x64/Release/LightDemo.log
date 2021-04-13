@@ -1,9 +1,51 @@
-﻿  LightApp.cpp
-D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(64,66): warning C4267: 'initializing': conversion from 'size_t' to 'UINT', possible loss of data
-D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(65,72): warning C4267: 'initializing': conversion from 'size_t' to 'UINT', possible loss of data
-D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(75,48): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
-D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(80,52): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
-D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(85,56): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+﻿  Dx12Context.cpp
+  DxApp.cpp
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(322,1): warning C4267: '=': conversion from 'size_t' to 'T', possible loss of data
+          with
+          [
+              T=gainput::uint32_t
+          ]
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(309): message : while compiling class template member function 'gainput::HashMap<gainput::DeviceId,bool>::Node *gainput::HashMap<gainput::DeviceId,bool>::insert(const K &,const V &)'
+          with
+          [
+              K=gainput::DeviceId,
+              V=bool
+          ]
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(356): message : see reference to function template instantiation 'gainput::HashMap<gainput::DeviceId,bool>::Node *gainput::HashMap<gainput::DeviceId,bool>::insert(const K &,const V &)' being compiled
+          with
+          [
+              K=gainput::DeviceId,
+              V=bool
+          ]
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\recorder\GainputInputRecorder.h(64): message : see reference to class template instantiation 'gainput::HashMap<gainput::DeviceId,bool>' being compiled
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(330,1): warning C4267: '=': conversion from 'size_t' to 'gainput::uint32_t', possible loss of data
+  SceneManager.cpp
+  LightApp.cpp
+D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(69,66): warning C4267: 'initializing': conversion from 'size_t' to 'UINT', possible loss of data
+D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(70,72): warning C4267: 'initializing': conversion from 'size_t' to 'UINT', possible loss of data
+D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(80,48): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(85,52): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+D:\PROJECT\Github\DirectX12Remaster\LightDemo\LightApp.cpp(90,56): warning C4267: '=': conversion from 'size_t' to 'UINT', possible loss of data
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(322,1): warning C4267: '=': conversion from 'size_t' to 'T', possible loss of data
+          with
+          [
+              T=gainput::uint32_t
+          ]
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(309): message : while compiling class template member function 'gainput::HashMap<gainput::DeviceId,bool>::Node *gainput::HashMap<gainput::DeviceId,bool>::insert(const K &,const V &)'
+          with
+          [
+              K=gainput::DeviceId,
+              V=bool
+          ]
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(356): message : see reference to function template instantiation 'gainput::HashMap<gainput::DeviceId,bool>::Node *gainput::HashMap<gainput::DeviceId,bool>::insert(const K &,const V &)' being compiled
+          with
+          [
+              K=gainput::DeviceId,
+              V=bool
+          ]
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\recorder\GainputInputRecorder.h(64): message : see reference to class template instantiation 'gainput::HashMap<gainput::DeviceId,bool>' being compiled
+D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(330,1): warning C4267: '=': conversion from 'size_t' to 'gainput::uint32_t', possible loss of data
+  Program.cpp
 D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(322,1): warning C4267: '=': conversion from 'size_t' to 'T', possible loss of data
           with
           [
@@ -24,8 +66,8 @@ D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(356): me
 D:\PROJECT\Github\DirectX12Remaster\Include\gainput\recorder\GainputInputRecorder.h(64): message : see reference to class template instantiation 'gainput::HashMap<gainput::DeviceId,bool>' being compiled
 D:\PROJECT\Github\DirectX12Remaster\Include\gainput\GainputContainers.h(330,1): warning C4267: '=': conversion from 'size_t' to 'gainput::uint32_t', possible loss of data
   Generating code
-  2 of 2286 functions (<0.1%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    19 functions had inline decision re-evaluated but remain unchanged
+  11 of 2289 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+    4 functions were new in current compilation
+    24 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   LightDemo.vcxproj -> D:\PROJECT\Github\DirectX12Remaster\LightDemo\x64\Release\LightDemo.exe
