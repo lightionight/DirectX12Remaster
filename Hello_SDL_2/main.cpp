@@ -26,10 +26,31 @@ int main(int argc, char* argv[])
 
 	g_Window = SDL_CreateWindow("Hello SDL2", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, SDL_WINDOW_RESIZABLE);
 	
-	g_Display = SDL_CreateRGBSurface()
+	g_Display = SDL_GetWindowSurface(g_Window);
 
-	SDL_ShowWindow(g_Window);
 
-	SDL_FillRect(g_Display, )
+	for (;;)
+	{
+		if (SDL_PollEvent(&g_Event) == 0)
+		{
+			g_R = rand() % 256;
+			g_G = rand() % 256;
+			g_B = rand() % 256;
+			g_Color = SDL_MapRGB(g_Display->format, g_R, g_G, g_B);
+			g_Rect.x = rand() % SCREEN_WIDTH;
+			g_Rect.y = rand() % SCREEN_WIDTH;
+			g_Rect.w = rand() % (SCREEN_WIDTH - g_Rect.x);
+			g_Rect.h = rand() % (SCREEN_WIDTH - g_Rect.y);
+			SDL_FillRect(g_Display, &g_Rect, g_Color);
+			SDL_UpdateWindowSurface(g_Window);
+		}
+		else
+		{
+			if (g_Event.type == SDL_QUIT)
+				break;
+		}
+	}
+
+	return 0;
 
 }
