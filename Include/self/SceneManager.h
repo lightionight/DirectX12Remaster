@@ -69,6 +69,11 @@ public:
 	std::vector<std::unique_ptr<RenderItem>>* AllSceneItem();
 	void AddMat(const std::string& name, const int cbIndex, const int diffHeapIndex, const XMFLOAT4& diffuse, const XMFLOAT3& fresnel, const float roughness);
 	
+	// Texture Function
+
+	// Load DDS Texture from given path and set name
+	void LoadTex(const std::string& name, const std::wstring& path, ComPtr<ID3D12Device>* d3dDevice, ComPtr<ID3D12GraphicsCommandList>* d3dCommandlist);
+	
 public: // Parameter
 	MeshGeometry* GetGeoPointer(const std::string& geoName);
 	Material* GetMatPointer(const std::string& matName);
@@ -83,6 +88,7 @@ private:
 	std::unique_ptr<PipelineStateCreator> mPSOs;
 	std::unordered_map<std::string, std::unique_ptr<MeshGeometry>> mGeos;
 	std::unordered_map<std::string, std::unique_ptr<Material>> mMats;
+	std::unordered_map<std::string, std::unique_ptr<Texture>> mTexs;
 
 	std::vector<Material*> mAllMaterial;
 	std::vector<std::unique_ptr<RenderItem>> mSceneItems;

@@ -241,3 +241,16 @@ Material* SceneManager::GetMatPointer(const std::string& matName)
 	return mMats[matName].get();
 
 }
+
+
+//---------------------------------------------Texture Function ----------------------------------------------------//
+
+void SceneManager::LoadTex(const std::string& name, const std::wstring& path, ComPtr<ID3D12Device>* d3dDevice, ComPtr<ID3D12GraphicsCommandList>* d3dCommandlist)
+{
+	auto tex = std::make_unique<Texture>();
+	tex->Name = name;
+	tex->Filename = path;
+	ThrowIfFailed(DirectX::CreateDDSTextureFromFile12(d3dDevice,
+		d3dCommandlist, tex->Filename.c_str(), tex->Resource, tex->UploadHeap()));
+
+}
