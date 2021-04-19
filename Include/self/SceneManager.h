@@ -30,7 +30,7 @@ public:
 	    ComPtr<ID3D12Device> currentD3dDevice,
 		ComPtr<ID3D12RootSignature> currentRootSignature,
 		const std::vector<D3D12_INPUT_ELEMENT_DESC> inputLayout,
-		Shader* shader,
+		const std::string& shaderName,
 		DXGI_FORMAT backbufferFormat,
 		DXGI_FORMAT depthStencilbufferFormat,
 		bool m4xMsaa,

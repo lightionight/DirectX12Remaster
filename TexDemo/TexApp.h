@@ -25,7 +25,7 @@ private:
 	void LoadTex();
 	void BuildShaderAndInputLayout();
 	void BuildGeo();
-	void BuildSkullGeometry();
+	//void BuildSkullGeometry();
 	void BuildPSO();
 	void BuildFrameResources();
 	void BuildMaterials();

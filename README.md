@@ -11,3 +11,7 @@
  - [ ] Main Focus On Blender Important Model borrow as self application as library for using. for build game ready scene
  - [ ] for now not considering Universal Scene Desriptortion (USD) by Pixar.
  - [ ] 
+
+## _20210419_
+
+- [ ] Texture Import to direct x 12 show.
