@@ -254,3 +254,8 @@ void SceneManager::LoadTex(const std::string& name, const std::wstring& path, Co
 		d3dCommandlist->Get(), tex->Filename.c_str(), tex->Resource,tex->UploadHeap));
 	mTexs[name] = std::move(tex);
 }
+
+Texture* SceneManager::GetTexturePointer(const std::string&  textureName)
+{
+	return mTexs[textureName].get();
+}

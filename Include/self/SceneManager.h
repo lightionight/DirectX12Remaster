@@ -77,6 +77,8 @@ public:
 public: // Parameter
 	MeshGeometry* GetGeoPointer(const std::string& geoName);
 	Material* GetMatPointer(const std::string& matName);
+	// return texture Pointer by texture name.
+	Texture* GetTexturePointer(const std::string& textureName);
 	std::unordered_map<std::string, std::unique_ptr<Material>>* GetAllMats();
 	size_t MaterialCount();
 

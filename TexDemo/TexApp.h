@@ -39,8 +39,12 @@ private:
 	void UpdateMaterialCBs(const GameTimer& gt);
 	void UpdateMainPassCBs(const GameTimer& gt);
 
+	std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> TexApp::GetStaticSamples();
+
 protected:
 	std::unique_ptr<SceneManager> mSceneManager;
+
+	
 
 	//Frame Resource
 	std::vector<std::unique_ptr<FrameResource>> mFrameResources;

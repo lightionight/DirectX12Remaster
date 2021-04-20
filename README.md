@@ -15,3 +15,6 @@
 ## _20210419_
 
 - [ ] Texture Import to direct x 12 show.
+
+## _20210420_
+- [ ] NEED Finish TexDemo HLSL progam and test it.

@@ -137,8 +137,18 @@ public:
 	// Main
 	ComPtr<ID3D12RootSignature>  RootSignnature = nullptr;
 	ComPtr<ID3D12DescriptorHeap> SrvHeap = nullptr;
-	static const int RootParameterNumber = 3;
+	static const int RootParameterNumber = 4;
+	std::vector<CD3DX12_STATIC_SAMPLER_DESC> TexSamples;
+	int TexSrvCount = 0;
+	UINT MaxTexSrvNum = 0;
+	
+	//-------Init Function
 	void Initialize(const DxData*);
+	void InitSrvHeap(UINT, ID3D12Device*);
+	void InitSamples();
+
+	//------ Add Function------//
+	void AddSrvDescToSrvHeap(ID3D12Device* device, SceneManager* sceneManager, const std::string& TexName);
 	void AddRootParameter();
 };
 

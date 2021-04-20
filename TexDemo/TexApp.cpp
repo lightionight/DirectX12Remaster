@@ -33,6 +33,9 @@ void TexApp::LoadTex()
 {
 	mSceneManager->LoadTex("Brick", L"bricks.dds", &mDirectX->Device, &mDirectX->CommandList);
 	mSceneManager->LoadTex("Brick2", L"bricks2.dds", &mDirectX->Device, &mDirectX->CommandList);
+
+	// Add Texture to d3d12_resource Srv heap;
+	mDxBind->AddSrvDescToSrvHeap(mDirectX->Device.Get(), mSceneManager.get(), "Brick");
 }
 
 void TexApp::BuildShaderAndInputLayout()
@@ -96,7 +99,7 @@ void TexApp::BuildPSO()
 
 void TexApp::BuildFrameResources()
 {
-	for (int i = 0; i < gNumFrameResource; ++i)
+	for (int i = 0; i < gNumFrameResources; ++i)
 	{
 		mFrameResources.push_back(std::make_unique<FrameResource>(mDirectX->Device.Get(),
 			1, (UINT)mSceneManager->AllSceneItem()->size(), (UINT)mSceneManager->GetAllMats()->size()));
@@ -246,3 +249,38 @@ void TexApp::UpdateMainPassCBs(const GameTimer& gt)
 	currentPassCB->CopyData(0, mMainPassCB);
 
 }
+
+void TexApp::Draw(const GameTimer& gt)
+{
+	mDirectX->PrepareRender(mSceneManager->UsePSO("Default"), mCurrentFrameResource->CmdListAlloc);
+
+	mDirectX->CommandList->SetGraphicsRootSignature(mDxBind->RootSignnature.Get());
+	mDirectX->CommandList->SetGraphicsRootConstantBufferView(2, mCurrentFrameResource->PassCB->Resource()->GetGPUVirtualAddress());
+	PerPassDrawItems();
+	mDirectX->AfterRender(mCurrentFrameResource);
+
+}
+
+void TexApp::PerPassDrawItems()
+{
+	UINT objCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
+	UINT matCBBytesize = d3dUtil::CalcConstantBufferByteSize(sizeof(MaterialConstants));
+
+	auto objectCB = mCurrentFrameResource->ObjectCB->Resource();
+	auto matCB = mCurrentFrameResource->MaterialCB->Resource();
+
+	for(size_t i = 0; i < mSceneManager->RenderLayerItem(RenderLayer::Opaque).size(); ++i)
+	{
+		auto ri = mSceneManager->RenderLayerItem(RenderLayer::Opaque)[i];
+
+		mDirectX->CommandList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
+		mDirectX->CommandList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
+		mDirectX->CommandList->IASetPrimitiveTopology(ri->Topology);
+
+		D3D12_GPU_VIRTUAL_ADDRESS objCbAddress = objectCB->GetGPUVirtualAddress() + ri->ObjIndex * objCBByteSize;
+		D3D12_GPU_VIRTUAL_ADDRESS matCbAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBBytesize;
+
+		mDirectX->CommandList->DrawIndexedInstanced(ri->IndexCount, 1, ri->StartIndexLocation, ri->BaseVertexLocation, 0);
+	}
+}
+

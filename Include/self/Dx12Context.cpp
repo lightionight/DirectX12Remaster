@@ -1,6 +1,7 @@
 #include "Dx12Context.h"
 #include <d3dx12.h>
 #include <DirectXColors.h>
+#include <SceneManager.h>
 
 
 DxDesc::DxDesc()
@@ -278,12 +279,15 @@ void DxData::EnableShaderBasedValidation()
 
 void DxBind::Initialize(const DxData* dxData)
 {
+	InitSamples();
+
 	CD3DX12_ROOT_PARAMETER slotRootParameter[RootParameterNumber];
 	slotRootParameter[0].InitAsConstantBufferView(0);
 	slotRootParameter[1].InitAsConstantBufferView(1);
 	slotRootParameter[2].InitAsConstantBufferView(2);
+	slotRootParameter[3].InitAsConstantBufferView(3);
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(3, slotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(4, slotRootParameter, (UINT)TexSamples.size(), TexSamples.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 	ComPtr<ID3DBlob> serializedRootSig = nullptr;
 	ComPtr<ID3DBlob> errorBlob = nullptr;
@@ -296,7 +300,113 @@ void DxBind::Initialize(const DxData* dxData)
 	dxData->Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(), IID_PPV_ARGS(RootSignnature.GetAddressOf()));
 
+	InitSrvHeap(4, dxData->Device.Get());
+
 }
+
+
+void DxBind::InitSamples()
+{
+	const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
+		0, // shaderRigister
+		D3D12_FILTER_MIN_MAG_MIP_POINT,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP
+	);
+
+	const CD3DX12_STATIC_SAMPLER_DESC pointClamp
+	(
+		1,
+		D3D12_FILTER_MIN_MAG_MIP_POINT,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP
+	);
+
+	const CD3DX12_STATIC_SAMPLER_DESC linearWrap
+	(
+		2,
+		D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP
+	);
+
+	const CD3DX12_STATIC_SAMPLER_DESC linearClamp
+	(
+		3,
+		D3D12_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP
+	);
+
+	const CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap
+	(
+		4,
+		D3D12_FILTER_ANISOTROPIC,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP,
+		D3D12_TEXTURE_ADDRESS_MODE_WRAP
+	);
+
+	const CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp
+	(
+		5,
+		D3D12_FILTER_ANISOTROPIC,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+		D3D12_TEXTURE_ADDRESS_MODE_CLAMP
+	);
+
+	TexSamples.push_back(pointWrap);
+	TexSamples.push_back(pointClamp);
+	TexSamples.push_back(linearWrap);
+	TexSamples.push_back(linearClamp);
+	TexSamples.push_back(anisotropicWrap);
+	TexSamples.push_back(anisotropicClamp);
+}
+
+void DxBind::InitSrvHeap(UINT number, ID3D12Device* device)
+{
+    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = { };
+	MaxTexSrvNum = srvHeapDesc.NumDescriptors = number;
+	
+	srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+	srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	ThrowIfFailed(device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&SrvHeap)));
+}
+
+void DxBind::AddSrvDescToSrvHeap(ID3D12Device* device, SceneManager* sceneManager, const std::string& texName)
+{
+	if((UINT)TexSrvCount > MaxTexSrvNum)
+	{
+		std::cout << "Error for add New Texture Resource. " << std::endl;
+	}
+	
+	// Get CPU Heap Address
+	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(SrvHeap->GetCPUDescriptorHandleForHeapStart());
+
+	
+	auto tex = sceneManager->GetTexturePointer(texName)->Resource;
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = { };
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = tex->GetDesc().Format;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = tex->GetDesc().MipLevels;
+	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+
+    //Need Offset, if there is not only one Texture;
+	hDescriptor.Offset(TexSrvCount, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
+
+	device->CreateShaderResourceView(tex.Get(),&srvDesc, hDescriptor);
+
+	++TexSrvCount;
+}
+
 
 void DxBind::AddRootParameter()
 {
