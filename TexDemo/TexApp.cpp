@@ -31,8 +31,8 @@ void TexApp::Initialize()
 
 void TexApp::LoadTex()
 {
-	mSceneManager->LoadTex("Brick", L"bricks.dds", &mDirectX->Device, &mDirectX->CommandList);
-	mSceneManager->LoadTex("Brick2", L"bricks2.dds", &mDirectX->Device, &mDirectX->CommandList);
+	mSceneManager->LoadTex("Brick", L"bricks.dds", mDirectX->Device.Get(), mDirectX->CommandList.Get());
+	//mSceneManager->LoadTex("Brick2", L"bricks2.dds", mDirectX->Device.Get(), mDirectX->CommandList.Get());
 
 	// Add Texture to d3d12_resource Srv heap;
 	mDxBind->AddSrvDescToSrvHeap(mDirectX->Device.Get(), mSceneManager.get(), "Brick");
@@ -45,12 +45,12 @@ void TexApp::BuildShaderAndInputLayout()
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 	};
-	for (auto e : inputLayout)
+	for (const auto& e : inputLayout)
 	{
 		mInputLayout.push_back(e);
 	}
 
-	mSceneManager->AddShader("Default", L"../Shaders/Default.hlsl", L"../Shaders/Default.hlsl");
+	mSceneManager->AddShader("Default", L"Shaders\\Default.hlsl", L"Shaders\\Default.hlsl");
 	mSceneManager->UseShader("Default");
 }
 
@@ -130,7 +130,7 @@ void TexApp::OnResize()
 {
 	DXApp::OnResize();
 
-	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, mWinDesc->AspectRadio(), 0.0f, 1000.0f);
+	XMMATRIX P = XMMatrixPerspectiveFovLH(0.25f * MathHelper::Pi, mWinDesc->AspectRadio(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, P);
 }
 
@@ -217,8 +217,8 @@ void TexApp::UpdateMainPassCBs(const GameTimer& gt)
 	XMMATRIX viewproj = XMMatrixMultiply(view, proj);
 	XMMATRIX invView = XMMatrixInverse(&XMMatrixDeterminant(view), view);
 
-	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(&proj), proj);
-	XMMATRIX inViewProj = XMMatrixInverse(&XMMatrixDeterminant(&viewproj), proj);
+	XMMATRIX invProj = XMMatrixInverse(&XMMatrixDeterminant(proj), proj);
+	XMMATRIX inViewProj = XMMatrixInverse(&XMMatrixDeterminant(viewproj), proj);
 
 	XMStoreFloat4x4(&mMainPassCB.View, XMMatrixTranspose(view));
 	XMStoreFloat4x4(&mMainPassCB.Proj, XMMatrixTranspose(proj));
@@ -284,3 +284,36 @@ void TexApp::PerPassDrawItems()
 	}
 }
 
+void TexApp::OnRotate(int x, int y)
+{
+
+}
+
+void TexApp::OnScale(int x, int y)
+{
+
+}
+
+void TexApp::OnMouseMove(int x, int y)
+{
+
+}
+
+void TexApp::UpdateCamera(const GameTimer& gt)
+{
+	mEyePos.x = mRadius * sinf(mPhi) * cosf(mTheta);
+	mEyePos.y = mRadius * sinf(mPhi) * sinf(mTheta);
+	mEyePos.z = mRadius * cosf(mPhi);
+
+	XMVECTOR pos = XMVectorSet(mEyePos.x, mEyePos.y, mEyePos.z, 1.0f);
+	XMVECTOR Target = XMVectorZero();
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX view = XMMatrixLookAtLH(pos, Target, up);
+	XMStoreFloat4x4(&mView, view);
+}
+
+void TexApp::OnKeyBoradInput(const GameTimer& gt)
+{
+
+}

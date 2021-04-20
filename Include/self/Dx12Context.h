@@ -26,6 +26,7 @@
 //Self Include 
 #include "d3dx12.h"
 #include "Win32Context.h"
+#include <self/SceneManager.h>
 
 // Library Include
 #pragma comment(lib, "dxgi.lib")

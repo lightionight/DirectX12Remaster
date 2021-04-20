@@ -13,6 +13,7 @@ public:
 	D3D12_SHADER_BYTECODE VS();
 	D3D12_SHADER_BYTECODE PS();
 	D3D12_SHADER_BYTECODE GS();
+	
 private:
 	std::string mName;
 	ComPtr<ID3DBlob> mVS;

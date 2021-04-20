@@ -72,7 +72,7 @@ public:
 	// Texture Function
 
 	// Load DDS Texture from given path and set name
-	void LoadTex(const std::string& name, const std::wstring& path, ComPtr<ID3D12Device>* d3dDevice, ComPtr<ID3D12GraphicsCommandList>* d3dCommandlist);
+	void LoadTex(const std::string& name, const std::wstring& path, ID3D12Device* d3dDevice, ID3D12GraphicsCommandList* d3dCommandlist);
 	
 public: // Parameter
 	MeshGeometry* GetGeoPointer(const std::string& geoName);

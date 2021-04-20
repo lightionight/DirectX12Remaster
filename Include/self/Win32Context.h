@@ -8,6 +8,8 @@
 #include <windowsx.h>
 #include <iostream>
 
+#include <DirectXMath.h>
+
 struct WinDesc
 {
 	bool Paused = false;
@@ -28,13 +30,13 @@ struct WinDesc
 	{ 
 		return static_cast<float> (ClientWidth) / ClientHeight;
 	}
-	const XMFLOAT2 RendertargetSize() const
+	const DirectX::XMFLOAT2 RendertargetSize() const
 	{
-		return XMFLOAT2((float)ClientWidth, (float)ClientHeight);
+		return DirectX::XMFLOAT2((float)ClientWidth, (float)ClientHeight);
 	}
-	const XMFLOAT2 InvRenderTargetSize() const
+	const DirectX::XMFLOAT2 InvRenderTargetSize() const
 	{
-		return XMFLOAT2(1.0f / ClientWidth, 1.0f / ClientHeight);
+		return DirectX::XMFLOAT2(1.0f / ClientWidth, 1.0f / ClientHeight);
 	}
 };
 

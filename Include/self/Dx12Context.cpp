@@ -1,7 +1,7 @@
 #include "Dx12Context.h"
 #include <d3dx12.h>
 #include <DirectXColors.h>
-#include <SceneManager.h>
+#include <Self\SceneManager.h>
 
 
 DxDesc::DxDesc()
