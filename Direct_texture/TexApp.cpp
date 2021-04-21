@@ -267,6 +267,7 @@ void TexApp::Draw(const GameTimer& gt)
 	mDirectX->CommandList->SetGraphicsRootConstantBufferView(2, mCurrentFrameResource->PassCB->Resource()->GetGPUVirtualAddress());
 
 	PerPassDrawItems();
+
 	mDirectX->AfterRender(mCurrentFrameResource);
 
 }
@@ -284,8 +285,9 @@ void TexApp::PerPassDrawItems()
 		auto ri = mSceneManager->RenderLayerItem(RenderLayer::Opaque)[i];
 
 		CD3DX12_GPU_DESCRIPTOR_HANDLE tex(mDxBind->SrvHeap->GetGPUDescriptorHandleForHeapStart());
+
 		tex.Offset(ri->Mat->DiffuseSrvHeapIndex, mDxBind->GetCbvSrvDesriptorSize(mDirectX->Device));
-		mDirectX->CommandList->SetGraphicsRootDescriptorTable(0, tex);
+
 
 		mDirectX->CommandList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
 		mDirectX->CommandList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
@@ -294,6 +296,8 @@ void TexApp::PerPassDrawItems()
 		D3D12_GPU_VIRTUAL_ADDRESS objCbAddress = objectCB->GetGPUVirtualAddress() + ri->ObjIndex * objCBByteSize;
 		D3D12_GPU_VIRTUAL_ADDRESS matCbAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBBytesize;
 		
+
+		mDirectX->CommandList->SetGraphicsRootDescriptorTable(0, tex);
 		mDirectX->CommandList->SetGraphicsRootConstantBufferView(1, objCbAddress);
 		mDirectX->CommandList->SetGraphicsRootConstantBufferView(3, matCbAddress);
 

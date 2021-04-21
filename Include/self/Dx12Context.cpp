@@ -292,9 +292,10 @@ void DxBind::Initialize(const DxData* dxData)
 {
 	InitSamples();
 
-	CD3DX12_ROOT_PARAMETER slotRootParameter[RootParameterNumber];
 	CD3DX12_DESCRIPTOR_RANGE texTable;
 	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+
+	CD3DX12_ROOT_PARAMETER slotRootParameter[RootParameterNumber];
 	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
 	slotRootParameter[1].InitAsConstantBufferView(0);
 	slotRootParameter[2].InitAsConstantBufferView(1);
@@ -411,7 +412,7 @@ void DxBind::AddSrvDescToSrvHeap(ID3D12Device* device, SceneManager* sceneManage
 		// Get CPU Heap Address
 		CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(SrvHeap->GetCPUDescriptorHandleForHeapStart());
 		//Need Offset, if there is not only one Texture;
-		hDescriptor.Offset(TexSrvCount, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
+		//hDescriptor.Offset(TexSrvCount, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
 
 		device->CreateShaderResourceView(tex.Get(), &srvDesc, hDescriptor);
 
