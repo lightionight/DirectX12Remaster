@@ -220,6 +220,18 @@ void DxData::ResizeWindow(const DxDesc* desc, int clientWidth, int clientHeight)
 	ScissorRect = { 0 , 0, (long)ScreenViewPort.Width, (long)ScreenViewPort.Height };
 }
 
+void DxData::SetDescriptorHeaps(DxBind* dxBind)
+{
+	ID3D12DescriptorHeap* descriptorHeaps[] = { dxBind->SrvHeap.Get() };
+	CommandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+}
+
+void DxData::SetRootSignature(DxBind* dxBind)
+{
+	CommandList->SetGraphicsRootSignature(dxBind->RootSignnature.Get());
+}
+
+
 void DxData::PrepareRender(ID3D12PipelineState* pso , ComPtr<ID3D12CommandAllocator> cmdListAlloc)
 {
 	ThrowIfFailed(cmdListAlloc->Reset());
@@ -271,7 +283,6 @@ void DxData::CommandExcute()
 	FlushCommandQueue();
 }
 
-
 void DxData::EnableShaderBasedValidation()
 {
 	
@@ -282,10 +293,12 @@ void DxBind::Initialize(const DxData* dxData)
 	InitSamples();
 
 	CD3DX12_ROOT_PARAMETER slotRootParameter[RootParameterNumber];
-	slotRootParameter[0].InitAsConstantBufferView(0);
-	slotRootParameter[1].InitAsConstantBufferView(1);
-	slotRootParameter[2].InitAsConstantBufferView(2);
-	slotRootParameter[3].InitAsConstantBufferView(3);
+	CD3DX12_DESCRIPTOR_RANGE texTable;
+	texTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+	slotRootParameter[0].InitAsDescriptorTable(1, &texTable, D3D12_SHADER_VISIBILITY_PIXEL);
+	slotRootParameter[1].InitAsConstantBufferView(0);
+	slotRootParameter[2].InitAsConstantBufferView(1);
+	slotRootParameter[3].InitAsConstantBufferView(2);
 
 	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(4, slotRootParameter, (UINT)TexSamples.size(), TexSamples.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -300,10 +313,9 @@ void DxBind::Initialize(const DxData* dxData)
 	dxData->Device->CreateRootSignature(0, serializedRootSig->GetBufferPointer(),
 		serializedRootSig->GetBufferSize(), IID_PPV_ARGS(RootSignnature.GetAddressOf()));
 
-	InitSrvHeap(4, dxData->Device.Get());
+	InitSrvHeap(1, dxData->Device.Get());
 
 }
-
 
 void DxBind::InitSamples()
 {
@@ -384,31 +396,37 @@ void DxBind::AddSrvDescToSrvHeap(ID3D12Device* device, SceneManager* sceneManage
 	{
 		std::cout << "Error for add New Texture Resource. " << std::endl;
 	}
+	else
+	{
+		auto tex = sceneManager->GetTexturePointer(texName)->Resource;
+
+		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = { };
+		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+		srvDesc.Format = tex->GetDesc().Format;
+		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = tex->GetDesc().MipLevels;
+		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+
+		// Get CPU Heap Address
+		CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(SrvHeap->GetCPUDescriptorHandleForHeapStart());
+		//Need Offset, if there is not only one Texture;
+		hDescriptor.Offset(TexSrvCount, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
+
+		device->CreateShaderResourceView(tex.Get(), &srvDesc, hDescriptor);
+
+		++TexSrvCount;
+	}
 	
-	// Get CPU Heap Address
-	CD3DX12_CPU_DESCRIPTOR_HANDLE hDescriptor(SrvHeap->GetCPUDescriptorHandleForHeapStart());
-
 	
-	auto tex = sceneManager->GetTexturePointer(texName)->Resource;
-
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = { };
-	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc.Format = tex->GetDesc().Format;
-	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = tex->GetDesc().MipLevels;
-	srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-
-    //Need Offset, if there is not only one Texture;
-	hDescriptor.Offset(TexSrvCount, sizeof(D3D12_SHADER_RESOURCE_VIEW_DESC));
-
-	device->CreateShaderResourceView(tex.Get(),&srvDesc, hDescriptor);
-
-	++TexSrvCount;
 }
-
 
 void DxBind::AddRootParameter()
 {
 
+}
+
+UINT DxBind::GetCbvSrvDesriptorSize(ComPtr<ID3D12Device> device)
+{
+	return device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }

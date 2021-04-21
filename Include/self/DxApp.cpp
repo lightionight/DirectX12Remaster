@@ -30,7 +30,7 @@ void DXApp::Initialize()
 	mDirectX     = std::make_unique<DxData>();
 	mInputHandle = std::make_unique<InputHandle>();
 	mWinDesc     = std::make_unique<WinDesc>();
-	mDxBind      = std::make_unique<DxBind>();
+	mDxBind      = std::make_unique<DxBind>();  // After reSetCommandList This Guy Need ReSetting.
 
 	// Win32 Init
 	mWinDesc->Initialize(L"LightApp", L"LightDemo", 1280, 720, GlobalProc);

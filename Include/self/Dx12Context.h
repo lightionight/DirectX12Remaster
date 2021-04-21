@@ -106,6 +106,9 @@ public:
 	void ResizeWindow(const DxDesc* , int , int);
 	void EnableShaderBasedValidation();
 
+	void SetDescriptorHeaps(DxBind*);
+	void SetRootSignature(DxBind*);
+
 	void PrepareRender(ID3D12PipelineState*, ComPtr<ID3D12CommandAllocator>);
 	void AfterRender(FrameResource*);
 	void InitCommand(ComPtr<ID3D12CommandAllocator> cmdListAlloc = nullptr);
@@ -132,6 +135,7 @@ struct DxDesc
 	void ResizeDesc(int, int, bool, UINT);
 };
 
+// Please take care!!!!   This Structure Bind With CommandList , After CommandList Excute  Need ReBinding.
 struct DxBind
 {
 public:
@@ -151,6 +155,7 @@ public:
 	//------ Add Function------//
 	void AddSrvDescToSrvHeap(ID3D12Device* device, SceneManager* sceneManager, const std::string& TexName);
 	void AddRootParameter();
+	UINT GetCbvSrvDesriptorSize(ComPtr<ID3D12Device>);
 };
 
 

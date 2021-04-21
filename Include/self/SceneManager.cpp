@@ -58,6 +58,8 @@ Shader* SceneManager::UseShader(const std::string& name)
 	return mShaders[name].get();
 }
 
+//--------------------------Geo Function------------------------------------------------------
+
 // this function is using for normal add geo and and geo drawarg
 void SceneManager::AddGeo(ComPtr<ID3D12Device> d3ddeivce, ComPtr<ID3D12GraphicsCommandList> commandList,
 	const std::string& meshGeometryName, const std::string& drawArgs, const UINT vbByteSize, const UINT ibByteSize,
@@ -131,6 +133,7 @@ void SceneManager::AddGeo(ComPtr<ID3D12Device> d3ddeivce, ComPtr<ID3D12GraphicsC
 	mGeos[meshGeometryName] = std::move(geo);
 }
 
+// Just Add Geo Not Add Draw Args;
 template <typename T> void SceneManager::AddGeo(ComPtr<ID3D12Device> device, ComPtr<ID3D12GraphicsCommandList> commandlist,
 	const std::string& meshName, const UINT vbByteSize, const UINT ibByteSzie,
 	const std::vector<Vertex>& vertices, const std::vector<T>& indices)
@@ -185,6 +188,9 @@ void SceneManager::AddDraw(const std::string& GeometryName, const std::string& D
 	mGeos[GeometryName]->DrawArgs[DrawName] = drawMesh;
 }
 
+
+
+//-------------------------
 MeshGeometry* SceneManager::GetGeoPointer(const std::string& geoName)
 {
 	if (mGeos[geoName] != nullptr)

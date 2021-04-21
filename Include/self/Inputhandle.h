@@ -5,9 +5,9 @@
 #include <gainput\gainput.h>
 #include <memory>
 #if defined _DEBUG | DEBUG
-    #pragma comment(lib, "gainput\\gainput-d.lib")
+    #pragma comment(lib, "gainput\\x64\\Debug\\gainput-d.lib")
 #else
-    #pragma comment(lib, "gainput\\gainput.lib")
+    #pragma comment(lib, "gainput\\x64\\Release\\gainput.lib")
 #endif
 
 
