@@ -1,5 +1,16 @@
 #include <self/Win32Context.h>
 
+//______________________WIN DESC
+
+// Set Default is nullptr
+WinDesc* WinDesc::staticWinDesc = nullptr;
+
+WinDesc::WinDesc()
+{
+	if (staticWinDesc == nullptr)
+		staticWinDesc = this;
+}
+
 void WinDesc::Initialize(const LPCWSTR className, const  LPCWSTR windowName, int width, int height, WNDPROC wndproc)
 {
 	ClassName = className;
@@ -8,13 +19,31 @@ void WinDesc::Initialize(const LPCWSTR className, const  LPCWSTR windowName, int
 	ClientHeight = height;
 	WndProc = wndproc;
 }
+WinDesc* WinDesc::GetStaticWinDesc()
+{
+	return staticWinDesc;
+}
 
+
+LRESULT CALLBACK WinDesc::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch (msg)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	}
+	return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+
+
+//______________________WIN DATA
 
 WindowData::WindowData()
 {
 	Hinstance = GetModuleHandle(NULL);
 }
-
 
 void WindowData::Initialize(const WinDesc* desc)
 {

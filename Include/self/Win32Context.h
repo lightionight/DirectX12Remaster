@@ -10,7 +10,9 @@
 
 #include <DirectXMath.h>
 
-struct WinDesc
+LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+typedef struct WinDesc
 {
 	bool Paused = false;
 	bool Minimized = false;
@@ -22,8 +24,17 @@ struct WinDesc
 	LPCWSTR ClassName = L"DirectApp";
 	LPCWSTR WindowName = L"Direct Demo";
 	WNDPROC WndProc = nullptr;
+	static WinDesc* staticWinDesc;
+public:
+
+	WinDesc();
 
 	void Initialize(const LPCWSTR className, const  LPCWSTR windowName, int width, int height, WNDPROC wndproc);
+
+	static WinDesc* GetStaticWinDesc();
+
+
+	LRESULT CALLBACK MsgProc(HWND Hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	//Parameter
 	float AspectRadio() const
@@ -38,14 +49,16 @@ struct WinDesc
 	{
 		return DirectX::XMFLOAT2(1.0f / ClientWidth, 1.0f / ClientHeight);
 	}
-};
+} WinDesc;
 
 
-struct WindowData
+typedef struct WindowData
 {
 	HINSTANCE Hinstance;
 	HWND Hwnd = nullptr;
 
+	static WindowData* staitcWinData ;
+
 	WindowData();
 	void Initialize(const WinDesc* desc);
-};
+} WinData;
