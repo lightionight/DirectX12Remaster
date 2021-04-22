@@ -35,5 +35,14 @@
     <ClInclude Include="..\Include\self\Dx2dData.h">
       <Filter>Header Files\Include</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\self\D2dDrawOjbect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\self\Box2dContext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\self\Box2dSceneManager.h">
+      <Filter>Header Files\Include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

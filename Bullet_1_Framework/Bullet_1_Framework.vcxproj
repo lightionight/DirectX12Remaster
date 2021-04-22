@@ -148,6 +148,9 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Include\self\Box2dContext.h" />
+    <ClInclude Include="..\Include\self\Box2dSceneManager.h" />
+    <ClInclude Include="..\Include\self\D2dDrawOjbect.h" />
     <ClInclude Include="..\Include\self\Dx2dData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

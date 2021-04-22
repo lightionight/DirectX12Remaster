@@ -30,10 +30,11 @@ void D2dData::Initialize(HWND hwnd, D2D1_FACTORY_TYPE factoryTypes)
 {
 	HRESULT hr = NULL;
 	{
-#if defined(DEBUG) | defined(_DEBUG)
+#if defined(DEBUG) || defined(_DEBUG)
 		D2D1_FACTORY_OPTIONS options;
 		options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
-		hr = D2D1CreateFactory(factoryTypes, options, IID_PPV_ARGS(&D2D1Factory));
+		//hr = D2D1CreateFactory(factoryTypes, __uuidof(ID2D1Factory), options, IID_PPV_ARGS(&D2D1Factory));
+		hr = D2D1CreateFactory(factoryTypes, IID_PPV_ARGS(&D2D1Factory));
 #else
 		hr = D2D1CreateFactory(factoryTypes, IID_PPV_ARGS(&D2D1Factory));
 #endif
@@ -79,9 +80,13 @@ void D2dData::Initialize(HWND hwnd, D2D1_FACTORY_TYPE factoryTypes)
 			std::cout << "DWriteFactory Create Error" << std::endl;
 			return;
 		}
+		else
+		{
+			AddColor("White", 1.0f, 1.0f, 1.0f, 1.0f);
+			AddColor("Black", 0.0f, 0.0f, 0.0f, 1.0f);
+		}
 	}
-	AddColor("White", 1.0f, 1.0f, 1.0f, 1.0f);
-	AddColor("Black", 0.0f, 0.0f, 0.0f, 1.0f);
+	
 
 }
 
@@ -111,7 +116,7 @@ void D2dData::AddTextFormat(const std::string& formatName,const WCHAR* fontName,
 		DWRITE_FONT_STRETCH_NORMAL,
 		fontSize,
 		L"",
-		TextFormats[formatName].Get()
+		&(TextFormats[formatName])
 	);
 	if (FAILED(hr))
 		std::cout << "Create AddTextFormat is failed" << std::endl;

@@ -12,6 +12,7 @@
 
 
 #pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dwrite.lib")
 
 using namespace D2D1;
 using namespace Microsoft::WRL;
@@ -30,7 +31,7 @@ private:
 
 	// Color using for brush add
 	std::unordered_map<std::string, std::unique_ptr<D2D1_COLOR_F>> Colors; // Default add White and Black Color;
-	std::unordered_map<std::string, ComPtr<IDWriteTextFormat*>> TextFormats;
+	std::unordered_map<std::string, ComPtr<IDWriteTextFormat>> TextFormats;
 public:
 	D2dData();
 	~D2dData();
