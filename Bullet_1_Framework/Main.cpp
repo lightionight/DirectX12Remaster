@@ -39,12 +39,13 @@ int main()
 	float bottom = (float)(rand() % 500);
 	d2dData.DrawRect(left, right, top, bottom);
 	d2dData.AfterDraw();
+	d2dData.Show();
 	
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != WM_QUIT)
 	{
 		
-		
+		std::system("pause");
 		std::cout << "Now is Countine Draw Rect as you see." << std::endl;
 	}
 
