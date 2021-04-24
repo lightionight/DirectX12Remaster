@@ -20,13 +20,15 @@ int main()
 	MoveWindow(GetConsoleWindow(), r.left, r.top, 800, 600, TRUE);
 	std::cout << "Now start Program." << std::endl;
 
-	WinDesc winDesc = WinDesc();
+	WinDesc winDesc;
 	WindowData winData;
 	D2dData d2dData;
+	
 
 	winDesc.Initialize(L"Hello Direct2D", L"First Taste For Direct2D", 1280, 720, GlobalProc); // Need Add MESSAGE HANDLE FUNCTION
 	winData.Initialize(&winDesc);
-	d2dData.Initialize(winData.Hwnd, D2D1_FACTORY_TYPE_SINGLE_THREADED);
+
+	d2dData = D2dData(winData.Hwnd);
 
 	// AddColor
 	d2dData.AddColor("Pink", 0.8f, 0.2f, 0.3f, 1.0f);
