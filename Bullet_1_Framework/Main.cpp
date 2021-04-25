@@ -30,10 +30,10 @@ int main()
 
 	d2dData = D2dData(winData.Hwnd);
 
+#ifdef _TEST_DRAW_
 	// AddColor
 	d2dData.AddColor("Pink", 0.8f, 0.2f, 0.3f, 1.0f);
 	d2dData.AddColor("Green", 0.2f, 0.3f, 0.77f, 1.0f);
-
 	d2dData.PerpareDraw("Pink");
 	float left = (float)(rand() % 500);
 	float right = (float)(rand() % 500);
@@ -42,13 +42,14 @@ int main()
 	d2dData.DrawRect(left, right, top, bottom);
 	d2dData.AfterDraw();
 	d2dData.Show();
-	
+#endif // _TEST_DRAW_
+
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != WM_QUIT)
 	{
 		
 		std::system("pause");
-		std::cout << "Now is Countine Draw Rect as you see." << std::endl;
+		std::cout << "Now is Direct2d is ready for you draw object" << std::endl;
 	}
 
 	return 0;

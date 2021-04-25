@@ -6,18 +6,16 @@
 // There need to Care fully windows version  win8 above and win8 later
 
 /// DXGI AND D3D12 Include
-#include <d3d11.h>
 #include <d3d11_3.h>
-#include <dxgi1_2.h>
 
 // D2D Include
-#include <d2d1.h>
-#include <d2d1helper.h>
 #include <d2d1_3.h>
 #include <d2d1_3helper.h>
 #include <d2d1effects_2.h>
 #include <d2d1effectauthor_1.h>
 #include <d2d1effecthelpers.h>
+
+#include <D2DErr.h>
 //DDwrite
 #include <dwrite_2.h>      // for DirectWrite draw text
 
@@ -45,8 +43,11 @@ public:
 	D2dData();
 	D2dData(HWND hwnd);
 	~D2dData();
+	
 public:
-	void ReSize(HWND hwnd, float dpi);
+    void ReSize(HWND hwnd, float dpi);
+public:
+#ifdef _TEST_DRAW_
 	void InitBrushColor(const std::string& colorName);
 	void PerpareDraw(const std::string& colorName);
 	void AfterDraw();
@@ -54,7 +55,7 @@ public:
 	void Show();
 	void DrawRect(float left, float right, float top, float bottom);
 	void DrawWord(const WCHAR* text, const std::string& textformatname, D2D1_RECT_F* drawrect);
-
+#endif // _TEST_DRAW_
 private:
 	void InitializeBase();
 	void InitializeD2D(HWND hwnd);
@@ -62,10 +63,13 @@ private:
 	void InitWindowOrResize();
 	
 public:
+
+#ifdef _TEST_DRAW_
 	void AddColor(const std::string& colorName, float r, float g, float b, float a);
 	ComPtr<D2D1_COLOR_F> UsingColor(const std::string& colorName);
 
 	void AddTextFormat(const std::string& formatName, const WCHAR* fontName, float fontSize);
+#endif //_TEST_DRAW_
 private:
 	// D2D
 	ComPtr<ID2D1Factory3>         m_D2DFactory;
@@ -96,15 +100,16 @@ private:
 
 	// Custom Settings Parameters;
 	D3D_FEATURE_LEVEL m_SupportFeatureLevel;
-	float             m_Dpi;
+	UINT              m_Dpi;
 	D2D1_SIZE_U       m_D3DRenderTargetSize;
 	D2D1_SIZE_U       m_OutputSize;
 	D2D1_SIZE_U       m_logicalSize;
-	RECT              m_WindowRect;
+	RECT              m_ClientRect;  // using for Windows Display and Draw Area Coodinate.
+	RECT              m_WindowRect;  // using for Diplay Screen area Coordinate
 
 	// Color using for brush add
-	std::unordered_map<std::string, std::unique_ptr<D2D1::ColorF>> Colors; // Default add White and Black Color;
-	std::unordered_map<std::string, ComPtr<IDWriteTextFormat>> TextFormats;
+	//std::unordered_map<std::string, std::unique_ptr<D2D1::ColorF>> Colors; // Default add White and Black Color;
+	//std::unordered_map<std::string, ComPtr<IDWriteTextFormat>> TextFormats;
 
 
 

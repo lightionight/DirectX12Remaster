@@ -3,11 +3,17 @@
 #include <memory>
 #include <unordered_map>
 
-inline void ThrowIfFailed(HRESULT hr, const std::string ErrorMessage)
+inline void ThrowIfFailed(HRESULT hr, const std::string& ObjectName)
 {
 	if (FAILED(hr))
 	{
-		std::cout << ErrorMessage << std::endl;
+		std::cout << "Create " << ObjectName << " Error" << std::endl;
+		return;
+	}
+	else
+	{
+		std::cout << "Create " << ObjectName << " Success." << std::endl;
+		return;
 	}
 }
 
@@ -36,9 +42,12 @@ D2dData::D2dData(HWND hwnd) :
 	m_D3DRenderTargetSize(),
 	m_OutputSize(),
 	m_logicalSize(),
-	m_Dpi(-1.0f)
+	m_Dpi(-1.0f),
+	m_HWND(hwnd)
 {
-	GetClientRect(hwnd, &m_WindowRect);  //Set m_RenderRect;
+	GetClientRect(m_HWND, &m_ClientRect);  //Set m_RenderRect;
+	GetWindowRect(m_HWND, &m_WindowRect);  
+	m_Dpi = GetDpiForWindow(m_HWND);
 
 	InitializeBase();
 #ifdef _D2D_WITH_D3D_
@@ -60,26 +69,18 @@ void D2dData::InitializeBase()
 	options.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 #endif
 	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory3), &options, &m_D2DFactory);
-	if (FAILED(hr))
-	{
-		std::cout << "Init D2D1 Factory Error" << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "D2D_Factory");
 
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory2), &m_DWriteFactory);
-	if (FAILED(hr))
-	{
-		std::cout << "Init DWrite facotry Error" << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "DDwriteFactory");
 
 	hr = CoCreateInstance(CLSID_WICImagingFactory2, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_WicFactory));
-	if (FAILED(hr))
-		std::cout << "Create WICFactory Error." << std::endl;
+	ThrowIfFailed(hr, "WicFactory");
 
+#ifdef _TEST_DRAW_
 	AddColor("White", 1.0f, 1.0f, 1.0f, 1.0f);
 	AddColor("Black", 0.0f, 0.0f, 0.0f, 1.0f);
-
+#endif // _TEST_DRAW_
 
 }
 
@@ -89,23 +90,15 @@ void D2dData::InitializeD2D(HWND hwnd)
 	// Create Render Target;
 	hr = m_D2DFactory->CreateHwndRenderTarget(
 		D2D1::RenderTargetProperties(),
-		D2D1::HwndRenderTargetProperties(hwnd, D2D1::SizeU(m_WindowRect.right - m_WindowRect.left, m_WindowRect.bottom - m_WindowRect.top)),
+		D2D1::HwndRenderTargetProperties(hwnd, D2D1::SizeU(m_ClientRect.right - m_ClientRect.left, m_ClientRect.bottom - m_ClientRect.top)),
 		&m_D2D1DrawTarget);
-	if (FAILED(hr))
-	{
-		std::cout << "Init D2d1 Draw Target Error." << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "D2D1DrawTarget");
 
 	// Create Brush
 	hr = m_D2D1DrawTarget->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::White),
 		&Brush);
-	if (FAILED(hr))
-	{
-		std::cout << "Create Brush Error" << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "D2D1Brush");
 }
 
 void D2dData::InitializeD2DWithD3D()
@@ -143,51 +136,29 @@ void D2dData::InitializeD2DWithD3D()
 		&device,
 		&m_SupportFeatureLevel,
 		&context);
-	if (FAILED(hr))
-	{
-		std::cout << "create d3d11 Device Error" << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "D3Ddevice & d3dDeviceContext");
 
 	// Translate to current version d3d11Device and d3d11deviceContext Version
 	hr = device.As(&m_D3DDevice);
-	if (FAILED(hr))
-		std::cout << "Convert D3dDevice version Error" << std::endl;
+	ThrowIfFailed(hr, "convert D3ddevice");
 	hr = context.As(&m_D3DContext);
-	if (FAILED(hr))
-		std::cout << "Convert D3d11DeviceContext Version Error." << std::endl;
+	ThrowIfFailed(hr, "Convert D3dDeviceContext");
 
 	// temp idxiDeivce
 	Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
 	hr = m_D3DDevice.As(&dxgiDevice);   // using d3ddevice as Dxgi Device
-	if (FAILED(hr))
-	{
-		std::cout << "D3ddevice As DxgiDevice Error" << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "d3ddevice AS DxgiDevice");
 
 	// Create D2DDeivce by using Dxgi Device
 	hr = m_D2DFactory->CreateDevice(dxgiDevice.Get(), &m_D2DDevice);
-	if (FAILED(hr))
-	{
-		std::cout << "Error to create D2ddevice." << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "D2d1Device");
 
 	// Create D2DContext
 	hr = m_D2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_D2DContext);
-	if (FAILED(hr))
-	{
-		std::cout << "Error to Create d2d1 Device Context." << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "D2d1DeviceContext");
 	// Create Brush
 	hr = m_D2DContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &Brush);
-	if (FAILED(hr))
-	{
-		std::cout << "Create Brush Error" << std::endl;
-		return;
-	}
+	ThrowIfFailed(hr, "d2d1Brush");
 }
 
 void D2dData::InitWindowOrResize()
@@ -197,10 +168,16 @@ void D2dData::InitWindowOrResize()
 
 	m_D3DContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
 	m_D3DRenderTargetView = nullptr;
-	m_D2DContext->SetTarget(nullptr);
-	m_D2DRenderTargetMap = nullptr;
 	m_D3DContext->Flush();
 
+	m_D2DRenderTargetMap = nullptr;
+	m_D2DContext->SetTarget(nullptr);
+	
+	GetWindowRect(m_HWND, &m_WindowRect);
+	GetClientRect(m_HWND, &m_ClientRect);
+	
+	m_logicalSize.width = m_ClientRect.right - m_ClientRect.left;
+	m_logicalSize.height = m_ClientRect.bottom - m_ClientRect.top;
 	// Calculate necessary Render target size in pixel units
 	m_OutputSize.width = m_logicalSize.width;
 	m_OutputSize.height = m_logicalSize.height;
@@ -260,34 +237,26 @@ void D2dData::InitWindowOrResize()
 		
 		ComPtr<IDXGIAdapter> dxgiAdpater;
 		hr = dxgiDevice->GetAdapter(&dxgiAdpater);
-		if (FAILED(hr))
-		{
-			std::cout << "Get dxgiAdpater Error from dxgi device " << std::endl;
-			return;
-		}
+		ThrowIfFailed(hr, "dxgiAdapater");
 
 		ComPtr<IDXGIFactory3> dxgiFactory;
 
 		hr = dxgiAdpater->GetParent(IID_PPV_ARGS(&dxgiFactory));
-		if (FAILED(hr))
-		{
-			std::cout << "dxgiAdapter Get Parent Error" << std::endl;
-			return;
-		}
+		ThrowIfFailed(hr, "dxgiFactory");
 		
-		hr = dxgiFactory->CreateSwapChainForHwnd(m_D3DDevice.Get(), m_HWND, &scDesc, nullptr, nullptr, &m_SwapChain);
-		if (FAILED(hr))
-			std::cout << "create Swap Chain Error" << std::endl;
+		hr = dxgiFactory->CreateSwapChainForHwnd(m_D3DDevice.Get(), m_HWND, &scDesc, NULL, NULL, &m_SwapChain);
+		ThrowIfFailed(hr, "Swap Chain");
+
 		hr = dxgiDevice->SetMaximumFrameLatency(1);
-		ThrowIfFailed(hr, "Set MaxinumFrame Error");
+		ThrowIfFailed(hr, "MaxinumFrame");
 	}
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
 	hr = m_SwapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
-	ThrowIfFailed(hr, "Get back buffer Error");
+	ThrowIfFailed(hr, "ID3D11Texxture2D");
 
 	hr = m_D3DDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &m_D3DRenderTargetView);
-	ThrowIfFailed(hr, "Create Render Target view Error");
+	ThrowIfFailed(hr, "D3DRenderTargetView");
 
 
 
@@ -296,23 +265,21 @@ void D2dData::InitWindowOrResize()
 	UINT pNumberViews = 1;
 	m_D3DContext->RSGetViewports(&pNumberViews, &m_ScreenViewport);
 
-	D2D1_BITMAP_PROPERTIES1 backBufferBitmapProperties = BitmapProperties1(
+	D2D1_BITMAP_PROPERTIES1 backBufferBitmapProperties = BitmapProperties1
+	(
 		D2D1_BITMAP_OPTIONS_TARGET | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
 		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_IGNORE),
-		m_Dpi, m_Dpi
+		(float)m_Dpi, (float)m_Dpi
 	);
 
 	Microsoft::WRL::ComPtr<IDXGISurface2> dxgiBackBuffer;
 	// backBuffer for direct2d
 	hr = m_SwapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer));
-	ThrowIfFailed(hr, "from swap Chain get dxgi surface is Error");
+	ThrowIfFailed(hr, "DXGI Surface");
 
-	hr = m_D2DContext->CreateBitmapFromDxgiSurface(
-		dxgiBackBuffer.Get(),
-		&backBufferBitmapProperties,
-		&m_D2DRenderTargetMap
-	);
-	ThrowIfFailed(hr, "create d2d Render target map Error");
+	// ERRORONTHIS
+	hr = m_D2DContext->CreateBitmapFromDxgiSurface(dxgiBackBuffer.Get(), &backBufferBitmapProperties, &m_D2DRenderTargetMap );
+	ThrowIfFailed(hr,  "BitMap from DXGI Surface");
 
 	// And Set Bitmap As RenderTarget
 	m_D2DContext->SetTarget(m_D2DRenderTargetMap.Get());
@@ -325,14 +292,14 @@ void D2dData::ReSize(HWND hwnd, float dpi)
 #ifdef _WINDOWS_OLD_
 	D2D1DrawTarget->CheckWindowState();
 #else
-	GetWindowRect(hwnd, &m_WindowRect);
-	m_logicalSize = D2D1::SizeU(m_WindowRect.right - m_WindowRect.left, m_WindowRect.bottom - m_WindowRect.top);
+	GetWindowRect(hwnd, &m_ClientRect);
+	m_logicalSize = D2D1::SizeU(m_ClientRect.right - m_ClientRect.left, m_ClientRect.bottom - m_ClientRect.top);
 	m_Dpi = dpi;
-	m_D2DContext->SetDpi(m_Dpi, m_Dpi);
+	m_D2DContext->SetDpi((FLOAT)m_Dpi, (FLOAT)m_Dpi);
 	InitWindowOrResize();
 #endif
 }
-
+#ifdef _TEST_DRAW_
 void D2dData::InitBrushColor(const std::string &colorName)
 {
 	if (Colors[colorName].get() == nullptr)
@@ -425,3 +392,4 @@ void D2dData::DrawWord(const WCHAR *text, const std::string &textformatname, D2D
 	PerpareDraw("Black");
 	//D2D1DrawTarget->DrawText(text, ARRAYSIZE(text) - 1, TextFormats[textformatname].Get(), drawrect, Brush);
 }
+#endif  //_TEST_DRAW_
