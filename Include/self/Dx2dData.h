@@ -2,6 +2,12 @@
 
 #pragma once
 
+//_________TE�ӣԣߣߣߣߣߣߣͣ��ңãϣӣߣߣߣߣߣߣ�//
+#define _TEST_DRAW_
+
+// Need to Detect using Direct2d Old way or NEw Way by using #define _D2D_WITH_D3D_
+#define _D2D_WITH_D3D_
+
 
 // There need to Care fully windows version  win8 above and win8 later
 
@@ -34,9 +40,6 @@ using namespace D2D1;
 using namespace Microsoft::WRL;
 
 
-// Need to Detect using Direct2d Old way or NEw Way by using #define _D2D_WITH_D3D_
-
-#define _D2D_WITH_D3D_
 
 class D2dData {
 public:
@@ -48,11 +51,12 @@ public:
     void ReSize(HWND hwnd, float dpi);
 public:
 #ifdef _TEST_DRAW_
-	void InitBrushColor(const std::string& colorName);
-	void PerpareDraw(const std::string& colorName);
+	void InitBrushColor(const D2D1::ColorF& color);
+	void PerpareDraw(const D2D1::ColorF&);
 	void AfterDraw();
 	void ClearTarget();
 	void Show();
+	void FillRect(float left, float right, float top, float bottom);
 	void DrawRect(float left, float right, float top, float bottom);
 	void DrawWord(const WCHAR* text, const std::string& textformatname, D2D1_RECT_F* drawrect);
 #endif // _TEST_DRAW_
@@ -64,12 +68,6 @@ private:
 	
 public:
 
-#ifdef _TEST_DRAW_
-	void AddColor(const std::string& colorName, float r, float g, float b, float a);
-	ComPtr<D2D1_COLOR_F> UsingColor(const std::string& colorName);
-
-	void AddTextFormat(const std::string& formatName, const WCHAR* fontName, float fontSize);
-#endif //_TEST_DRAW_
 private:
 	// D2D
 	ComPtr<ID2D1Factory3>         m_D2DFactory;
@@ -106,13 +104,5 @@ private:
 	D2D1_SIZE_U       m_logicalSize;
 	RECT              m_ClientRect;  // using for Windows Display and Draw Area Coodinate.
 	RECT              m_WindowRect;  // using for Diplay Screen area Coordinate
-
-	// Color using for brush add
-	//std::unordered_map<std::string, std::unique_ptr<D2D1::ColorF>> Colors; // Default add White and Black Color;
-	//std::unordered_map<std::string, ComPtr<IDWriteTextFormat>> TextFormats;
-
-
-
-
 };
 

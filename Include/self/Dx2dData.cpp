@@ -77,11 +77,6 @@ void D2dData::InitializeBase()
 	hr = CoCreateInstance(CLSID_WICImagingFactory2, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_WicFactory));
 	ThrowIfFailed(hr, "WicFactory");
 
-#ifdef _TEST_DRAW_
-	AddColor("White", 1.0f, 1.0f, 1.0f, 1.0f);
-	AddColor("Black", 0.0f, 0.0f, 0.0f, 1.0f);
-#endif // _TEST_DRAW_
-
 }
 
 void D2dData::InitializeD2D(HWND hwnd)
@@ -156,9 +151,7 @@ void D2dData::InitializeD2DWithD3D()
 	// Create D2DContext
 	hr = m_D2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_D2DContext);
 	ThrowIfFailed(hr, "D2d1DeviceContext");
-	// Create Brush
-	hr = m_D2DContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &Brush);
-	ThrowIfFailed(hr, "d2d1Brush");
+
 }
 
 void D2dData::InitWindowOrResize()
@@ -214,7 +207,7 @@ void D2dData::InitWindowOrResize()
 		DXGI_SWAP_CHAIN_DESC1 scDesc = { 0 };
 		scDesc.Width = lround(m_D3DRenderTargetSize.width);
 		scDesc.Height = lround(m_D3DRenderTargetSize.height);
-		scDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		scDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		scDesc.Stereo = false;
 		scDesc.SampleDesc.Count = 1;
 		scDesc.SampleDesc.Quality = 0;
@@ -229,12 +222,8 @@ void D2dData::InitWindowOrResize()
 		ComPtr<IDXGIDevice3> dxgiDevice;
 		// Using D3d Device as DxgiDevice
 		hr = m_D3DDevice.As(&dxgiDevice);
-		if (FAILED(hr))
-		{
-			std::cout << "Convert Device as dxgiDevice Error." << std::endl;
-			return;
-		}
-		
+		ThrowIfFailed(hr, "convert Device AS DxgiDeivce");
+
 		ComPtr<IDXGIAdapter> dxgiAdpater;
 		hr = dxgiDevice->GetAdapter(&dxgiAdpater);
 		ThrowIfFailed(hr, "dxgiAdapater");
@@ -258,8 +247,6 @@ void D2dData::InitWindowOrResize()
 	hr = m_D3DDevice->CreateRenderTargetView(backBuffer.Get(), nullptr, &m_D3DRenderTargetView);
 	ThrowIfFailed(hr, "D3DRenderTargetView");
 
-
-
 	m_ScreenViewport = CD3D11_VIEWPORT(0.0f, 0.0f, m_D3DRenderTargetSize.width, m_D3DRenderTargetSize.height);
 
 	UINT pNumberViews = 1;
@@ -272,10 +259,16 @@ void D2dData::InitWindowOrResize()
 		(float)m_Dpi, (float)m_Dpi
 	);
 
+
 	Microsoft::WRL::ComPtr<IDXGISurface2> dxgiBackBuffer;
 	// backBuffer for direct2d
 	hr = m_SwapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer));
 	ThrowIfFailed(hr, "DXGI Surface");
+	
+	DXGI_SURFACE_DESC dsc;
+	dxgiBackBuffer->GetDesc(&dsc);
+	std::cout << static_cast<UINT>(dsc.Format) << std::endl;
+	std::cout << static_cast<UINT>(backBufferBitmapProperties.pixelFormat.format) << std::endl;
 
 	// ERRORONTHIS
 	hr = m_D2DContext->CreateBitmapFromDxgiSurface(dxgiBackBuffer.Get(), &backBufferBitmapProperties, &m_D2DRenderTargetMap );
@@ -298,47 +291,33 @@ void D2dData::ReSize(HWND hwnd, float dpi)
 	m_D2DContext->SetDpi((FLOAT)m_Dpi, (FLOAT)m_Dpi);
 	InitWindowOrResize();
 #endif
+
 }
 #ifdef _TEST_DRAW_
-void D2dData::InitBrushColor(const std::string &colorName)
-{
-	if (Colors[colorName].get() == nullptr)
-	{
-		std::cout << "Change Brush Color Error, There is no this Name Color" << std::endl;
-	}
-	Brush->SetColor(Colors[colorName].get());
-}
 
-void D2dData::AddColor(const std::string &colorName, float r, float g, float b, float a)
-{
-	auto c = std::make_unique<D2D1::ColorF>(r, g, b, a);
 
-	Colors[colorName] = std::move(c);
-}
 
-void D2dData::AddTextFormat(const std::string &formatName, const WCHAR *fontName, float fontSize)
-{
-	HRESULT hr = m_DWriteFactory->CreateTextFormat(
-		fontName,
-		NULL,
-		DWRITE_FONT_WEIGHT_NORMAL,
-		DWRITE_FONT_STYLE_NORMAL,
-		DWRITE_FONT_STRETCH_NORMAL,
-		fontSize,
-		L"",
-		&(TextFormats[formatName]));
-	if (FAILED(hr))
-		std::cout << "Create AddTextFormat is failed" << std::endl;
-}
-
-void D2dData::PerpareDraw(const std::string &colorName)
+void D2dData::PerpareDraw(const D2D1::ColorF& drawColor)
 {
 #ifdef _WINDOWS_OLD_
 	D2D1DrawTarget->BeginDraw();
 #else
 	m_D2DContext->BeginDraw();
+	// Create Brush
+
 #endif
-	InitBrushColor(colorName);
+	HRESULT hr = m_D2DContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &Brush);
+	ThrowIfFailed(hr, "d2d1Brush");
+	InitBrushColor(drawColor);
+}
+
+/// <summary>
+/// using for Reset Brush Color
+/// </summary>
+/// <param name="color">D2D1::ColorF</param>
+void D2dData::InitBrushColor(const D2D1::ColorF& color)
+{
+	Brush->SetColor(color);
 }
 
 void D2dData::AfterDraw()
@@ -350,10 +329,7 @@ void D2dData::AfterDraw()
 	hr = m_D2DContext->EndDraw();
 #endif
 
-	if (FAILED(hr))
-		std::cout << "END Draw is Error" << std::endl;
-	else
-		std::cout << "Draw Done!" << std::endl;
+	ThrowIfFailed(hr, "END DRAW");
 }
 
 void D2dData::Show()
@@ -363,10 +339,11 @@ void D2dData::Show()
 
 void D2dData::ClearTarget()
 {
+	D2D1_COLOR_F clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 #ifdef _WINDOWS_OLD_
 	m_D2DDrawTarget->Clear(Colors["White"].get());
 #else
-	m_D2DContext->Clear(Colors["White"].get());
+	m_D2DContext->Clear(clearColor);
 #endif
 }
 
@@ -387,9 +364,23 @@ void D2dData::DrawRect(float left, float right, float top, float bottom)
 #endif
 }
 
+void D2dData::FillRect(float left, float right, float top, float bottom)
+{
+	const D2D1_RECT_F rc = D2D1::RectF(
+		m_ClientRect.left + left,
+		m_ClientRect.top + top,
+		m_ClientRect.right - right,
+		m_ClientRect.bottom - bottom);
+#ifdef _WINDOWS_OLD_
+	D2D1DrawTarget->DrawRectangle(&rc, Brush.Get());
+#else
+	m_D2DContext->FillRectangle(&rc, Brush.Get());
+#endif
+}
+
 void D2dData::DrawWord(const WCHAR *text, const std::string &textformatname, D2D1_RECT_F *drawrect)
 {
-	PerpareDraw("Black");
+	//PerpareDraw("Black");
 	//D2D1DrawTarget->DrawText(text, ARRAYSIZE(text) - 1, TextFormats[textformatname].Get(), drawrect, Brush);
 }
 #endif  //_TEST_DRAW_
