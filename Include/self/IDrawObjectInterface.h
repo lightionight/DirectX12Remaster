@@ -6,15 +6,17 @@ using namespace D2D1;
 
 struct D2dDrawData;
 
-class D2dDrawOjbect
+// Graphics Draw object interface.
+class IDrawOjbectInterface
 {
 public:
-	D2dDrawOjbect();
-	~D2dDrawOjbect();
-	
+	virtual void Draw();
+	virtual void Update();
+	virtual bool IsDirty();
 };
 
 typedef struct D2dDrawData
 {
+	
 
 } D2dDrawData;

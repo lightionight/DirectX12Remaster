@@ -59,8 +59,6 @@ public:
 	void CreateGround(float halfwidth, float halfheight);
 private:
     std::unique_ptr<b2World> mWorld;
-    std::unordered_map<std::string, std::unique_ptr<b2Body>> mSceneObjectsBody;
-	std::unordered_map<std::string ,std::unique_ptr<b2Shape>> mSceneOjbectsShape;
-	std::unordered_map<std::string, std::unique_ptr<b2FixtureDef>> mSceneOjbectsFixture;
+    std::unordered_map<SceneLayer::DrawOjbect, std::unique_ptr<>>
 
 };

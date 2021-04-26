@@ -6,6 +6,9 @@
 #include <self\Dx2dData.h>
 #include <cstdlib>
 
+#include <self/Box2dSceneManager.h>
+#include <Box2dEngine.h>
+
 #include <iostream>  // for output Debug infromation
 
 LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
