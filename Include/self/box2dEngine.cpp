@@ -22,7 +22,6 @@ Box2dEngine::~Box2dEngine()
 
 }
 
-
 void Box2dEngine::Initialize()
 {
     // Create Ground

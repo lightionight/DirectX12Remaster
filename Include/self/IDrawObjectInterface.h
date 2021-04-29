@@ -1,7 +1,7 @@
 #pragma once
 
 #include <d2d1helper.h>
-
+#include <d2d1.h>
 using namespace D2D1;
 
 struct D2dDrawData;

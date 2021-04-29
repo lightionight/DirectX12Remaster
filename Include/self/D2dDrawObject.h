@@ -1,6 +1,7 @@
 
 #include <box2d/box2d.h>
 #include <IDrawObjectInterface.h>
+#include <d2d1helper.h>
 
 class D2dDrawObject: public IDrawOjbectInterface
 {

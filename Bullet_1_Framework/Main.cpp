@@ -6,8 +6,8 @@
 #include <self\Dx2dData.h>
 #include <cstdlib>
 
-#include <self/Box2dSceneManager.h>
-#include <Box2dEngine.h>
+//#include <self/Box2dSceneManager.h>
+//#include <self/Box2dEngine.h>
 
 #include <iostream>  // for output Debug infromation
 
@@ -36,16 +36,24 @@ int main()
 #ifdef _TEST_DRAW_
 	
 #endif // _TEST_DRAW_
-
+	float bottom = 0.0f;
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != WM_QUIT)
 	{
+		
 		d2dData.PerpareDraw(D2D1::ColorF::Red);
-		float left = (float)(rand() % 100);
-		float right = (float)(rand() % 100);
-		float top = (float)(rand() % 100);
-		float bottom = (float)(rand() % 100);
-		d2dData.FillRect(left, right, top, bottom);
+		float left = 10.0f;
+		float right = 300.0f;
+		float top =  50.0f;
+		bottom = bottom + 10.0f;
+		D2D_POINT_2F first = { 640.0f, 360.0f };
+		D2D_POINT_2F last = { 1200.0f, 360.0f };
+
+		D2D_POINT_2F first2 = { 640.0f, 360.0f };
+		D2D_POINT_2F last2 = { 640.0f, 700.0f };
+		d2dData.DrawLine(first, last);
+		d2dData.DrawLine(first2, last2);
+		//d2dData.FillRect(left, right, top, bottom);
 		d2dData.AfterDraw();
 		d2dData.Show();
 		std::system("pause");

@@ -278,6 +278,8 @@ void D2dData::InitWindowOrResize()
 	m_D2DContext->SetTarget(m_D2DRenderTargetMap.Get());
 
 	m_D2DContext->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
+
+	m_D2DContext->SetTransform(D2D1::Matrix3x2F::Identity());  // Set direct 2d draw coordinate to origin.
 }
 
 void D2dData::ReSize(HWND hwnd, float dpi)
@@ -303,9 +305,10 @@ void D2dData::PerpareDraw(const D2D1::ColorF& drawColor)
 	D2D1DrawTarget->BeginDraw();
 #else
 	m_D2DContext->BeginDraw();
-	// Create Brush
-
 #endif
+
+	SetTransformOrigin();
+	// Create Brush
 	HRESULT hr = m_D2DContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &Brush);
 	ThrowIfFailed(hr, "d2d1Brush");
 	InitBrushColor(drawColor);
@@ -347,16 +350,22 @@ void D2dData::ClearTarget()
 #endif
 }
 
+
+void D2dData::SetTransformOrigin()
+{
+	m_D2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
+}
+
 // ---------------Draw Function---------------------------------//
 
 void D2dData::DrawRect(float left, float right, float top, float bottom)
 {
 
 	const D2D1_RECT_F rc = D2D1::RectF(
-		m_WindowRect.left + left,
-		m_WindowRect.top + top,
-		m_WindowRect.right - right,
-		m_WindowRect.bottom - bottom);
+		left,
+		bottom,
+		right,
+		top);
 #ifdef _WINDOWS_OLD_
 	D2D1DrawTarget->DrawRectangle(&rc, Brush.Get());
 #else
@@ -377,6 +386,17 @@ void D2dData::FillRect(float left, float right, float top, float bottom)
 	m_D2DContext->FillRectangle(&rc, Brush.Get());
 #endif
 }
+
+void D2dData::DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint, D2D1::Matrix3x2F& matrix)
+{
+	// this is transform matrix.
+	m_D2DContext->SetTransform(D2D1::Matrix3x2F::Matrix3x2F(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, (m_ClientRect.bottom - m_ClientRect.top)));
+
+	m_D2DContext->DrawLine(fpoint, lpoint, Brush.Get());
+	SetTransformOrigin();
+}
+
+
 
 void D2dData::DrawWord(const WCHAR *text, const std::string &textformatname, D2D1_RECT_F *drawrect)
 {

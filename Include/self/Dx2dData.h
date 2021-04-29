@@ -58,6 +58,7 @@ public:
 	void Show();
 	void FillRect(float left, float right, float top, float bottom);
 	void DrawRect(float left, float right, float top, float bottom);
+	void DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint, D2D1::Matrix3x2F& matrix = D2D1::Matrix3x2F::Identity());
 	void DrawWord(const WCHAR* text, const std::string& textformatname, D2D1_RECT_F* drawrect);
 #endif // _TEST_DRAW_
 private:
@@ -65,6 +66,7 @@ private:
 	void InitializeD2D(HWND hwnd);
 	void InitializeD2DWithD3D();
 	void InitWindowOrResize();
+	void SetTransformOrigin();
 	
 public:
 
