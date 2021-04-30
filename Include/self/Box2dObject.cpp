@@ -26,7 +26,7 @@ Box2dObjects::Box2dObjects(const std::string& name,const b2Vec2* points, int cou
 
 Box2dObjects::~Box2dObjects()
 {
-    if(m_Body != nullptr)
+    //if(m_Body != nullptr)
 
 }
 

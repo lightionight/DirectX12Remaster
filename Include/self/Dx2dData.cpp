@@ -2,6 +2,7 @@
 #include <iostream> // using for output ERROR
 #include <memory>
 #include <unordered_map>
+#include <DirectXMath.h>
 
 inline void ThrowIfFailed(HRESULT hr, const std::string& ObjectName)
 {
@@ -24,16 +25,7 @@ D2dData::D2dData()
 
 D2dData::~D2dData()
 {
-	if (m_D2DFactory.Get() != NULL)
-	{
-		m_D2DFactory->Release();
-		m_D2DFactory = nullptr;
-	}
-	if (Brush.Get() != NULL)
-	{
-		Brush->Release();
-		Brush = nullptr;
-	}
+
 }
 
 D2dData::D2dData(HWND hwnd) :
@@ -48,6 +40,10 @@ D2dData::D2dData(HWND hwnd) :
 	GetClientRect(m_HWND, &m_ClientRect);  //Set m_RenderRect;
 	GetWindowRect(m_HWND, &m_WindowRect);  
 	m_Dpi = GetDpiForWindow(m_HWND);
+	D2D1_MATRIX_3X2_F cameraScale = D2D1::Matrix3x2F::Scale(D2D1::SizeF(1.0, -1.0f), D2D1::Point2(0.0f, 0.0f));
+	D2D1_MATRIX_3X2_F cameraTranslate = D2D1::Matrix3x2F::Translation(D2D1::SizeF(0.0f, m_ClientRect.bottom - m_ClientRect.top));
+	m_ViewCamera = D2D1::Matrix3x2F(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, (m_ClientRect.bottom - m_ClientRect.top));
+
 
 	InitializeBase();
 #ifdef _D2D_WITH_D3D_
@@ -306,12 +302,11 @@ void D2dData::PerpareDraw(const D2D1::ColorF& drawColor)
 #else
 	m_D2DContext->BeginDraw();
 #endif
-
-	SetTransformOrigin();
 	// Create Brush
 	HRESULT hr = m_D2DContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), &Brush);
 	ThrowIfFailed(hr, "d2d1Brush");
 	InitBrushColor(drawColor);
+    ClearTarget();
 }
 
 /// <summary>
@@ -333,6 +328,7 @@ void D2dData::AfterDraw()
 #endif
 
 	ThrowIfFailed(hr, "END DRAW");
+	Show();
 }
 
 void D2dData::Show()
@@ -342,11 +338,10 @@ void D2dData::Show()
 
 void D2dData::ClearTarget()
 {
-	D2D1_COLOR_F clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
 #ifdef _WINDOWS_OLD_
 	m_D2DDrawTarget->Clear(Colors["White"].get());
 #else
-	m_D2DContext->Clear(clearColor);
+	m_D2DContext->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f));
 #endif
 }
 
@@ -355,6 +350,25 @@ void D2dData::SetTransformOrigin()
 {
 	m_D2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
 }
+
+void D2dData::CameraMove(float offsetx, float offsety)
+{
+	m_ViewCamera.dx += offsetx;
+	m_ViewCamera.dy += offsety;
+}
+
+//---------------------Resource Create Function------------------//
+
+
+void D2dData::CreateGeometry(ID2D1PathGeometry** pathGeometry)
+{
+	m_D2DFactory->CreatePathGeometry(pathGeometry);
+}
+
+
+
+
+
 
 // ---------------Draw Function---------------------------------//
 
@@ -373,27 +387,39 @@ void D2dData::DrawRect(float left, float right, float top, float bottom)
 #endif
 }
 
-void D2dData::FillRect(float left, float right, float top, float bottom)
+// One Object or Draw Object Only can using one Matrix.
+/// the Rotate using 
+void D2dData::FillRect(float left, float right, float top, float bottom, D2D1_MATRIX_3X2_F& matrix)
 {
+	m_D2DContext->SetTransform(m_ViewCamera * matrix);
 	const D2D1_RECT_F rc = D2D1::RectF(
 		m_ClientRect.left + left,
 		m_ClientRect.top + top,
 		m_ClientRect.right - right,
 		m_ClientRect.bottom - bottom);
+	//m_D2DContext->SetTransform(
+		//D2D1::Matrix3x2F::Rotation(45.0f, D2D1::Point2F(640.0f, 360.0f)));
 #ifdef _WINDOWS_OLD_
 	D2D1DrawTarget->DrawRectangle(&rc, Brush.Get());
 #else
 	m_D2DContext->FillRectangle(&rc, Brush.Get());
+	SetTransformOrigin();
 #endif
 }
 
-void D2dData::DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint, D2D1::Matrix3x2F& matrix)
+void D2dData::DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint)
 {
 	// this is transform matrix.
-	m_D2DContext->SetTransform(D2D1::Matrix3x2F::Matrix3x2F(1.0f, 0.0f, 0.0f, -1.0f, 0.0f, (m_ClientRect.bottom - m_ClientRect.top)));
+	m_D2DContext->SetTransform(m_ViewCamera);
 
 	m_D2DContext->DrawLine(fpoint, lpoint, Brush.Get());
 	SetTransformOrigin();
+}
+
+void D2dData::DrawGeometry(ID2D1Geometry* geo, D2D1_MATRIX_3X2_F& matrix)
+{
+	m_D2DContext->SetTransform(m_ViewCamera * matrix);
+	m_D2DContext->DrawGeometry(geo, Brush.Get());
 }
 
 

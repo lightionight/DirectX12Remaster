@@ -19,7 +19,7 @@ public:
     const std::string& GetName() {return m_Name;}
     const b2Vec2& GetCurrentPosition() { return m_Body->GetPosition();}
     const float& GetAngle() { return m_Body->GetAngle();}
-    const b2Vec2* GetAllShapeVertexPosition() {return m_Shape->m_vertices;}
+    b2Vec2* GetAllShapeVertexPosition() {return m_Shape->m_vertices;}
 private:
     std::string m_Name;
     b2Body* m_Body;

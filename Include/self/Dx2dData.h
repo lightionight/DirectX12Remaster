@@ -2,7 +2,7 @@
 
 #pragma once
 
-//_________TE�ӣԣߣߣߣߣߣߣͣ��ңãϣӣߣߣߣߣߣߣ�//
+//_________TE�ӣԣߣߣߣߣߣߣͣ��ңãϣӣߣߣߣߣߣߣ�//
 #define _TEST_DRAW_
 
 // Need to Detect using Direct2d Old way or NEw Way by using #define _D2D_WITH_D3D_
@@ -50,16 +50,23 @@ public:
 public:
     void ReSize(HWND hwnd, float dpi);
 public:
+    void CreateGeometry(ID2D1PathGeometry** pathGeometry);
 #ifdef _TEST_DRAW_
+
 	void InitBrushColor(const D2D1::ColorF& color);
 	void PerpareDraw(const D2D1::ColorF&);
 	void AfterDraw();
 	void ClearTarget();
 	void Show();
-	void FillRect(float left, float right, float top, float bottom);
+// Draw Function
+	void FillRect(float left, float right, float top, float bottom, D2D1_MATRIX_3X2_F& martix = D2D1::Matrix3x2F::Identity());
 	void DrawRect(float left, float right, float top, float bottom);
-	void DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint, D2D1::Matrix3x2F& matrix = D2D1::Matrix3x2F::Identity());
+	void DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint);
+    void DrawGeometry(ID2D1Geometry* geo, D2D1_MATRIX_3X2_F& martrix = D2D1::Matrix3x2F::Identity());
 	void DrawWord(const WCHAR* text, const std::string& textformatname, D2D1_RECT_F* drawrect);
+	void CameraMove(float offsetx = 0.0f , float offsetz = 0.0f);
+
+
 #endif // _TEST_DRAW_
 private:
 	void InitializeBase();
@@ -106,5 +113,6 @@ private:
 	D2D1_SIZE_U       m_logicalSize;
 	RECT              m_ClientRect;  // using for Windows Display and Draw Area Coodinate.
 	RECT              m_WindowRect;  // using for Diplay Screen area Coordinate
+	D2D1::Matrix3x2F  m_ViewCamera;
 };
 

@@ -37,27 +37,24 @@ int main()
 	
 #endif // _TEST_DRAW_
 	float bottom = 0.0f;
+	D2D_POINT_2F first = { 10.0f, 10.0f };
+	D2D_POINT_2F last = { 10.0f, 700.0f };
+	D2D_POINT_2F first2 = { 10.0f, 10.0f };
+	D2D_POINT_2F last2 = { 1000.0f, 10.0f };
+	D2D_POINT_2F CameraPos = { 0.0f, 0.0f };
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != WM_QUIT)
 	{
-		
 		d2dData.PerpareDraw(D2D1::ColorF::Red);
-		float left = 10.0f;
-		float right = 300.0f;
-		float top =  50.0f;
-		bottom = bottom + 10.0f;
-		D2D_POINT_2F first = { 640.0f, 360.0f };
-		D2D_POINT_2F last = { 1200.0f, 360.0f };
-
-		D2D_POINT_2F first2 = { 640.0f, 360.0f };
-		D2D_POINT_2F last2 = { 640.0f, 700.0f };
+		//d2dData.CameraMove(CameraPos.x);
+		d2dData.ClearTarget();
 		d2dData.DrawLine(first, last);
 		d2dData.DrawLine(first2, last2);
-		//d2dData.FillRect(left, right, top, bottom);
+		d2dData.FillRect(500.0f, 500.0f, 200.0f, 200.0f);
 		d2dData.AfterDraw();
 		d2dData.Show();
-		std::system("pause");
-		std::cout << "Now is Direct2d is ready for you draw object" << std::endl;
+		//std::system("pause");
+		//std::cout << "Now is Direct2d is ready for you draw object" << std::endl;
 	}
 
 	return 0;
