@@ -42,14 +42,15 @@ int main()
 
 	geo.Add(pointList, 6);
 
+
+
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != WM_QUIT)
 	{
 		d2dData.PerpareDraw(D2D1::ColorF::Red);
 		geo.Draw(&d2dData);
-		d2dData.DrawLine(pointList[3], pointList[5]);
+		//d2dData.DrawLine(pointList[3], pointList[5]);
 		d2dData.AfterDraw();
 	}
-
 	return 0;
 }

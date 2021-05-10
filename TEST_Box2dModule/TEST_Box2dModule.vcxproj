@@ -142,6 +142,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Include\self\box2dEngine.cpp" />
+    <ClCompile Include="..\Include\self\Box2dObject.cpp" />
+    <ClCompile Include="..\Include\self\Box2dSceneManager.cpp" />
     <ClCompile Include="..\Include\self\Win32Context.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>

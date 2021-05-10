@@ -7,19 +7,29 @@
 #include <memory>
 #include <string>
 
-class Box2dObjects : public IPhysicObjectInterface
+class Box2dObject : public IPhysicObjectInterface
 {
 public:
     /// Add Objects by give the array of points and count of points , count must < maxpointsNumber.
     // @Param points 
-    Box2dObjects(const std::string& Name, const b2Vec2* points, int counts, b2World&  world, b2BodyType bodytype);
-    ~Box2dObjects();
+    Box2dObject();
+    Box2dObject(const std::string&, const b2Vec2[], int, b2World*, b2BodyType);
+    Box2dObject(const std::string&);
+    ~Box2dObject();
 public:
     void Update()override;
-    const std::string& GetName() {return m_Name;}
+public:
+    void InitAsGround(float, float, float, float, b2World*);
+   
+public:
     const b2Vec2& GetCurrentPosition() { return m_Body->GetPosition();}
-    const float& GetAngle() { return m_Body->GetAngle();}
-    b2Vec2* GetAllShapeVertexPosition() {return m_Shape->m_vertices;}
+    const float&  GetAngle() { return m_Body->GetAngle();}
+    b2Vec2*       GetAllShapeVertexPosition() {return m_Shape->m_vertices;}
+    std::string   GetName(){return m_Name;}
+    void          SetName(std::string name) { m_Name = name;}
+    b2Body*       GetBody() { return m_Body;}
+    b2PolygonShape* GetShape(){ return m_Shape;}
+
 private:
     std::string m_Name;
     b2Body* m_Body;

@@ -5,7 +5,7 @@
 #include <self\Win32Context.h>
 
 // Using For Box2d Module Test.
-#include <self\Box2dEngine.h>
+#include <self\Box2dSceneManager.h>
 
 LRESULT CALLBACK GlobalProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -24,15 +24,20 @@ int main()
 	winDesc.Initialize(L"Hello Direct2D", L"First Taste For Direct2D", 1280, 720, GlobalProc); // Need Add MESSAGE HANDLE FUNCTION
 	winData.Initialize(&winDesc);
 
-	Box2dEngine box2dEngine(-10.0f);
+	Box2dSceneManager scene;
+	scene.Initialize(-9.8f, 0.0f, -20.0f, 10.0f, 20.0f);
 
-	box2dEngine.Initialize();
+    b2Vec2 pointsArr[4] {b2Vec2(10.0f, 10.0f), b2Vec2(10.0f, 20.0f), b2Vec2(20.0f, 20.0f), b2Vec2(0.0f, 20.0f)};
+	scene.AddBox2dObjects("box", pointsArr, 4, b2BodyType::b2_dynamicBody);
+	Box2dObject* obj = nullptr;
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != WM_QUIT)
 	{
-		
+		scene.Run();
+		//obj = scene.GetSceneObject("box");
 		std::system("pause");
-		std::cout << "Now is Direct2d is ready for you draw object" << std::endl;
+		//std::cout << "Now is Direct2d is ready for you draw object" << std::endl;
+		//std::cout << "X : " << obj->GetCurrentPosition().x << "Y : " << obj->GetCurrentPosition().y << std::endl;
 	}
 
 	return 0;

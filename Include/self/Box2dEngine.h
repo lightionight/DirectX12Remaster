@@ -28,6 +28,8 @@ public:
 	void Update();
 	void Calculate();
 	void Refresh();
+public:
+    b2World* GetEngine();
 private:
 	//std::unique_ptr<Box2dSceneManager> mSceneManager;
 
@@ -36,6 +38,11 @@ private:
 	float   m_timeStep = 1.0f / 60.0f; 
 	int32   m_VelocityIteration = 6;
 	int32   m_PositionIteration = 2;
+    // Engine Status
+	bool    m_IsStart;
+	bool    m_IsStop;
+	bool    m_IsPause;
+
 
 };
 

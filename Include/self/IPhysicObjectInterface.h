@@ -9,5 +9,5 @@
 class IPhysicObjectInterface
 {
 public:
-    virtual void Update();  
+    virtual void Update() = 0;  
 };

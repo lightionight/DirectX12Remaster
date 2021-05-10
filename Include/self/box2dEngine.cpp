@@ -68,7 +68,16 @@ void Box2dEngine::Initialize()
 
 void Box2dEngine::Start()
 {
-    
+    if(!m_IsStart)
+        m_IsStart = true;
+        m_IsPause = false;
+        m_IsStop  = false;
+    m_World->Step(m_timeStep, m_VelocityIteration, m_PositionIteration);
+#if defined (DEBUG) | defined (_DEBUG)
+    b2Body* test = m_World->GetBodyList();
+    if(test != nullptr)
+        std::cout << "Position is :" << test->GetPosition().x << " " << test->GetPosition().y << std::endl;
+#endif
 }
 
 void Box2dEngine::Update()
@@ -85,4 +94,9 @@ void Box2dEngine::Calculate()
 void Box2dEngine::Refresh()
 {
 
+}
+
+b2World* Box2dEngine::GetEngine()
+{
+    return m_World.get();
 }
