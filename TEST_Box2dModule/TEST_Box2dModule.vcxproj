@@ -144,6 +144,8 @@
     <ClCompile Include="..\Include\self\box2dEngine.cpp" />
     <ClCompile Include="..\Include\self\Box2dObject.cpp" />
     <ClCompile Include="..\Include\self\Box2dSceneManager.cpp" />
+    <ClCompile Include="..\Include\self\D2dDrawObject.cpp" />
+    <ClCompile Include="..\Include\self\Dx2dData.cpp" />
     <ClCompile Include="..\Include\self\Win32Context.cpp" />
     <ClCompile Include="Main.cpp" />
   </ItemGroup>

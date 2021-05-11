@@ -3,6 +3,7 @@
 #include <d2d1helper.h>
 #include <d2d1.h>
 #include <self\Dx2dData.h>
+#include <self\Box2dObject.h>
 using namespace D2D1;
 
 struct D2dDrawData;
@@ -11,8 +12,8 @@ struct D2dDrawData;
 class IDrawOjbectInterface
 {
 public:
-	virtual void Draw(D2dData* d2dData) = 0;
-	virtual void Update() = 0;
+	virtual void Draw(D2dData*) = 0;
+	virtual void Update(const b2Vec2&) = 0;
 	virtual bool IsDirty() = 0;
 };
 

@@ -24,12 +24,12 @@ public:
     ~D2dDrawObject();
 public:
     void Draw(D2dData* d2dData)override;
-    void Update()override;
+    void Update(const b2Vec2& position)override;
     bool IsDirty()override;
 
-    void Add(Box2dObjects* box2dObject);
+    void Add(Box2dObject* box2dObject);
     void Add(D2D1_POINT_2F pointList[], int countPoints);  // Only Using For Test;
-    D2D1_POINT_2F* Convertb2Vec2ToPoint2F(b2Vec2*);
+    D2D1_POINT_2F* Convertb2Vec2ToPoint2F(b2Vec2[]);
 
 private:
     void PrepareAdd();

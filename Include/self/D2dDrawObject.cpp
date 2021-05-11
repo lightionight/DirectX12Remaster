@@ -22,12 +22,17 @@ D2dDrawObject::~D2dDrawObject()
 
 void D2dDrawObject::Draw(D2dData* d2dData)
 {
-    d2dData->DrawGeometry(m_Geo.Get());
+    d2dData->DrawGeometry(m_Geo.Get(), m_Translate);
 }
 
-void D2dDrawObject::Update()
+void D2dDrawObject::Update(const b2Vec2& position)
 {
-    
+    m_Translate._11 = 1.0f;
+    m_Translate._21 = 0.0f;
+    m_Translate._12 = 0.0f;
+    m_Translate._22 = 1.0f;
+    m_Translate._31 = position.x;
+    m_Translate._32 = position.y;
 }
 
 bool D2dDrawObject::IsDirty()
@@ -35,7 +40,7 @@ bool D2dDrawObject::IsDirty()
     return true;
 }
 
-D2D1_POINT_2F* D2dDrawObject::Convertb2Vec2ToPoint2F(b2Vec2* vec)
+D2D1_POINT_2F* D2dDrawObject::Convertb2Vec2ToPoint2F(b2Vec2 vec[])
 { 
     size_t countNum = sizeof(vec) / sizeof(b2Vec2);
 
@@ -50,7 +55,7 @@ D2D1_POINT_2F* D2dDrawObject::Convertb2Vec2ToPoint2F(b2Vec2* vec)
 }
 
 
-void D2dDrawObject::Add(Box2dObjects* box2dObjects)
+void D2dDrawObject::Add(Box2dObject* box2dObjects)
 {
     PrepareAdd();
     b2Vec2* b2vecList = box2dObjects->GetAllShapeVertexPosition();
