@@ -35,7 +35,7 @@ int main()
     b2Vec2 pointsArr[4] {b2Vec2(10.0f, 10.0f), b2Vec2(10.0f, 20.0f), b2Vec2(20.0f, 20.0f), b2Vec2(0.0f, 20.0f)};
 	scene.AddBox2dObjects("box", pointsArr, 4, b2BodyType::b2_dynamicBody);
 	Box2dObject* obj = scene.GetSceneObject("box");
-	geo.Add(obj);
+	geo.Add(obj); // There has problem, need to fix
 	MSG msg;
 	while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != WM_QUIT)
 	{

@@ -59,10 +59,10 @@ public:
 	void ClearTarget();
 	void Show();
 // Draw Function
-	void FillRect(float left, float right, float top, float bottom, D2D1_MATRIX_3X2_F& martix = D2D1::Matrix3x2F::Identity());
+	void FillRect(float left, float right, float top, float bottom, D2D1_MATRIX_3X2_F martix = D2D1::Matrix3x2F::Identity());
 	void DrawRect(float left, float right, float top, float bottom);
 	void DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint);
-    void DrawGeometry(ID2D1Geometry* geo, D2D1_MATRIX_3X2_F& martrix = D2D1::Matrix3x2F::Identity());
+    void DrawGeometry(ID2D1Geometry* geo, D2D1_MATRIX_3X2_F martrix = D2D1::Matrix3x2F::Identity());
 	void DrawWord(const WCHAR* text, const std::string& textformatname, D2D1_RECT_F* drawrect);
 	void CameraMove(float offsetx = 0.0f , float offsetz = 0.0f);
 

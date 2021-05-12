@@ -42,10 +42,10 @@ bool D2dDrawObject::IsDirty()
 
 D2D1_POINT_2F* D2dDrawObject::Convertb2Vec2ToPoint2F(b2Vec2 vec[])
 { 
-    size_t countNum = sizeof(vec) / sizeof(b2Vec2);
+    int countNum = *(&vec + 1) - vec;
 
     std::vector<D2D1_POINT_2F> pointlist;
-    for(size_t i = 0; i < countNum; ++i)
+    for(int i = 0; i < countNum; ++i)
     {
         D2D1_POINT_2F point = D2D1::Point2(vec[i].x, vec[i].y);
         pointlist.push_back(point);
@@ -59,9 +59,10 @@ void D2dDrawObject::Add(Box2dObject* box2dObjects)
 {
     PrepareAdd();
     b2Vec2* b2vecList = box2dObjects->GetAllShapeVertexPosition();
-    D2D1_POINT_2F* pointList =  Convertb2Vec2ToPoint2F(b2vecList);
+    D2D1_POINT_2F* pointList = nullptr;
+    pointList = Convertb2Vec2ToPoint2F(b2vecList);
 
-    size_t CountPoints = sizeof(pointList) / sizeof(D2D1_POINT_2F);
+    size_t CountPoints = sizeof(pointList) / sizeof(pointList[0]);
     m_GeoSink->SetFillMode(D2D1_FILL_MODE_WINDING);
     m_GeoSink->BeginFigure(pointList[0],D2D1_FIGURE_BEGIN_FILLED);
     for(size_t i = 1; i < CountPoints; ++i)

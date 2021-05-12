@@ -1,3 +1,4 @@
+#pragma once
 
 #include "IPhysicObjectInterface.h"
 #include "../box2d/box2d.h"

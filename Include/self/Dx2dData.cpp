@@ -389,7 +389,7 @@ void D2dData::DrawRect(float left, float right, float top, float bottom)
 
 // One Object or Draw Object Only can using one Matrix.
 /// the Rotate using 
-void D2dData::FillRect(float left, float right, float top, float bottom, D2D1_MATRIX_3X2_F& matrix)
+void D2dData::FillRect(float left, float right, float top, float bottom, D2D1_MATRIX_3X2_F matrix)
 {
 	m_D2DContext->SetTransform(m_ViewCamera * matrix);
 	const D2D1_RECT_F rc = D2D1::RectF(
@@ -416,7 +416,7 @@ void D2dData::DrawLine(D2D_POINT_2F& fpoint, D2D_POINT_2F& lpoint)
 	SetTransformOrigin();
 }
 
-void D2dData::DrawGeometry(ID2D1Geometry* geo, D2D1_MATRIX_3X2_F& matrix)
+void D2dData::DrawGeometry(ID2D1Geometry* geo, D2D1_MATRIX_3X2_F matrix)
 {
 	m_D2DContext->SetTransform(m_ViewCamera * matrix);
 	m_D2DContext->DrawGeometry(geo, Brush.Get());

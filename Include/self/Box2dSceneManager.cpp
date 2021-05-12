@@ -1,5 +1,9 @@
 #include "Box2dSceneManager.h"
-#include <iostream>
+#if defined (DEBUG) | defined (_DEBUG)
+    #include <iostream>
+#endif // d (DEBUG) | defined (_DEBUG)
+
+#include <algorithm>
 
 
 Box2dSceneManager::Box2dSceneManager()
@@ -27,7 +31,7 @@ void Box2dSceneManager::InitializeGround(float posX, float posY, float halfwidth
 {
     Box2dObject objects;
     objects.InitAsGround(posX, posY, halfwidth, halfHeight, GetEngine());
-    m_AllObject.push_back(objects);
+    m_AllObject.push_back(std::move(objects));
 }
 
 b2World* Box2dSceneManager::GetEngine()
@@ -37,19 +41,23 @@ b2World* Box2dSceneManager::GetEngine()
 
 Box2dObject* Box2dSceneManager::GetSceneObject(const std::string& name)
 {
+    Box2dObject* result = nullptr;
     for (Box2dObject obj : m_AllObject)
-    {
-        /* code */
-        if(obj.GetName() == name)
-            return &obj;
-    }
-    
+        if (obj.GetName() == name)
+            result = &obj;
+
+    return result;   
 }
 
 void Box2dSceneManager::AddBox2dObjects(std::string name,b2Vec2 points[], int counts, b2BodyType bodytype)
 {
     Box2dObject obj(name, points, counts, GetEngine(), bodytype);
-    m_AllObject.push_back(obj);
+#if defined(DEBUG) | defined(_DEBUG)
+    for (int i = 0; i < counts; i++)
+        std::cout << "Points : " << points[i].x << "," << points[i].y << std::endl;
+#endif
+
+    m_AllObject.push_back(std::move(obj));
 }
 
 
