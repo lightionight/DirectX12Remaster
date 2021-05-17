@@ -14,18 +14,16 @@ Box2dObject::Box2dObject(const std::string& name,const b2Vec2 points[], int coun
    m_Body = b2World->CreateBody(&def);
    
    b2PolygonShape shape;
-   shape.m_count = counts;
-   for(int i = 0; i < counts; ++i)
-   {
-       shape.m_vertices[i].Set(points[i].x, points[i].y);
-   }
-
+   shape.Set(points, counts);
 
    b2FixtureDef fixDef;
    fixDef.shape = &shape;
    fixDef.density = 0.3f;
    fixDef.friction = 0.1f;
    m_Body->CreateFixture(&fixDef);
+
+   m_Shape = (b2PolygonShape*)m_Body->GetFixtureList()[0].GetShape();
+   
 
 }
 Box2dObject::Box2dObject(const std::string& name)

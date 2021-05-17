@@ -39,14 +39,13 @@ b2World* Box2dSceneManager::GetEngine()
     return m_Box2dEngine->GetEngine();
 }
 
+// this function return reference may have some problem
 Box2dObject* Box2dSceneManager::GetSceneObject(const std::string& name)
 {
-    Box2dObject* result = nullptr;
-    for (Box2dObject obj : m_AllObject)
-        if (obj.GetName() == name)
-            result = &obj;
-
-    return result;   
+    for (size_t i = 0; i < m_AllObject.size(); i++)
+        if (m_AllObject[i].GetName() == name)
+            return &(m_AllObject[i]);
+    return nullptr;
 }
 
 void Box2dSceneManager::AddBox2dObjects(std::string name,b2Vec2 points[], int counts, b2BodyType bodytype)
@@ -54,10 +53,16 @@ void Box2dSceneManager::AddBox2dObjects(std::string name,b2Vec2 points[], int co
     Box2dObject obj(name, points, counts, GetEngine(), bodytype);
 #if defined(DEBUG) | defined(_DEBUG)
     for (int i = 0; i < counts; i++)
-        std::cout << "Points : " << points[i].x << "," << points[i].y << std::endl;
+        std::cout << "Points : " << i << ":" << points[i].x << "," << points[i].y << std::endl;
 #endif
-
     m_AllObject.push_back(std::move(obj));
+#if defined(DEBUG) | defined(_DEBUG)
+    Box2dObject test = m_AllObject.back();
+    b2PolygonShape* sp = test.GetShape();
+    for (int i = 0; i < 8; i++)
+        std::cout << "After Add: "<< i << ":" << sp->m_vertices[i].x << ", " << sp->m_vertices[i].y << std::endl;
+#endif 
+                  
 }
 
 

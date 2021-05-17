@@ -29,7 +29,13 @@ public:
 
     void Add(Box2dObject* box2dObject);
     void Add(D2D1_POINT_2F pointList[], int countPoints);  // Only Using For Test;
-    D2D1_POINT_2F* Convertb2Vec2ToPoint2F(b2Vec2[]);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="b2Vec"> Array Pointer</param>
+    /// <param name="int">Count of array element</param>
+    /// <returns></returns>
+    void Convertb2Vec2ToPoint2F(b2Vec2*, int);
 
 private:
     void PrepareAdd();
@@ -46,6 +52,8 @@ private:
     D2D1_MATRIX_3X2_F   m_Translate;
     D2D1_MATRIX_3X2_F   m_rotate;
     D2D1_MATRIX_3X2_F   m_scale;
+
+    std::vector<D2D1_POINT_2F> m_PointList;
     
     
 };

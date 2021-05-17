@@ -1,6 +1,11 @@
 #include <self\D2dDrawObject.h>
 #include <self/Dx2dData.h>
 
+#ifdef _DEBUG
+#include <iostream>
+#endif // _DEBUG
+
+
 
 D2dDrawObject::D2dDrawObject(D2dData* d2dData, D2dDrawObjectType type)
 {
@@ -17,8 +22,6 @@ D2dDrawObject::~D2dDrawObject()
 {
 
 }
-
-
 
 void D2dDrawObject::Draw(D2dData* d2dData)
 {
@@ -40,36 +43,29 @@ bool D2dDrawObject::IsDirty()
     return true;
 }
 
-D2D1_POINT_2F* D2dDrawObject::Convertb2Vec2ToPoint2F(b2Vec2 vec[])
+void D2dDrawObject::Convertb2Vec2ToPoint2F(b2Vec2* vec, int count)
 { 
-    int countNum = *(&vec + 1) - vec;
-
-    std::vector<D2D1_POINT_2F> pointlist;
-    for(int i = 0; i < countNum; ++i)
+    for(int i = 0; i < count; ++i)
     {
         D2D1_POINT_2F point = D2D1::Point2(vec[i].x, vec[i].y);
-        pointlist.push_back(point);
+        m_PointList.push_back(std::move(point));
     }
-    
-    return pointlist.data();
 }
-
 
 void D2dDrawObject::Add(Box2dObject* box2dObjects)
 {
     PrepareAdd();
     b2Vec2* b2vecList = box2dObjects->GetAllShapeVertexPosition();
-    D2D1_POINT_2F* pointList = nullptr;
-    pointList = Convertb2Vec2ToPoint2F(b2vecList);
+    int count = box2dObjects->GetVertexCount();
+    Convertb2Vec2ToPoint2F(b2vecList, count);
 
-    size_t CountPoints = sizeof(pointList) / sizeof(pointList[0]);
+    size_t CountPoints = m_PointList.size();
     m_GeoSink->SetFillMode(D2D1_FILL_MODE_WINDING);
-    m_GeoSink->BeginFigure(pointList[0],D2D1_FIGURE_BEGIN_FILLED);
+    m_GeoSink->BeginFigure(m_PointList[0],D2D1_FIGURE_BEGIN_FILLED);
     for(size_t i = 1; i < CountPoints; ++i)
     {
-       m_GeoSink->AddLine(pointList[i]);
+       m_GeoSink->AddLine(m_PointList[i]);
     }
-    m_GeoSink->EndFigure(D2D1_FIGURE_END_CLOSED);
 
     AfterAdd();
 }
@@ -94,6 +90,9 @@ void D2dDrawObject::PrepareAdd()
 
 void D2dDrawObject::AfterAdd()
 {
+#if defined(DEBUG) | defined(_DEBUG)
+    std::cout << "GeoSink Was Closed." << std::endl;
+#endif
     m_GeoSink->EndFigure(D2D1_FIGURE_END_CLOSED);
     m_GeoSink->Close();
 }

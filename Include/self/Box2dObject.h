@@ -24,11 +24,13 @@ public:
    
 public:
     const b2Vec2& GetCurrentPosition() { return m_Body->GetPosition();}
-    const float&  GetAngle() { return m_Body->GetAngle();}
-    b2Vec2*       GetAllShapeVertexPosition() {return m_Shape->m_vertices;}
-    std::string   GetName(){return m_Name;}
-    void          SetName(std::string name) { m_Name = name;}
-    b2Body*       GetBody() { return m_Body;}
+    const float& GetAngle() { return m_Body->GetAngle();}
+    // this function only return array first element adress.
+    b2Vec2* GetAllShapeVertexPosition() {return m_Shape->m_vertices;}
+    int32 GetVertexCount(){ return m_Shape->m_count; }
+    std::string GetName(){return m_Name;}
+    void SetName(std::string name) { m_Name = name;}
+    b2Body* GetBody() { return m_Body;}
     b2PolygonShape* GetShape(){ return m_Shape;}
 
 private:
