@@ -41,11 +41,12 @@ int main()
 	{
 		scene.Run();
 		geo.Update(obj->GetCurrentPosition());
+		
 		d2dData.PerpareDraw(D2D1::ColorF::Red);
 		geo.Draw(&d2dData);
 		d2dData.AfterDraw();
 		//obj = scene.GetSceneObject("box");
-		std::system("pause");
+		//std::system("pause");
 		//std::cout << "Now is Direct2d is ready for you draw object" << std::endl;
 		//std::cout << "X : " << obj->GetCurrentPosition().x << "Y : " << obj->GetCurrentPosition().y << std::endl;
 	}
