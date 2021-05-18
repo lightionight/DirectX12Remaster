@@ -8,7 +8,7 @@ Box2dObject::Box2dObject(const std::string& name,const b2Vec2 points[], int coun
 {
    m_Name = name; 
    b2BodyDef def;
-   def.position.Set(0.0f, 1.0f);
+   def.position.Set(500.0f, 500.0f);
    def.angle = 0;
    def.type = bodyType;
    m_Body = b2World->CreateBody(&def);

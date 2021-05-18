@@ -20,7 +20,8 @@ public:
         Bitmap    = 4
     };
 public:
-    D2dDrawObject(D2dData* d2dData, D2dDrawObjectType type);
+    //D2dDrawObject(D2dData* d2dData, D2dDrawObjectType type);
+    D2dDrawObject(D2dData* d2dData, D2dDrawObjectType type, float offset = 0.0f);
     ~D2dDrawObject();
 public:
     void Draw(D2dData* d2dData)override;
@@ -52,6 +53,7 @@ private:
     D2D1_MATRIX_3X2_F   m_Translate;
     D2D1_MATRIX_3X2_F   m_rotate;
     D2D1_MATRIX_3X2_F   m_scale;
+    float               m_x_offset;
 
     std::vector<D2D1_POINT_2F> m_PointList;
     

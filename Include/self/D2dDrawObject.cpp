@@ -6,17 +6,22 @@
 #endif // _DEBUG
 
 
+// There need to make this class as templete
 
-D2dDrawObject::D2dDrawObject(D2dData* d2dData, D2dDrawObjectType type)
+D2dDrawObject::D2dDrawObject(D2dData* d2dData, D2dDrawObjectType type, float offset)
 {
     m_DrawType = type;
     m_PosW = D2D1::Point2(0.0f, 0.0f);
     m_Translate = D2D1::IdentityMatrix();
     m_rotate = D2D1::IdentityMatrix();
     m_scale = D2D1::IdentityMatrix();
+    m_x_offset = offset;
     d2dData->CreateGeometry(&m_Geo);
-
+        
+    
 }
+
+
 
 D2dDrawObject::~D2dDrawObject()
 {
@@ -34,8 +39,8 @@ void D2dDrawObject::Update(const b2Vec2& position)
     m_Translate._21 = 0.0f;
     m_Translate._12 = 0.0f;
     m_Translate._22 = 1.0f;
-    m_Translate._31 = position.x;
-    m_Translate._32 = position.y;
+    m_Translate._31 = position.x + m_x_offset;
+    m_Translate._32 = -position.y;
 }
 
 bool D2dDrawObject::IsDirty()
