@@ -29,10 +29,11 @@ int main()
 	winData.Initialize(&winDesc);
 
 	D2dData d2dData(winData.Hwnd);
-	D2dDrawObject geo(&d2dData, D2dDrawObject::D2dDrawObjectType::Geometry);
-	scene.Initialize(-9.8f, 0.0f, -20.0f, 10.0f, 20.0f);
+	D2dDrawObject geo(&d2dData, D2dDrawObject::D2dDrawObjectType::Geometry, 500.0f);
+	D2dDrawObject leftPanel(&d2dData, D2dDrawObject::D2dDrawObjectType::Rectangle);
+	scene.Initialize(-9.8f, 0.0f, -20.0f, 1000.0f, 20.0f);
 
-    b2Vec2 pointsArr[4] {b2Vec2(10.0f, 10.0f), b2Vec2(10.0f, 20.0f), b2Vec2(20.0f, 20.0f), b2Vec2(0.0f, 20.0f)};
+    b2Vec2 pointsArr[4] {b2Vec2(10.0f, 10.0f), b2Vec2(10.0f, 20.0f), b2Vec2(20.0f, 20.0f), b2Vec2(20.0f, 10.0f)};
 	scene.AddBox2dObjects("box", pointsArr, 4, b2BodyType::b2_dynamicBody);
 	Box2dObject* obj = scene.GetSceneObject("box");
 	geo.Add(obj); // There has problem, need to fix
